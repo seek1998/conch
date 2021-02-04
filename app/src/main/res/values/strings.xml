@@ -1,0 +1,22 @@
+<resources>
+    <string name="app_name">海螺音乐</string>
+
+    <string name="login">登录</string>
+    <string name="register">注册</string>
+    <string name="email">邮箱</string>
+    <string name="password">密码</string>
+    <string name="display_name">昵称</string>
+    <string name="captcha">验证码</string>
+    <!-- 错误信息 -->
+    <string name="wrong_email">邮箱格式错误</string>
+
+    <string name="track_title">音轨标题</string>
+    <string name="track_artist">音轨作者</string>
+
+    <string name="duration_unknown">--:--</string>
+    <string name="duration_format">%d:%02d</string>
+    <string name="title_local">本地</string>
+    <string name="title_cloud">云端</string>
+    <string name="title_account">我的</string>
+
+</resources>
