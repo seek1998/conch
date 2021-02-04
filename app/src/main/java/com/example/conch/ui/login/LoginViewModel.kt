@@ -1,16 +1,18 @@
 package com.example.conch.ui.login
 
+import android.app.Application
+import android.os.Bundle
 import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.ViewModel
 import com.example.conch.data.Result
 import com.example.conch.data.UserRepository
 import com.example.conch.data.model.User
+import com.example.conch.ui.BaseViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
-class LoginViewModel : ViewModel() {
+class LoginViewModel(application: Application) : BaseViewModel(application) {
 
     var loginResult = MutableLiveData<Result<User>>()
 
@@ -21,6 +23,10 @@ class LoginViewModel : ViewModel() {
             }
             loginResult.value = result
         }
+    }
+
+    override fun attach(savedInstanceState: Bundle?) {
+
     }
 
 }

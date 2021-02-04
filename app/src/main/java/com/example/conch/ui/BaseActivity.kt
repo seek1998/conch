@@ -29,10 +29,10 @@ abstract class BaseActivity<VDB : ViewDataBinding, VM : BaseViewModel> : AppComp
 
         viewModel.attach(savedInstanceState)
 
-
-
+        processLogic()
     }
 
+    abstract fun processLogic()
 
     @LayoutRes
     abstract fun getLayoutId(): Int

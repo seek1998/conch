@@ -1,36 +1,24 @@
 package com.example.conch.ui.login
 
 import android.content.Intent
-import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
 import android.widget.Toast
-import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
-import androidx.databinding.DataBindingUtil
-import androidx.lifecycle.ViewModelProvider
 import com.example.conch.R
 import com.example.conch.data.Result
 import com.example.conch.data.model.User
 import com.example.conch.databinding.ActivityLoginBinding
+import com.example.conch.ui.BaseActivity
 import com.example.conch.ui.register.RegisterActivity
 import com.example.conch.utils.RegexUtil
 import com.jaeger.library.StatusBarUtil
 
-class LoginActivity : AppCompatActivity() {
+class LoginActivity : BaseActivity<ActivityLoginBinding, LoginViewModel>() {
 
-    private lateinit var binding: ActivityLoginBinding
-
-    private lateinit var viewModel: LoginViewModel
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_login)
+    override fun processLogic() {
         initToolBar()
-        initDataBinding()
         initEditText()
-
-        viewModel = ViewModelProvider(this).get(LoginViewModel::class.java)
 
         binding.btnLogin.apply {
             setOnClickListener {
@@ -65,8 +53,8 @@ class LoginActivity : AppCompatActivity() {
                 showLoginFailed(loginResult.exception.message)
             }
         })
-
     }
+
 
     private fun initEditText() {
         val textWatcher = object : TextWatcher {
@@ -92,11 +80,6 @@ class LoginActivity : AppCompatActivity() {
         binding.editPwd.addTextChangedListener(textWatcher)
     }
 
-    private fun initDataBinding() {
-        binding = DataBindingUtil.setContentView(this, R.layout.activity_login)
-        binding.lifecycleOwner = this
-    }
-
     private fun initToolBar() {
         StatusBarUtil.setLightMode(this)
         StatusBarUtil.setColor(this, ContextCompat.getColor(this, R.color.white), 0)
@@ -109,5 +92,11 @@ class LoginActivity : AppCompatActivity() {
     private fun updateUiWithUser(user: User) {
         Toast.makeText(this, "你好， ${user.name}。", Toast.LENGTH_SHORT).show()
     }
+
+    override fun getLayoutId(): Int = R.layout.activity_login
+
+    override fun getViewModelInstance(): LoginViewModel = LoginViewModel(application)
+
+    override fun getViewModelClass(): Class<LoginViewModel> = LoginViewModel::class.java
 
 }

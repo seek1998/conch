@@ -6,13 +6,13 @@ import android.os.Bundle
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.DataBindingUtil
-import androidx.navigation.findNavController
+import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.setupActionBarWithNavController
 import androidx.navigation.ui.setupWithNavController
 import com.example.conch.R
 import com.example.conch.databinding.ActivityMainBinding
-import com.example.conch.ui.track.TrackActivity
+import com.example.conch.ui.login.LoginActivity
 import com.permissionx.guolindev.PermissionX
 
 class MainActivity : AppCompatActivity() {
@@ -23,13 +23,15 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        startActivity(Intent(this, TrackActivity::class.java))
+        startActivity(Intent(this, LoginActivity::class.java))
 
         initPermission()
 
         initDataBinding()
 
-        val navController = findNavController(binding.navHostFragment.id)
+        val navHostFragment =
+            supportFragmentManager.findFragmentById(R.id.nav_host_fragment) as NavHostFragment
+        val navController = navHostFragment.navController
 
         val appBarConfiguration = AppBarConfiguration(
             setOf(
