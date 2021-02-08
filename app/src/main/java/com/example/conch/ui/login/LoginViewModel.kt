@@ -1,7 +1,6 @@
 package com.example.conch.ui.login
 
 import android.app.Application
-import android.os.Bundle
 import androidx.lifecycle.MutableLiveData
 import com.example.conch.data.Result
 import com.example.conch.data.UserRepository
@@ -23,10 +22,6 @@ class LoginViewModel(application: Application) : BaseViewModel(application) {
             }
             loginResult.value = result
         }
-    }
-
-    override fun attach(savedInstanceState: Bundle?) {
-
     }
 
 }

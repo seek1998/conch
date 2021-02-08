@@ -1,7 +1,8 @@
 package com.example.conch.ui.main.account
 
-import androidx.lifecycle.ViewModel
+import android.app.Application
+import com.example.conch.ui.BaseViewModel
 
-class AccountViewModel : ViewModel() {
-    // TODO: Implement the ViewModel
+class AccountViewModel(application: Application) : BaseViewModel(application) {
+
 }

@@ -1,18 +1,15 @@
 package com.example.conch.ui.main
 
 import android.Manifest
-import android.content.Intent
 import android.os.Bundle
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.DataBindingUtil
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.AppBarConfiguration
-import androidx.navigation.ui.setupActionBarWithNavController
 import androidx.navigation.ui.setupWithNavController
 import com.example.conch.R
 import com.example.conch.databinding.ActivityMainBinding
-import com.example.conch.ui.login.LoginActivity
 import com.permissionx.guolindev.PermissionX
 
 class MainActivity : AppCompatActivity() {
@@ -23,7 +20,7 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        startActivity(Intent(this, LoginActivity::class.java))
+        // startActivity(Intent(this, TrackActivity::class.java))
 
         initPermission()
 
@@ -39,7 +36,6 @@ class MainActivity : AppCompatActivity() {
             )
         )
 
-        setupActionBarWithNavController(navController, appBarConfiguration)
         binding.navView.setupWithNavController(navController)
     }
 

@@ -82,6 +82,10 @@ class TrackViewModel constructor(
         }
     }
 
+    fun changeTrackProgress(newProgress: Int) {
+        musicServiceConnection.transportControls.seekTo(newProgress.toLong())
+    }
+
 
     class Factory(
         private val musicServiceConnection: MusicServiceConnection

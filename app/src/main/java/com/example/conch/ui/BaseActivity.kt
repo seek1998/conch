@@ -14,7 +14,6 @@ abstract class BaseActivity<VDB : ViewDataBinding, VM : BaseViewModel> : AppComp
 
     protected lateinit var viewModel: VM
 
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = DataBindingUtil.setContentView(this, getLayoutId())
@@ -26,8 +25,6 @@ abstract class BaseActivity<VDB : ViewDataBinding, VM : BaseViewModel> : AppComp
                 return getViewModelInstance() as T
             }
         }).get(getViewModelClass())
-
-        viewModel.attach(savedInstanceState)
 
         processLogic()
     }

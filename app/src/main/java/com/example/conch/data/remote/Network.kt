@@ -1,11 +1,11 @@
-package com.example.conch.data.net
+package com.example.conch.data.remote
 
 import android.net.Uri
 import com.example.conch.data.Result
 import com.example.conch.data.model.RegisterInfoVO
 import com.example.conch.data.model.Track
 import com.example.conch.data.model.User
-import com.example.conch.data.net.api.UserService
+import com.example.conch.data.remote.api.UserService
 
 class Network {
     companion object {
@@ -13,9 +13,9 @@ class Network {
 
         private val userService: UserService = ServiceCreator.create(UserService::class.java)
 
-        private val remoteTrackPath = "http://conch-music.oss-cn-hangzhou.aliyuncs.com/track/"
+        val remoteTrackPath = "http://conch-music.oss-cn-hangzhou.aliyuncs.com/track/"
 
-        private val remoteCoverPath = "http://conch-music.oss-cn-hangzhou.aliyuncs.com/image/"
+        val remoteCoverPath = "http://conch-music.oss-cn-hangzhou.aliyuncs.com/image/"
 
         suspend fun login(email: String, password: String): Result<User> {
             val apiResponse = userService.login(email, password)

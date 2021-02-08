@@ -1,8 +1,8 @@
-package com.example.conch.data.net.api
+package com.example.conch.data.remote.api
 
 import com.example.conch.data.model.RegisterInfoVO
 import com.example.conch.data.model.User
-import com.example.conch.data.net.ApiResponse
+import com.example.conch.data.remote.ApiResponse
 import retrofit2.http.Body
 import retrofit2.http.GET
 import retrofit2.http.POST

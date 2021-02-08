@@ -1,35 +1,26 @@
 package com.example.conch.ui.register
 
 import android.content.Intent
-import android.os.Bundle
 import android.widget.Toast
-import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
-import androidx.databinding.DataBindingUtil
-import androidx.lifecycle.ViewModelProvider
 import com.example.conch.R
 import com.example.conch.data.Result
 import com.example.conch.data.model.RegisterInfoVO
 import com.example.conch.databinding.ActivityRegisterBinding
+import com.example.conch.ui.BaseActivity
 import com.example.conch.ui.login.LoginActivity
 import com.jaeger.library.StatusBarUtil
 
-class RegisterActivity : AppCompatActivity() {
-
-    private lateinit var binding: ActivityRegisterBinding
-
-    private lateinit var viewModel: RegisterViewModel
+class RegisterActivity : BaseActivity<ActivityRegisterBinding, RegisterViewModel>() {
 
     lateinit var registerInfo: RegisterInfoVO
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_register)
+    override fun processLogic() {
+        registerInfo = RegisterInfoVO()
 
-        initDataBinding()
+        binding.registerInfo = this.registerInfo
+
         initToolBar()
-
-        viewModel = ViewModelProvider(this).get(RegisterViewModel::class.java)
 
         binding.btnGetCaptcha.apply {
             setOnClickListener {
@@ -70,6 +61,7 @@ class RegisterActivity : AppCompatActivity() {
         })
     }
 
+
     private fun registerSucceeded() {
         Toast.makeText(applicationContext, "注册成功", Toast.LENGTH_LONG).show()
         startActivity(Intent(this, LoginActivity::class.java))
@@ -90,10 +82,10 @@ class RegisterActivity : AppCompatActivity() {
         StatusBarUtil.setColor(this, ContextCompat.getColor(this, R.color.purple500), 0)
     }
 
-    private fun initDataBinding() {
-        registerInfo = RegisterInfoVO("", "", "", "")
-        binding = DataBindingUtil.setContentView(this, R.layout.activity_register)
-        binding.lifecycleOwner = this
-        binding.registerInfo = registerInfo
-    }
+
+    override fun getLayoutId(): Int = R.layout.activity_register
+
+    override fun getViewModelInstance() = RegisterViewModel(application)
+
+    override fun getViewModelClass(): Class<RegisterViewModel> = RegisterViewModel::class.java
 }

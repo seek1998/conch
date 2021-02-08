@@ -2,7 +2,7 @@ package com.example.conch.data
 
 import com.example.conch.data.model.RegisterInfoVO
 import com.example.conch.data.model.User
-import com.example.conch.data.net.Network
+import com.example.conch.data.remote.Network
 
 object UserRepository {
     

@@ -1,4 +1,4 @@
-package com.example.conch.data.net
+package com.example.conch.data.remote
 
 import android.util.Log
 import com.google.gson.Gson
@@ -13,7 +13,7 @@ import java.util.concurrent.TimeUnit
 class ServiceCreator {
 
     companion object {
-        private const val BASE_URL = "http://192.168.1.6:8080/"
+        private const val BASE_URL = "http://192.168.1.10:8080/"
 
         private var gson: Gson? = null
 

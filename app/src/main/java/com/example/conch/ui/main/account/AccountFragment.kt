@@ -1,32 +1,21 @@
 package com.example.conch.ui.main.account
 
-import androidx.lifecycle.ViewModelProvider
-import android.os.Bundle
-import androidx.fragment.app.Fragment
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
 import com.example.conch.R
+import com.example.conch.databinding.FragmentAccountBinding
+import com.example.conch.ui.BaseFragment
 
-class AccountFragment : Fragment() {
+class AccountFragment : BaseFragment<FragmentAccountBinding, AccountViewModel>() {
 
-    companion object {
-        fun newInstance() = AccountFragment()
+    override fun processLogic() {
+
     }
 
-    private lateinit var viewModel: AccountViewModel
+    override fun getLayoutId(): Int = R.layout.fragment_account
 
-    override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View? {
-        return inflater.inflate(R.layout.fragment_account, container, false)
-    }
+    override fun getViewModelInstance() =
+        AccountViewModel(application = requireActivity().application)
 
-    override fun onActivityCreated(savedInstanceState: Bundle?) {
-        super.onActivityCreated(savedInstanceState)
-        viewModel = ViewModelProvider(this).get(AccountViewModel::class.java)
-        // TODO: Use the ViewModel
-    }
+    override fun getViewModelClass(): Class<AccountViewModel> = AccountViewModel::class.java
+
 
 }

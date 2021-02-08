@@ -1,4 +1,4 @@
-package com.example.conch.data.net
+package com.example.conch.data.remote
 
 data class ApiResponse<T>(
     var code: Int = 0,

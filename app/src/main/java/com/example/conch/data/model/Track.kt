@@ -24,6 +24,7 @@ data class Track(
     var albumName: String = "",
     //专辑封面
     @Expose
+    //本地封面路径
     var coverPath: String = "",
     //云端路径
     @Expose

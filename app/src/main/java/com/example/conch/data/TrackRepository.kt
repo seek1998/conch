@@ -3,7 +3,7 @@ package com.example.conch.data
 import android.content.Context
 import com.example.conch.data.local.LocalTrackSource
 import com.example.conch.data.model.Track
-import com.example.conch.data.net.Network
+import com.example.conch.data.remote.Network
 
 object TrackRepository {
 

@@ -1,16 +1,17 @@
 package com.example.conch.ui.register
 
+import android.app.Application
 import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.ViewModel
 import com.example.conch.data.Result
 import com.example.conch.data.UserRepository
 import com.example.conch.data.model.RegisterInfoVO
+import com.example.conch.ui.BaseViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
-class RegisterViewModel : ViewModel() {
+class RegisterViewModel(application: Application) : BaseViewModel(application) {
 
     var captchaResult = MutableLiveData<Result<Nothing>>()
 
@@ -33,4 +34,5 @@ class RegisterViewModel : ViewModel() {
             registerResult.value = result
         }
     }
+
 }

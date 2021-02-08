@@ -1,7 +1,7 @@
-package com.example.conch.data.net.api
+package com.example.conch.data.remote.api
 
 import com.example.conch.data.model.Track
-import com.example.conch.data.net.ApiResponse
+import com.example.conch.data.remote.ApiResponse
 import retrofit2.http.GET
 import retrofit2.http.Query
 
