@@ -13,7 +13,7 @@ class AccountFragment : BaseFragment<FragmentAccountBinding, AccountViewModel>()
     override fun getLayoutId(): Int = R.layout.fragment_account
 
     override fun getViewModelInstance() =
-        AccountViewModel(application = requireActivity().application)
+        AccountViewModel(requireActivity().application)
 
     override fun getViewModelClass(): Class<AccountViewModel> = AccountViewModel::class.java
 

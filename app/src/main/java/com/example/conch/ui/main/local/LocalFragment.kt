@@ -19,7 +19,7 @@ class LocalFragment : BaseFragment<FragmentLocalBinding, LocalViewModel>() {
 
     override fun processLogic() {
 
-        binding.localTrackCount = ""
+
         val localTrackAdapter = LocalTrackAdapter{ track -> adapterOnClick(track)
         }
         binding.rv.adapter = localTrackAdapter

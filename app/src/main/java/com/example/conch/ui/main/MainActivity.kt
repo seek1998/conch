@@ -4,17 +4,14 @@ import android.Manifest
 import android.os.Bundle
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-import androidx.databinding.DataBindingUtil
 import androidx.navigation.fragment.NavHostFragment
-import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.setupWithNavController
 import com.example.conch.R
-import com.example.conch.databinding.ActivityMainBinding
+import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.permissionx.guolindev.PermissionX
 
 class MainActivity : AppCompatActivity() {
 
-    private lateinit var binding: ActivityMainBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -24,24 +21,12 @@ class MainActivity : AppCompatActivity() {
 
         initPermission()
 
-        initDataBinding()
-
         val navHostFragment =
             supportFragmentManager.findFragmentById(R.id.nav_host_fragment) as NavHostFragment
         val navController = navHostFragment.navController
 
-        val appBarConfiguration = AppBarConfiguration(
-            setOf(
-                R.id.navigation_local, R.id.navigation_cloud, R.id.navigation_account
-            )
-        )
-
-        binding.navView.setupWithNavController(navController)
-    }
-
-    private fun initDataBinding() {
-        binding = DataBindingUtil.setContentView(this, R.layout.activity_main)
-        binding.lifecycleOwner = this
+        val navView = findViewById<BottomNavigationView>(R.id.nav_view)
+        navView.setupWithNavController(navController)
     }
 
     private fun initPermission() {
