@@ -51,12 +51,18 @@ class LocalTrackAdapter(private val onClick: (Track) -> Unit) :
             trackTitle.text = track.title
             trackArtist.text = track.artist
             if (track.coverPath.isNotEmpty()) {
-                //TODO 加载本地封面
-            } else {
                 Glide.with(context)
-                    .load(Uri.parse(remoteCoverPath + track.id + ".jpg"))
+                    .load(Uri.parse(track.coverPath))
                     .diskCacheStrategy(DiskCacheStrategy.ALL)
                     .into(trackCover)
+            } else {
+
+                Glide.with(context)
+                    .load(Uri.parse(remoteCoverPath + 1 + ".jpg"))
+                    .diskCacheStrategy(DiskCacheStrategy.ALL)
+
+                    .into(trackCover)
+
             }
         }
     }
@@ -64,7 +70,7 @@ class LocalTrackAdapter(private val onClick: (Track) -> Unit) :
     override fun onCreateViewHolder(
         parent: ViewGroup,
         viewType: Int
-    ): LocalTrackViewHolder {
+    ): LocalTrackAdapter.LocalTrackViewHolder {
         val view = LayoutInflater.from(parent.context)
             .inflate(R.layout.item_local_track, parent, false)
         this.context = parent.context

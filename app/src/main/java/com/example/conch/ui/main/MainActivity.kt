@@ -27,6 +27,7 @@ class MainActivity : AppCompatActivity() {
 
         val navView = findViewById<BottomNavigationView>(R.id.nav_view)
         navView.setupWithNavController(navController)
+
     }
 
     private fun initPermission() {
