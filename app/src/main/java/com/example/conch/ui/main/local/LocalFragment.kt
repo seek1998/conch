@@ -1,5 +1,6 @@
 package com.example.conch.ui.main.local
 
+import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -9,6 +10,8 @@ import com.example.conch.R
 import com.example.conch.data.model.Track
 import com.example.conch.databinding.FragmentLocalBinding
 import com.example.conch.ui.BaseFragment
+import com.example.conch.ui.track.TrackActivity
+import com.example.conch.utils.InjectUtil
 
 
 class LocalFragment : BaseFragment<FragmentLocalBinding, LocalViewModel>() {
@@ -20,13 +23,13 @@ class LocalFragment : BaseFragment<FragmentLocalBinding, LocalViewModel>() {
     override fun processLogic() {
 
 
-        val localTrackAdapter = LocalTrackAdapter{ track -> adapterOnClick(track)
-        }
+        val localTrackAdapter = LocalTrackAdapter { track -> itemOnClick(track) }
         binding.rv.adapter = localTrackAdapter
 
         viewModel.localTracksLiveData.observe(this, {
             it?.let {
                 localTrackAdapter.submitList(it as MutableList<Track>)
+                binding.toolBarLayout.subtitle = "共有${it.size}首歌曲"
             }
         })
 
@@ -42,8 +45,9 @@ class LocalFragment : BaseFragment<FragmentLocalBinding, LocalViewModel>() {
         return super.onCreateView(inflater, container, savedInstanceState)
     }
 
-    private fun adapterOnClick(track: Track) {
-        //TODO 跳转至TrackActivity，开始播放
+    private fun itemOnClick(track: Track) {
+        viewModel.playTrack(track)
+        startActivity(Intent(requireActivity(), TrackActivity::class.java))
     }
 
     override fun onStart() {
@@ -53,7 +57,7 @@ class LocalFragment : BaseFragment<FragmentLocalBinding, LocalViewModel>() {
 
     override fun getLayoutId() = R.layout.fragment_local
 
-    override fun getViewModelInstance() = LocalViewModel(requireActivity().application)
+    override fun getViewModelInstance() = InjectUtil.provideLocalViewModel(requireActivity())
 
     override fun getViewModelClass() = LocalViewModel::class.java
 

@@ -16,6 +16,7 @@
 
         <com.google.android.material.imageview.ShapeableImageView
             android:id="@+id/item_local_track_cover"
+            android:src="@drawable/ic_music_note"
             android:layout_width="48dp"
             android:layout_height="48dp" />
 
@@ -29,7 +30,10 @@
         android:gravity="center"
         android:text="@string/track_title"
         android:textColor="@color/black"
+        android:maxEms="8"
+        android:ellipsize="end"
         android:textSize="16sp"
+        android:maxLines="1"
         android:textStyle="bold"
         app:layout_constraintStart_toEndOf="@+id/materialCardView2"
         app:layout_constraintTop_toTopOf="@+id/materialCardView2" />

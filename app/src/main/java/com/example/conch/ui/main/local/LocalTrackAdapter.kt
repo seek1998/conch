@@ -50,19 +50,19 @@ class LocalTrackAdapter(private val onClick: (Track) -> Unit) :
 
             trackTitle.text = track.title
             trackArtist.text = track.artist
+
             if (track.coverPath.isNotEmpty()) {
+
                 Glide.with(context)
                     .load(Uri.parse(track.coverPath))
+                    .override(120, 120)
                     .diskCacheStrategy(DiskCacheStrategy.ALL)
                     .into(trackCover)
             } else {
-
                 Glide.with(context)
-                    .load(Uri.parse(remoteCoverPath + 1 + ".jpg"))
+                    .load(Uri.parse(remoteCoverPath + 1 + ".jpg" + "!s"))
                     .diskCacheStrategy(DiskCacheStrategy.ALL)
-
                     .into(trackCover)
-
             }
         }
     }
@@ -70,7 +70,7 @@ class LocalTrackAdapter(private val onClick: (Track) -> Unit) :
     override fun onCreateViewHolder(
         parent: ViewGroup,
         viewType: Int
-    ): LocalTrackAdapter.LocalTrackViewHolder {
+    ): LocalTrackViewHolder {
         val view = LayoutInflater.from(parent.context)
             .inflate(R.layout.item_local_track, parent, false)
         this.context = parent.context

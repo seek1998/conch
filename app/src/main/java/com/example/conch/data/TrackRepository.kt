@@ -13,7 +13,7 @@ object TrackRepository {
         return Network.fetchTracksByUID(uid)
     }
 
-    suspend fun fetchTrackFromLocation(context: Context): List<Track> {
+    suspend fun fetchTracksFromLocation(context: Context): List<Track> {
         if (localTrackSource == null) {
             localTrackSource = LocalTrackSource(context.contentResolver)
         }

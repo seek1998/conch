@@ -132,11 +132,11 @@ class MusicService : MediaBrowserServiceCompat(), CoroutineScope by MainScope() 
         ) {
             launch {
                 val itemToPlay =
-                    TrackRepository.fetchTrackFromLocation(this@MusicService).find { item ->
+                    TrackRepository.fetchTracksFromLocation(this@MusicService).find { item ->
                         item.id.toString() == mediaId
                     }?.toMediaMetadataCompat()
 
-                val playlist = TrackRepository.fetchTrackFromLocation(this@MusicService)
+                val playlist = TrackRepository.fetchTracksFromLocation(this@MusicService)
                     .toMediaMetadataCompat()
 
                 if (itemToPlay == null) {
