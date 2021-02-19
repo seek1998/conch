@@ -2,7 +2,6 @@ package com.example.conch.ui.track
 
 import android.net.Uri
 import android.os.Bundle
-import android.view.View
 import android.widget.SeekBar
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
@@ -69,16 +68,17 @@ class TrackActivity : AppCompatActivity() {
 
     override fun onStart() {
         super.onStart()
-        window.decorView.systemUiVisibility = View.SYSTEM_UI_FLAG_FULLSCREEN
+        //window.decorView.systemUiVisibility = View.SYSTEM_UI_FLAG_FULLSCREEN
     }
 
     override fun onStop() {
         super.onStop()
+        viewModel.disconnect(this)
         //断开连接
     }
 
     private fun setupNowPlaying() {
-        binding.seekBar.max = viewModel.mediaMetadata.value!!._duration
+        binding.seekbar.max = viewModel.mediaMetadata.value!!._duration
     }
 
     private fun updateUI(metadata: NowPlayingMetadata) = with(binding) {
@@ -101,7 +101,7 @@ class TrackActivity : AppCompatActivity() {
 
 
     private fun setUpSeekBar() {
-        binding.seekBar.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
+        binding.seekbar.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
             override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
                 val formattedProgress = progress.getFormattedDuration()
                 binding.trackProgressMax.text = formattedProgress
@@ -113,7 +113,7 @@ class TrackActivity : AppCompatActivity() {
 
             override fun onStopTrackingTouch(seekBar: SeekBar?) {
                 //通知service调整音轨进度
-               // viewModel.changeTrackProgress(seekBar!!.progress)
+                //viewModel.changeTrackProgress(seekBar!!.progress)
             }
 
         })

@@ -2,14 +2,13 @@ package com.example.conch.ui.register
 
 import android.content.Intent
 import android.widget.Toast
-import androidx.core.content.ContextCompat
 import com.example.conch.R
 import com.example.conch.data.Result
 import com.example.conch.data.model.RegisterInfoVO
 import com.example.conch.databinding.ActivityRegisterBinding
 import com.example.conch.ui.BaseActivity
 import com.example.conch.ui.login.LoginActivity
-import com.jaeger.library.StatusBarUtil
+import com.example.conch.utils.RegexUtil
 
 class RegisterActivity : BaseActivity<ActivityRegisterBinding, RegisterViewModel>() {
 
@@ -20,11 +19,14 @@ class RegisterActivity : BaseActivity<ActivityRegisterBinding, RegisterViewModel
 
         binding.registerInfo = this.registerInfo
 
-        initToolBar()
-
         binding.btnGetCaptcha.apply {
             setOnClickListener {
-                val email = registerInfo.email
+                val email = registerInfo.email.trim()
+                if (!RegexUtil.isEmail(email)) {
+                    Toast.makeText(this@RegisterActivity, R.string.wrong_email, Toast.LENGTH_SHORT)
+                        .show()
+                    return@setOnClickListener
+                }
                 viewModel.getCaptcha(email)
             }
         }
@@ -76,12 +78,6 @@ class RegisterActivity : BaseActivity<ActivityRegisterBinding, RegisterViewModel
     private fun sendCaptchaSucceeded() {
         Toast.makeText(applicationContext, "验证码已发送", Toast.LENGTH_SHORT).show()
     }
-
-    private fun initToolBar() {
-        StatusBarUtil.setDarkMode(this)
-        StatusBarUtil.setColor(this, ContextCompat.getColor(this, R.color.purple500), 0)
-    }
-
 
     override fun getLayoutId(): Int = R.layout.activity_register
 

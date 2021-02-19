@@ -19,5 +19,9 @@
     <string name="title_local">本地</string>
     <string name="title_cloud">云端</string>
     <string name="title_account">我的</string>
+    <string name="email_example">xxxxx@example.com</string>
+    <string name="username">用户名</string>
+    <string name="recent_playlist">最近播放</string>
+    <string name="my_playlist">我的歌单</string>
 
 </resources>

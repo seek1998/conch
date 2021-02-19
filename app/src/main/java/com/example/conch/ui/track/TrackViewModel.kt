@@ -1,5 +1,6 @@
 package com.example.conch.ui.track
 
+import android.app.Activity
 import android.support.v4.media.MediaMetadataCompat
 import android.support.v4.media.session.PlaybackStateCompat
 import androidx.lifecycle.MutableLiveData
@@ -84,6 +85,10 @@ class TrackViewModel constructor(
 
     fun changeTrackProgress(newProgress: Int) {
         musicServiceConnection.transportControls.seekTo(newProgress.toLong())
+    }
+
+    fun disconnect(activity: Activity) {
+       //TODO 断开与service的连接
     }
 
 
