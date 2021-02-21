@@ -14,6 +14,7 @@ private const val TAG = "MusicServiceConnection"
 
 
 class MusicServiceConnection (context: Context) {
+
     val isConnected = MutableLiveData<Boolean>()
         .apply { postValue(false) }
     val playbackState = MutableLiveData<PlaybackStateCompat>()
@@ -55,7 +56,8 @@ class MusicServiceConnection (context: Context) {
 
             isConnected.postValue(true)
             //准备歌曲资源
-            transportControls.prepare()
+           // transportControls.prepare()
+
         }
 
         /**
@@ -127,6 +129,8 @@ class MusicServiceConnection (context: Context) {
 //        }
 //        context.sendBroadcast(intent)
 //    }
+
+    fun disconnect() = mediaBrowser.disconnect()
 
     companion object {
         // For Singleton instantiation.

@@ -8,7 +8,7 @@ data class NowPlayingMetadata(
     var albumArtUri: Uri = Uri.EMPTY,
     var title: String? = "标题",
     var subtitle: String? = "作者",
-    var duration: String = "--:--",
+    var duration: String = "--:--",//界面展示用值
     var _duration: Int = 0
 ) {
 

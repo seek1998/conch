@@ -24,6 +24,10 @@ import com.google.android.exoplayer2.util.Util
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.launch
+import org.greenrobot.eventbus.EventBus
+import java.util.*
+import kotlin.collections.ArrayList
+import kotlin.math.floor
 
 
 class MusicService : MediaBrowserServiceCompat(), CoroutineScope by MainScope() {
@@ -35,8 +39,6 @@ class MusicService : MediaBrowserServiceCompat(), CoroutineScope by MainScope() 
     private lateinit var stateBuilder: PlaybackStateCompat.Builder
 
     private lateinit var exoPlayer: SimpleExoPlayer
-
-    private val trackRepository = TrackRepository
 
     //当前播放列表
     private var currentPlaylistItems: List<MediaMetadataCompat> = emptyList()
@@ -70,6 +72,20 @@ class MusicService : MediaBrowserServiceCompat(), CoroutineScope by MainScope() 
         initExoPlayer()
         initMediaSessionConnector()
 
+
+        Timer().apply {
+            schedule(object : TimerTask() {
+                override fun run() {
+                    if (!exoPlayer.isPlaying) return
+
+                    val currentDuration = floor(exoPlayer.currentPosition / 1E3).toInt()
+                    Log.d(TAG, currentDuration.toString())
+                    EventBus.getDefault().post(MessageEvent(MessageType.currduration).put(currentDuration))
+                }
+
+            }, 0, 200)
+        }
+
     }
 
     private fun initMediaSessionConnector() {
@@ -102,27 +118,28 @@ class MusicService : MediaBrowserServiceCompat(), CoroutineScope by MainScope() 
                     PlaybackStateCompat.ACTION_PLAY_FROM_MEDIA_ID or
                     PlaybackStateCompat.ACTION_PREPARE_FROM_SEARCH or
                     PlaybackStateCompat.ACTION_PLAY_FROM_URI or
-                    PlaybackStateCompat.ACTION_PREPARE
+                    PlaybackStateCompat.ACTION_PREPARE or
+                    PlaybackStateCompat.ACTION_SEEK_TO
 
         override fun onPrepare(playWhenReady: Boolean) {
 
-            launch {
-
-//                val playlist = TrackRepository.fetchTrackFromLocation(this@MusicService)
+//            launch {
+//
+////                val playlist = TrackRepository.fetchTrackFromLocation(this@MusicService)
+////                    .toMediaMetadataCompat()
+//
+//                val playlist = TrackRepository.fetchTrackFromRemote(0)
 //                    .toMediaMetadataCompat()
-
-                val playlist = TrackRepository.fetchTrackFromRemote(0)
-                    .toMediaMetadataCompat()
-
-                val itemToPlay = playlist.get(index = 0)
-
-                preparePlaylist(
-                    playlist,
-                    itemToPlay,
-                    playWhenReady,
-                    0
-                )
-            }
+//
+//                val itemToPlay = playlist.get(index = 0)
+//
+//                preparePlaylist(
+//                    playlist,
+//                    itemToPlay,
+//                    playWhenReady,
+//                    0
+//                )
+//            }
         }
 
         override fun onPrepareFromMediaId(

@@ -81,7 +81,7 @@ class LocalTrackSource(private val contentResolver: ContentResolver) {
         val albumArtUri =
             Uri.parse("content://media/external/audio/albumart")
         val coverUri = ContentUris.withAppendedId(albumArtUri, albumId)
-        Log.d("RDM", coverUri.toString())
+        Log.d(TAG, coverUri.toString())
         return coverUri.toString()
 
 //        return try {

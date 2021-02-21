@@ -51,7 +51,7 @@ class LocalTrackAdapter(private val onClick: (Track) -> Unit) :
             trackTitle.text = track.title
             trackArtist.text = track.artist
 
-            if (track.coverPath.isNotEmpty()) {
+            if (track.coverPath.trim().isNotEmpty()) {
 
                 Glide.with(context)
                     .load(Uri.parse(track.coverPath))
@@ -60,8 +60,7 @@ class LocalTrackAdapter(private val onClick: (Track) -> Unit) :
                     .into(trackCover)
             } else {
                 Glide.with(context)
-                    .load(Uri.parse(remoteCoverPath + 1 + ".jpg" + "!s"))
-                    .diskCacheStrategy(DiskCacheStrategy.ALL)
+                    .load(R.drawable.ic_music_note)
                     .into(trackCover)
             }
         }

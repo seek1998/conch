@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <dimen name="extra_big_text_size">22sp</dimen>
+    <dimen name="extra_big_text_size">18sp</dimen>
     <dimen name="activity_margin">16dp</dimen>
 
     <dimen name="large_play_icon_size">64dp</dimen>

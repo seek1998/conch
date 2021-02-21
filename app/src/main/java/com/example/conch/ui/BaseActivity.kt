@@ -10,12 +10,15 @@ import androidx.lifecycle.ViewModelProvider
 
 abstract class BaseActivity<VDB : ViewDataBinding, VM : BaseViewModel> : AppCompatActivity() {
 
+    protected lateinit var TAG: String
+
     protected lateinit var binding: VDB
 
     protected lateinit var viewModel: VM
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
         binding = DataBindingUtil.setContentView(this, getLayoutId())
         binding.lifecycleOwner = this
 

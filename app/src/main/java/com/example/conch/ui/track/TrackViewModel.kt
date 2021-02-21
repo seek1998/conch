@@ -12,10 +12,12 @@ import com.example.conch.extension.*
 import com.example.conch.service.EMPTY_PLAYBACK_STATE
 import com.example.conch.service.MusicServiceConnection
 import com.example.conch.service.NOTHING_PLAYING
+import kotlin.math.floor
 
 class TrackViewModel constructor(
     musicServiceConnection: MusicServiceConnection,
 ) : ViewModel() {
+
 
     val mediaMetadata: MutableLiveData<NowPlayingMetadata> = MutableLiveData()
 
@@ -34,8 +36,9 @@ class TrackViewModel constructor(
     }
 
     private val mediaMetadataObserver = Observer<MediaMetadataCompat> {
-        updateState(playbackState, it)
+        onMetadataChanged(it)
         mediaDuration = it.duration
+
     }
 
     private val musicServiceConnection = musicServiceConnection.also {
@@ -47,7 +50,11 @@ class TrackViewModel constructor(
         playbackState: PlaybackStateCompat,
         mediaMetadata: MediaMetadataCompat
     ) {
-        onMetadataChanged(mediaMetadata)
+
+        if (mediaMetadata.id.toString() != _nowPlaying.value!!.id) {
+            //若歌曲信息没有改变，则不更新NowPlaying
+            onMetadataChanged(mediaMetadata)
+        }
 
         mediaButtonRes.postValue(
             when (playbackState.isPlaying) {
@@ -65,7 +72,7 @@ class TrackViewModel constructor(
             title = metadata.displayTitle?.trim(),
             subtitle = metadata.displaySubtitle?.trim(),
             duration = NowPlayingMetadata.timestampToMSS(metadata.duration),
-            _duration = metadata.duration.toInt()
+            _duration = floor(metadata.duration / 1E3).toInt()
         )
 
         this.mediaMetadata.postValue(nowPlayingMetadata)
@@ -84,11 +91,13 @@ class TrackViewModel constructor(
     }
 
     fun changeTrackProgress(newProgress: Int) {
-        musicServiceConnection.transportControls.seekTo(newProgress.toLong())
+        musicServiceConnection.transportControls.seekTo(newProgress * 1000.toLong())
     }
 
-    fun disconnect(activity: Activity) {
-       //TODO 断开与service的连接
+    fun disconnect(activity: Activity) = musicServiceConnection.disconnect()
+
+    fun connect(activity: Activity) {
+
     }
 
 
@@ -101,5 +110,10 @@ class TrackViewModel constructor(
             return TrackViewModel(musicServiceConnection) as T
         }
     }
+
+    private val TAG = this::class.java.simpleName
 }
+
+
+
 

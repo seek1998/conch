@@ -14,8 +14,8 @@ object InjectUtil {
         )
     }
 
-    fun provideTrackViewModel(context: Context): TrackViewModel {
-        val musicServiceConnection = provideMusicServiceConnection(context)
+    fun provideTrackViewModel(activity: Activity): TrackViewModel {
+        val musicServiceConnection = provideMusicServiceConnection(activity)
         return TrackViewModel.Factory(musicServiceConnection).create(TrackViewModel::class.java)
     }
 
