@@ -3,25 +3,24 @@ package com.example.conch.ui.track
 import android.app.Activity
 import android.support.v4.media.MediaMetadataCompat
 import android.support.v4.media.session.PlaybackStateCompat
-import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.*
 import com.example.conch.R
 import com.example.conch.extension.*
 import com.example.conch.service.EMPTY_PLAYBACK_STATE
 import com.example.conch.service.MusicServiceConnection
 import com.example.conch.service.NOTHING_PLAYING
+import com.example.conch.service.SupportedPlayMode
 import kotlin.math.floor
 
 class TrackViewModel constructor(
-    musicServiceConnection: MusicServiceConnection,
+   musicServiceConnection: MusicServiceConnection,
 ) : ViewModel() {
-
 
     val mediaMetadata: MutableLiveData<NowPlayingMetadata> = MutableLiveData()
 
     val _nowPlaying = musicServiceConnection.nowPlaying
+
+    val _playMode: LiveData<SupportedPlayMode> = musicServiceConnection.playMode
 
     private var playbackState: PlaybackStateCompat = EMPTY_PLAYBACK_STATE
 
@@ -82,6 +81,9 @@ class TrackViewModel constructor(
 
     fun skipToPrevious() = musicServiceConnection.transportControls.skipToPrevious()
 
+    fun changeTrackProgress(progress: Int) =
+        musicServiceConnection.transportControls.seekTo(progress * 1E3.toLong())
+
     fun playOrPause() {
         if (playbackState.isPlaying) {
             musicServiceConnection.transportControls.pause()
@@ -90,16 +92,11 @@ class TrackViewModel constructor(
         }
     }
 
-    fun changeTrackProgress(newProgress: Int) {
-        musicServiceConnection.transportControls.seekTo(newProgress * 1000.toLong())
+    fun changePlayMode() {
+        musicServiceConnection.changePlayMode(currentMode = _playMode.value)
     }
 
     fun disconnect(activity: Activity) = musicServiceConnection.disconnect()
-
-    fun connect(activity: Activity) {
-
-    }
-
 
     class Factory(
         private val musicServiceConnection: MusicServiceConnection

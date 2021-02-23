@@ -4,6 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools">
 
     <androidx.coordinatorlayout.widget.CoordinatorLayout
+        android:id="@+id/fragment_local"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         tools:context=".ui.main.local.LocalFragment">
@@ -12,6 +13,7 @@
             android:id="@+id/app_bar"
             android:layout_width="match_parent"
             android:layout_height="176dp"
+            app:expanded="false"
             android:theme="@style/AppTheme.AppBarOverlay">
 
             <com.google.android.material.appbar.SubtitleCollapsingToolbarLayout
@@ -49,6 +51,7 @@
             app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
             <LinearLayout
+                android:id="@+id/rv_container"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:orientation="vertical">

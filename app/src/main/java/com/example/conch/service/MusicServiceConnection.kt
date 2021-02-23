@@ -13,7 +13,7 @@ import com.example.conch.extension.id
 private const val TAG = "MusicServiceConnection"
 
 
-class MusicServiceConnection (context: Context) {
+class MusicServiceConnection(context: Context) {
 
     val isConnected = MutableLiveData<Boolean>()
         .apply { postValue(false) }
@@ -21,12 +21,20 @@ class MusicServiceConnection (context: Context) {
         .apply { postValue(EMPTY_PLAYBACK_STATE) }
     val nowPlaying = MutableLiveData<MediaMetadataCompat>()
         .apply { postValue(NOTHING_PLAYING) }
+
     //随机模式
     val shuffleModeState = MutableLiveData<Int>()
-        .apply { postValue(PlaybackStateCompat.SHUFFLE_MODE_NONE) }
-    //单曲循环
+        .apply { postValue(PlaybackStateCompat.SHUFFLE_MODE_ALL) }
+
+    //列表循环,默认模式
     val repeatModeState = MutableLiveData<Int>()
-        .apply { postValue(PlaybackStateCompat.REPEAT_MODE_NONE) }
+        .apply { postValue(PlaybackStateCompat.REPEAT_MODE_ALL) }
+
+    //单曲循环
+    val playMode = MutableLiveData<SupportedPlayMode>().apply {
+        postValue(SupportedPlayMode.REPEAT)
+    }
+
 
     lateinit var mediaController: MediaControllerCompat
 
@@ -56,7 +64,7 @@ class MusicServiceConnection (context: Context) {
 
             isConnected.postValue(true)
             //准备歌曲资源
-           // transportControls.prepare()
+            // transportControls.prepare()
 
         }
 
@@ -102,14 +110,24 @@ class MusicServiceConnection (context: Context) {
             super.onShuffleModeChanged(shuffleMode)
             Log.d(TAG, "MediaControllerCallback onShuffleModeChanged:$shuffleMode")
             shuffleModeState.postValue(shuffleMode)
+
+            playMode.postValue(SupportedPlayMode.SHUFFLE)
         }
 
         override fun onRepeatModeChanged(repeatMode: Int) {
             super.onRepeatModeChanged(repeatMode)
             Log.d(TAG, "MediaControllerCallback onRepeatModeChanged:$repeatMode")
             repeatModeState.postValue(repeatMode)
+
+            if (repeatMode == PlaybackStateCompat.REPEAT_MODE_ALL) {
+                playMode.postValue(SupportedPlayMode.REPEAT)
+            } else if (repeatMode == PlaybackStateCompat.REPEAT_MODE_ONE){
+                playMode.postValue(SupportedPlayMode.REPEAT_ONE)
+            }
+
         }
     }
+
 
 //    private fun sendWidgetPlaybackStateIntent(playbackStateCompat: PlaybackStateCompat) {
 //        val intent = Intent(context, MusicAppWidget::class.java).apply {
@@ -132,6 +150,27 @@ class MusicServiceConnection (context: Context) {
 
     fun disconnect() = mediaBrowser.disconnect()
 
+    fun changePlayMode(currentMode: SupportedPlayMode?) {
+        when (currentMode) {
+            SupportedPlayMode.REPEAT -> {
+                transportControls.setRepeatMode(PlaybackStateCompat.REPEAT_MODE_ONE)
+
+            }
+
+            SupportedPlayMode.REPEAT_ONE -> {
+                transportControls.setShuffleMode(PlaybackStateCompat.SHUFFLE_MODE_ALL)
+            }
+
+            SupportedPlayMode.SHUFFLE -> {
+                transportControls.setRepeatMode(PlaybackStateCompat.REPEAT_MODE_ALL)
+            }
+            else -> {
+
+            }
+        }
+    }
+
+
     companion object {
         // For Singleton instantiation.
         @Volatile
@@ -146,6 +185,11 @@ class MusicServiceConnection (context: Context) {
 
 }
 
+enum class SupportedPlayMode(value: Int) {
+    REPEAT(PlaybackStateCompat.REPEAT_MODE_ALL),
+    REPEAT_ONE(PlaybackStateCompat.REPEAT_MODE_ONE),
+    SHUFFLE(PlaybackStateCompat.SHUFFLE_MODE_ALL)
+}
 
 @Suppress("PropertyName")
 val EMPTY_PLAYBACK_STATE: PlaybackStateCompat = PlaybackStateCompat.Builder()

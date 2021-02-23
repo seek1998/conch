@@ -15,6 +15,7 @@ import com.example.conch.databinding.ActivityTrackBinding
 import com.example.conch.extension.getFormattedDuration
 import com.example.conch.service.MessageEvent
 import com.example.conch.service.MessageType
+import com.example.conch.service.SupportedPlayMode
 import com.example.conch.utils.InjectUtil
 import org.greenrobot.eventbus.EventBus
 import org.greenrobot.eventbus.Subscribe
@@ -45,6 +46,28 @@ class TrackActivity : AppCompatActivity() {
         viewModel.mediaButtonRes.observe(this) {
             binding.btnPlay.setImageState(it, true)
         }
+
+        viewModel._playMode.observe(this) {
+
+            binding.btnPlayMode.setImageLevel(
+                when (it) {
+                    SupportedPlayMode.REPEAT -> {
+                        toast(this.getString(R.string.mode_repeat))
+                        0
+                    }
+                    SupportedPlayMode.REPEAT_ONE -> {
+                        toast(this.getString(R.string.mode_repeat_one))
+                        1
+                    }
+                    SupportedPlayMode.SHUFFLE -> {
+                        toast(this.getString(R.string.mode_shuffle))
+                        2
+                    }
+                    else -> 0
+                }
+            )
+
+        }
     }
 
     //接收消息
@@ -55,17 +78,26 @@ class TrackActivity : AppCompatActivity() {
                 binding.seekbar.progress = event.getInt()
 
             }
-            else -> ""
+            else -> {
+
+            }
         }
     }
 
 
-    private fun toastMessage(message: String) {
+    private fun toast(message: String) {
         Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
     }
 
-
     private fun setUpButtons() {
+
+        binding.toolBar.apply {
+            setNavigationOnClickListener {
+                this@TrackActivity.finish()
+            }
+
+        }
+
         binding.btnPlay.setOnClickListener {
             viewModel.playOrPause()
         }
@@ -76,6 +108,14 @@ class TrackActivity : AppCompatActivity() {
 
         binding.btnPreviousTrack.setOnClickListener {
             viewModel.skipToPrevious()
+        }
+
+        binding.btnPlayMode.setOnClickListener {
+            viewModel.changePlayMode()
+        }
+
+        binding.btnQueueTrack.setOnClickListener {
+
         }
     }
 
@@ -94,7 +134,6 @@ class TrackActivity : AppCompatActivity() {
 
     override fun onStart() {
         super.onStart()
-        viewModel.connect(this)
         EventBus.getDefault().register(this)
     }
 
@@ -117,9 +156,10 @@ class TrackActivity : AppCompatActivity() {
     //加载专辑图片
     private fun setupTopArt(uri: Uri) {
 
+        Log.d(TAG, uri.toString())
         if (uri.toString() == "") {
             Glide.with(this)
-                .load(R.drawable.ic_music_note)
+                .load(R.drawable.ic_music_note_big)
                 .into(binding.ivAlbumImage)
         } else {
             Glide.with(this)

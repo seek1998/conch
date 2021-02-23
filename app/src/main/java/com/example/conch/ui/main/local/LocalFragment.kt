@@ -2,6 +2,7 @@ package com.example.conch.ui.main.local
 
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -16,6 +17,8 @@ import com.example.conch.utils.InjectUtil
 
 class LocalFragment : BaseFragment<FragmentLocalBinding, LocalViewModel>() {
 
+    private val TAG = this.javaClass.simpleName
+
     companion object {
         fun newInstance() = LocalFragment()
     }
@@ -24,7 +27,12 @@ class LocalFragment : BaseFragment<FragmentLocalBinding, LocalViewModel>() {
 
 
         val localTrackAdapter = LocalTrackAdapter { track -> itemOnClick(track) }
-        binding.rv.adapter = localTrackAdapter
+        binding.rv.apply {
+            adapter = localTrackAdapter
+            isSaveEnabled = true
+            isSaveFromParentEnabled = true
+            Log.d(TAG, isStateSaved.toString())
+        }
 
         viewModel.localTracksLiveData.observe(this, {
             it?.let {
@@ -32,17 +40,19 @@ class LocalFragment : BaseFragment<FragmentLocalBinding, LocalViewModel>() {
                 binding.toolBarLayout.subtitle = "共有${it.size}首歌曲"
             }
         })
-
     }
+
 
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
+        super.onCreateView(inflater, container, savedInstanceState)
         val toolbar = container!!.findViewById<androidx.appcompat.widget.Toolbar>(R.id.tool_bar)
         (activity as AppCompatActivity?)!!.setSupportActionBar(toolbar)
-        return super.onCreateView(inflater, container, savedInstanceState)
+        viewModel.getLocalTrackList(requireContext())
+        return binding.root
     }
 
     private fun itemOnClick(track: Track) {
@@ -50,9 +60,18 @@ class LocalFragment : BaseFragment<FragmentLocalBinding, LocalViewModel>() {
         startActivity(Intent(requireActivity(), TrackActivity::class.java))
     }
 
+    override fun onSaveInstanceState(outState: Bundle) {
+        super.onSaveInstanceState(outState)
+    }
+
+
+    override fun onViewStateRestored(savedInstanceState: Bundle?) {
+        super.onViewStateRestored(savedInstanceState)
+    }
+
+
     override fun onStart() {
         super.onStart()
-        viewModel.getLocalTrackList(requireContext())
     }
 
     override fun getLayoutId() = R.layout.fragment_local

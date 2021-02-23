@@ -40,8 +40,8 @@ class MusicService : MediaBrowserServiceCompat(), CoroutineScope by MainScope() 
 
     private lateinit var exoPlayer: SimpleExoPlayer
 
-    //当前播放列表
-    private var currentPlaylistItems: List<MediaMetadataCompat> = emptyList()
+    //播放列表
+    private var playlist: List<MediaMetadataCompat> = emptyList()
 
     private val remote = "http://conch-music.oss-cn-hangzhou.aliyuncs.com/track/"
 
@@ -96,7 +96,7 @@ class MusicService : MediaBrowserServiceCompat(), CoroutineScope by MainScope() 
                     player: Player,
                     windowIndex: Int
                 ): MediaDescriptionCompat =
-                    currentPlaylistItems[windowIndex].description
+                    playlist[windowIndex].description
 
             })
             setPlaybackPreparer(getPlaybackPreparer())
@@ -202,7 +202,7 @@ class MusicService : MediaBrowserServiceCompat(), CoroutineScope by MainScope() 
             if (itemToPlay == null) 0 else metadataList.indexOfFirst { metadata ->
                 metadata.id == itemToPlay.id
             }
-        currentPlaylistItems = metadataList
+        playlist = metadataList
 
         exoPlayer.playWhenReady = playWhenReady
         exoPlayer.stop(true)

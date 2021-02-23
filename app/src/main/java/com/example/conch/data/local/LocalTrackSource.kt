@@ -8,6 +8,8 @@ import android.util.Log
 import com.example.conch.data.model.Track
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
+import java.io.IOException
+import java.io.InputStream
 
 class LocalTrackSource(private val contentResolver: ContentResolver) {
     private val TAG = LocalTrackSource::class.java.simpleName
@@ -82,16 +84,15 @@ class LocalTrackSource(private val contentResolver: ContentResolver) {
             Uri.parse("content://media/external/audio/albumart")
         val coverUri = ContentUris.withAppendedId(albumArtUri, albumId)
         Log.d(TAG, coverUri.toString())
-        return coverUri.toString()
 
-//        return try {
-//            val inputStream: InputStream? = contentResolver.openInputStream(coverUri)
-//            inputStream?.close()
-//            coverUri.toString()
-//        } catch (e: IOException) {
-//            ""
-//        } catch (e: IllegalStateException) {
-//            ""
-//        }
+        return try {
+            val inputStream: InputStream? = contentResolver.openInputStream(coverUri)
+            inputStream?.close()
+            coverUri.toString()
+        } catch (e: IOException) {
+            ""
+        } catch (e: IllegalStateException) {
+            ""
+        }
     }
 }

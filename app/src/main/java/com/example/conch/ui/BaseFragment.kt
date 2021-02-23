@@ -33,6 +33,7 @@ abstract class BaseFragment<VDB : ViewDataBinding, VM : BaseViewModel> : Fragmen
         return binding.root
     }
 
+
     abstract fun processLogic()
 
     @LayoutRes
@@ -41,5 +42,7 @@ abstract class BaseFragment<VDB : ViewDataBinding, VM : BaseViewModel> : Fragmen
     abstract fun getViewModelInstance(): VM
 
     abstract fun getViewModelClass(): Class<VM>
+
+
 
 }

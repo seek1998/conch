@@ -20,12 +20,22 @@ inline val PlaybackStateCompat.isPlayEnabled
             ((actions and PlaybackStateCompat.ACTION_PLAY_PAUSE != 0L) &&
                     (state == PlaybackStateCompat.STATE_PAUSED))
 
+inline val PlaybackStateCompat.repeat
+    get() = (state and PlaybackStateCompat.REPEAT_MODE_ALL)
+
+inline val PlaybackStateCompat.repeatOne
+    get() = (state and PlaybackStateCompat.REPEAT_MODE_ONE)
+
+inline val PlaybackStateCompat.shuffle
+    get() = (state and PlaybackStateCompat.SHUFFLE_MODE_ALL)
+
 
 /**
  * Calculates the current playback position based on last update time along with playback
  * state and speed.
  */
-inline val PlaybackStateCompat.currentPlayBackPosition: Long
+inline
+val PlaybackStateCompat.currentPlayBackPosition: Long
     get() = if (state == PlaybackStateCompat.STATE_PLAYING) {
         val timeDelta = SystemClock.elapsedRealtime() - lastPositionUpdateTime
         (position + (timeDelta * playbackSpeed)).toLong()

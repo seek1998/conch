@@ -2,6 +2,8 @@ package com.example.conch.ui.main
 
 import android.Manifest
 import android.os.Bundle
+import android.os.PersistableBundle
+import android.util.Log
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.navigation.fragment.NavHostFragment
@@ -9,15 +11,15 @@ import androidx.navigation.ui.setupWithNavController
 import com.example.conch.R
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.permissionx.guolindev.PermissionX
+import kotlin.system.exitProcess
 
 class MainActivity : AppCompatActivity() {
 
+    private val TAG = this::class.simpleName
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-
-       // startActivity(Intent(this, LoginActivity::class.java))
 
         initPermission()
 
@@ -30,6 +32,10 @@ class MainActivity : AppCompatActivity() {
 
     }
 
+    override fun onSaveInstanceState(outState: Bundle, outPersistentState: PersistableBundle) {
+        super.onSaveInstanceState(outState, outPersistentState)
+    }
+
     private fun initPermission() {
         PermissionX.init(this)
             .permissions(
@@ -39,16 +45,27 @@ class MainActivity : AppCompatActivity() {
             )
             .request { allGranted, grantedList, deniedList ->
                 if (allGranted) {
-                    Toast.makeText(this, "All permissions are granted", Toast.LENGTH_LONG).show()
+                    Log.i(TAG, "All permissions are granted")
                 } else {
-                    Toast.makeText(
-                        this,
-                        "These permissions are denied: $deniedList",
-                        Toast.LENGTH_LONG
-                    ).show()
+                    Log.i(TAG, "These permissions are denied: $deniedList")
                 }
             }
 
+    }
+
+
+    var pressedTime = 0L
+
+    override fun onBackPressed() {
+
+        var nowTime = System.currentTimeMillis()
+        if (nowTime - pressedTime > 2000) {
+            Toast.makeText(this, "再按一次退出应用", Toast.LENGTH_SHORT).show()
+            pressedTime = nowTime
+        } else {
+            this.finish()
+            exitProcess(0)
+        }
     }
 
 }
