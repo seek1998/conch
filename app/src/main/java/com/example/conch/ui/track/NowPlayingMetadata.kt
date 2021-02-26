@@ -4,7 +4,7 @@ import android.net.Uri
 import kotlin.math.floor
 
 data class NowPlayingMetadata(
-    var id: String = "",
+    var id: String = "-1",
     var albumArtUri: Uri = Uri.EMPTY,
     var title: String? = "标题",
     var subtitle: String? = "作者",

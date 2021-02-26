@@ -21,13 +21,13 @@ inline val PlaybackStateCompat.isPlayEnabled
                     (state == PlaybackStateCompat.STATE_PAUSED))
 
 inline val PlaybackStateCompat.repeat
-    get() = (state and PlaybackStateCompat.REPEAT_MODE_ALL)
+    get() = (state == PlaybackStateCompat.REPEAT_MODE_ALL)
 
 inline val PlaybackStateCompat.repeatOne
-    get() = (state and PlaybackStateCompat.REPEAT_MODE_ONE)
+    get() = (state == PlaybackStateCompat.REPEAT_MODE_ONE)
 
 inline val PlaybackStateCompat.shuffle
-    get() = (state and PlaybackStateCompat.SHUFFLE_MODE_ALL)
+    get() = (state == PlaybackStateCompat.SHUFFLE_MODE_ALL)
 
 
 /**

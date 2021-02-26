@@ -53,7 +53,6 @@ class MainActivity : AppCompatActivity() {
 
     }
 
-
     var pressedTime = 0L
 
     override fun onBackPressed() {

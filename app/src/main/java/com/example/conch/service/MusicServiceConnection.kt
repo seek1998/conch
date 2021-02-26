@@ -22,19 +22,9 @@ class MusicServiceConnection(context: Context) {
     val nowPlaying = MutableLiveData<MediaMetadataCompat>()
         .apply { postValue(NOTHING_PLAYING) }
 
-    //随机模式
-    val shuffleModeState = MutableLiveData<Int>()
-        .apply { postValue(PlaybackStateCompat.SHUFFLE_MODE_ALL) }
-
-    //列表循环,默认模式
-    val repeatModeState = MutableLiveData<Int>()
-        .apply { postValue(PlaybackStateCompat.REPEAT_MODE_ALL) }
-
-    //单曲循环
     val playMode = MutableLiveData<SupportedPlayMode>().apply {
         postValue(SupportedPlayMode.REPEAT)
     }
-
 
     lateinit var mediaController: MediaControllerCompat
 
@@ -65,7 +55,6 @@ class MusicServiceConnection(context: Context) {
             isConnected.postValue(true)
             //准备歌曲资源
             // transportControls.prepare()
-
         }
 
         /**
@@ -109,19 +98,16 @@ class MusicServiceConnection(context: Context) {
         override fun onShuffleModeChanged(shuffleMode: Int) {
             super.onShuffleModeChanged(shuffleMode)
             Log.d(TAG, "MediaControllerCallback onShuffleModeChanged:$shuffleMode")
-            shuffleModeState.postValue(shuffleMode)
-
             playMode.postValue(SupportedPlayMode.SHUFFLE)
         }
 
         override fun onRepeatModeChanged(repeatMode: Int) {
             super.onRepeatModeChanged(repeatMode)
             Log.d(TAG, "MediaControllerCallback onRepeatModeChanged:$repeatMode")
-            repeatModeState.postValue(repeatMode)
 
             if (repeatMode == PlaybackStateCompat.REPEAT_MODE_ALL) {
                 playMode.postValue(SupportedPlayMode.REPEAT)
-            } else if (repeatMode == PlaybackStateCompat.REPEAT_MODE_ONE){
+            } else if (repeatMode == PlaybackStateCompat.REPEAT_MODE_ONE) {
                 playMode.postValue(SupportedPlayMode.REPEAT_ONE)
             }
 

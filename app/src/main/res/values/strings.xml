@@ -13,9 +13,6 @@
     <string name="track_title">音轨标题</string>
     <string name="track_artist">音轨作者</string>
 
-    <string name="duration_unknown">--:--</string>
-    <string name="duration_format">%d:%02d</string>
-
     <string name="title_local">本地</string>
     <string name="title_cloud">云端</string>
     <string name="title_account">我的</string>
@@ -29,5 +26,15 @@
     <string name="mode_repeat">列表循环</string>
     <string name="mode_repeat_one">单曲循环</string>
     <string name="mode_shuffle">随机播放</string>
+    <string name="favorite">喜欢</string>
+    <string name="library_add">收藏</string>
+    <string name="more">详细信息</string>
+
+    <!-- Notification Channel -->
+    <string name="notification_channel">Now Playing</string>
+    <string name="notification_channel_description">Shows what music is currently playing in Fancy</string>
+
+    <string name="unknown_error">出现未知错误</string>
+    <string name="queue_track">播放队列</string>
 
 </resources>

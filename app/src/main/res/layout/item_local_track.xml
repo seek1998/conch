@@ -23,15 +23,16 @@
         android:id="@+id/item_local_track_title"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="2dp"
         android:ellipsize="end"
         android:gravity="center"
         android:maxEms="8"
         android:maxLines="1"
-        android:layout_marginTop="2dp"
-        android:layout_marginStart="8dp"
         android:text="@string/track_title"
         android:textColor="@color/primary_text"
         android:textSize="16sp"
+        app:layout_constraintBottom_toTopOf="@+id/center_guideline"
         app:layout_constraintStart_toEndOf="@+id/item_local_track_cover"
         app:layout_constraintTop_toTopOf="@+id/item_local_track_cover" />
 
@@ -39,23 +40,31 @@
         android:id="@+id/item_local_track_artist"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="4dp"
+        android:layout_marginStart="8dp"
         android:gravity="center"
         android:text="@string/track_artist"
-        android:layout_marginStart="8dp"
         android:textColor="@color/secondary_text"
         android:textSize="12sp"
+        android:ellipsize="end"
         app:layout_constraintStart_toEndOf="@+id/item_local_track_cover"
-        app:layout_constraintTop_toBottomOf="@+id/item_local_track_title" />
+        app:layout_constraintTop_toTopOf="@+id/center_guideline" />
 
 
     <com.google.android.material.imageview.ShapeableImageView
         android:layout_width="wrap_content"
-        android:layout_height="match_parent"
+        android:layout_height="0dp"
         android:layout_margin="8dp"
+        android:layout_marginHorizontal="16dp"
         android:src="@drawable/ic_more_vert"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/center_guideline"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintGuide_percent="0.5" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

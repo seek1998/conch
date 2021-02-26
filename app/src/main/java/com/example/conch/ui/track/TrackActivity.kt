@@ -17,6 +17,7 @@ import com.example.conch.service.MessageEvent
 import com.example.conch.service.MessageType
 import com.example.conch.service.SupportedPlayMode
 import com.example.conch.utils.InjectUtil
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import org.greenrobot.eventbus.EventBus
 import org.greenrobot.eventbus.Subscribe
 import org.greenrobot.eventbus.ThreadMode
@@ -39,7 +40,7 @@ class TrackActivity : AppCompatActivity() {
         setUpButtons()
         setUpSeekBar()
 
-        viewModel.mediaMetadata.observe(this) {
+        viewModel.nowPlayingMetadata.observe(this) {
             updateUI(it)
         }
 
@@ -76,14 +77,12 @@ class TrackActivity : AppCompatActivity() {
         when (event.type) {
             MessageType.currduration -> {
                 binding.seekbar.progress = event.getInt()
-
             }
             else -> {
 
             }
         }
     }
-
 
     private fun toast(message: String) {
         Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
@@ -115,7 +114,14 @@ class TrackActivity : AppCompatActivity() {
         }
 
         binding.btnQueueTrack.setOnClickListener {
+            val items = viewModel.getQueueTrack().toTypedArray()
 
+            MaterialAlertDialogBuilder(this)
+                .setTitle(getString(R.string.queue_track))
+                .setItems(items) { dialog, which ->
+
+                }
+                .show()
         }
     }
 
@@ -145,10 +151,11 @@ class TrackActivity : AppCompatActivity() {
 
     private fun updateUI(metadata: NowPlayingMetadata) = with(binding) {
 
+        Log.d(TAG, "手动进度置为0")
         uiNowPlayingMetadata = metadata
-        Log.d(TAG, uiNowPlayingMetadata.toString())
         binding.seekbar.progress = 0
-        binding.seekbar.max = viewModel.mediaMetadata.value!!._duration
+        binding.seekbar.max = metadata._duration
+        binding.trackProgressMax.text = metadata.duration
         //更新图片
         setupTopArt(metadata.albumArtUri)
     }
@@ -170,28 +177,24 @@ class TrackActivity : AppCompatActivity() {
                 .into(binding.ivAlbumImage)
         }
 
-
     }
-
 
     private fun setUpSeekBar() {
         binding.seekbar.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
             override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
-                val formattedProgress = progress.getFormattedDuration()
-                binding.trackProgressCurrent.text = formattedProgress
+                binding.trackProgressCurrent.text = progress.getFormattedDuration()
+                Log.d(TAG, "新位置$progress")
             }
 
             override fun onStartTrackingTouch(seekBar: SeekBar?) {
-                Log.d("seekbar", "开始拖动")
+                EventBus.getDefault().unregister(this@TrackActivity)
             }
 
             override fun onStopTrackingTouch(seekBar: SeekBar?) {
                 viewModel.changeTrackProgress(seekBar!!.progress)
-                Log.d("seekbar", "拖动结束， 新位置${seekBar.progress}")
+                EventBus.getDefault().register(this@TrackActivity)
             }
 
         })
     }
-
-
 }

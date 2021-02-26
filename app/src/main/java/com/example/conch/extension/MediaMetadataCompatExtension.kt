@@ -4,14 +4,10 @@ import android.graphics.Bitmap
 import android.net.Uri
 import android.support.v4.media.MediaDescriptionCompat
 import android.support.v4.media.MediaMetadataCompat
+import com.google.android.exoplayer2.MediaItem
 import com.google.android.exoplayer2.source.ConcatenatingMediaSource
 import com.google.android.exoplayer2.source.ProgressiveMediaSource
 import com.google.android.exoplayer2.upstream.DataSource
-
-/**
- * Helper extension to convert a potentially null [String] to a [Uri] falling back to [Uri.EMPTY]
- */
-fun String?.toUri(): Uri = this?.let { Uri.parse(it) } ?: Uri.EMPTY
 
 /**
  * Useful extensions for [MediaMetadataCompat].
@@ -240,4 +236,5 @@ fun List<MediaMetadataCompat>.toMediaSource(
  * For convenience, place the [MediaDescriptionCompat] into the tag so it can be retrieved later.
  */
 private fun MediaMetadataCompat.toMediaSource(dataSourceFactory: DataSource.Factory) =
-    ProgressiveMediaSource.Factory(dataSourceFactory).createMediaSource(mediaUri)
+    ProgressiveMediaSource.Factory(dataSourceFactory).createMediaSource(MediaItem.fromUri(mediaUri))
+

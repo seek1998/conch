@@ -59,8 +59,9 @@
                 <androidx.recyclerview.widget.RecyclerView
                     android:id="@+id/rv"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    app:layoutManager="LinearLayoutManager" />
+                    android:layout_height="match_parent"
+                    app:layoutManager="LinearLayoutManager"
+                    tools:listitem="@layout/item_local_track"/>
             </LinearLayout>
 
         </androidx.core.widget.NestedScrollView>
