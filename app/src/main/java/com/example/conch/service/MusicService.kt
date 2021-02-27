@@ -5,8 +5,6 @@ import android.app.PendingIntent
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
-import android.os.Handler
-import android.os.Looper
 import android.os.ResultReceiver
 import android.support.v4.media.MediaBrowserCompat
 import android.support.v4.media.MediaDescriptionCompat
@@ -29,10 +27,8 @@ import com.google.android.exoplayer2.ui.PlayerNotificationManager
 import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory
 import com.google.android.exoplayer2.util.Util
 import kotlinx.coroutines.*
-import org.greenrobot.eventbus.EventBus
 import java.util.*
 import kotlin.collections.ArrayList
-import kotlin.math.floor
 
 
 class MusicService : MediaBrowserServiceCompat(), CoroutineScope by MainScope() {
@@ -56,13 +52,9 @@ class MusicService : MediaBrowserServiceCompat(), CoroutineScope by MainScope() 
 
     private val remote = "http://conch-music.oss-cn-hangzhou.aliyuncs.com/track/"
 
-    private val TAG = this.javaClass.simpleName
-
     private var isForegroundService = false
 
     private val playerListener = PlayerEventListener()
-
-    private val handler = Handler(Looper.getMainLooper())
 
     private lateinit var storage: PersistentStorage
 
@@ -100,18 +92,6 @@ class MusicService : MediaBrowserServiceCompat(), CoroutineScope by MainScope() 
 
         initExoPlayer()
         initMediaSessionConnector()
-
-//        val processTimer = Timer().apply {
-//            schedule(object : TimerTask() {
-//                //每过100ms,通知进度条修改进度
-//                override fun run() {
-//                    val currentDuration = floor(player.currentPosition / 1E3).toInt()
-//                    EventBus.getDefault().post(MessageEvent(MessageType.currduration).put(currentDuration))
-//                }
-//
-//            }, 0, 100)
-//        }
-        postCurrentPosition()
 
         launch {
             mediaSource = TrackRepository.fetchTracksFromLocation(this@MusicService)
@@ -301,6 +281,9 @@ class MusicService : MediaBrowserServiceCompat(), CoroutineScope by MainScope() 
                 ExoPlaybackException.TYPE_REMOTE -> {
                     Log.e(TAG, "TYPE_REMOTE: " + error.message)
                 }
+                ExoPlaybackException.TYPE_TIMEOUT -> {
+                    TODO()
+                }
             }
             Toast.makeText(applicationContext, message, Toast.LENGTH_LONG).show()
         }
@@ -362,17 +345,6 @@ class MusicService : MediaBrowserServiceCompat(), CoroutineScope by MainScope() 
         }
     }
 
-    private fun postCurrentPosition(): Boolean = handler.postDelayed({
-        val updatePosition = true
-
-        if (EventBus.getDefault().hasSubscriberForEvent(MessageType.currduration::class.java)) {
-            val currentDuration = floor(player.currentPosition / 1E3).toInt()
-            EventBus.getDefault().post(MessageEvent(MessageType.currduration).put(currentDuration))
-        }
-
-        if (updatePosition)
-            postCurrentPosition()
-    }, 100L)
 
     override fun onGetRoot(
         clientPackageName: String,
@@ -419,3 +391,6 @@ private const val MY_EMPTY_MEDIA_ROOT_ID = "empty_root_id"
 const val MEDIA_DESCRIPTION_EXTRAS_START_PLAYBACK_POSITION_MS = "playback_start_position_ms"
 
 private const val MUSIC_USER_AGENT = "music.agent"
+
+private const val TAG = "MusicService"
+

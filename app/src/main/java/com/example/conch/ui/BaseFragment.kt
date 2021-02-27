@@ -29,8 +29,13 @@ abstract class BaseFragment<VDB : ViewDataBinding, VM : BaseViewModel> : Fragmen
                 return getViewModelInstance() as T
             }
         })[getViewModelClass()]
-        processLogic()
+
         return binding.root
+    }
+
+    override fun onActivityCreated(savedInstanceState: Bundle?) {
+        super.onActivityCreated(savedInstanceState)
+        processLogic()
     }
 
 

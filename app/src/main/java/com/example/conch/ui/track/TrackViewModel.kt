@@ -1,6 +1,7 @@
 package com.example.conch.ui.track
 
-import android.app.Activity
+import android.os.Handler
+import android.os.Looper
 import android.support.v4.media.MediaMetadataCompat
 import android.support.v4.media.session.PlaybackStateCompat
 import android.util.Log
@@ -18,12 +19,12 @@ class TrackViewModel constructor(
     musicServiceConnection: MusicServiceConnection,
 ) : ViewModel() {
 
-    //TODO 分离playbackState和nowPlaying的观察
-
     val nowPlayingMetadata: MutableLiveData<NowPlayingMetadata> =
         MutableLiveData(NowPlayingMetadata())
 
-    val _playMode: LiveData<SupportedPlayMode> = musicServiceConnection.playMode
+    val playMode: LiveData<SupportedPlayMode> = musicServiceConnection.playMode
+
+    val queueTracks : LiveData<List<MediaMetadataCompat>> = musicServiceConnection.queueTracks
 
     private var playbackState: PlaybackStateCompat = EMPTY_PLAYBACK_STATE
 
@@ -31,12 +32,18 @@ class TrackViewModel constructor(
 
     private val playbackStateObserver = Observer<PlaybackStateCompat> {
         playbackState = it ?: EMPTY_PLAYBACK_STATE
+
         val metadata = musicServiceConnection.nowPlaying.value ?: NOTHING_PLAYING
 
-        if (playbackState.isPlaying || playbackState.isPlayEnabled){
-            updateState(playbackState, metadata)
-        }
+        updateState(playbackState, metadata)
     }
+
+    val mediaPosition = MutableLiveData<Long>().apply {
+        postValue(0L)
+    }
+
+    private var updatePosition = true
+    private val handler = Handler(Looper.getMainLooper())
 
     private val mediaMetadataObserver = Observer<MediaMetadataCompat> {
         Log.d(TAG, "监测到数据变化， 新id:${it.id}")
@@ -46,7 +53,18 @@ class TrackViewModel constructor(
     private val musicServiceConnection = musicServiceConnection.also {
         it.playbackState.observeForever(playbackStateObserver)
         it.nowPlaying.observeForever(mediaMetadataObserver)
+        checkPlaybackPosition()
     }
+
+
+    private fun checkPlaybackPosition(): Boolean = handler.postDelayed({
+        val currentPosition = playbackState.currentPlayBackPosition
+        if (mediaPosition.value != currentPosition)
+            mediaPosition.postValue(currentPosition)
+        if (updatePosition)
+            checkPlaybackPosition()
+    }, 100L)
+
 
     private fun updateState(
         playbackState: PlaybackStateCompat,
@@ -97,20 +115,18 @@ class TrackViewModel constructor(
     }
 
     fun changePlayMode() =
-        musicServiceConnection.changePlayMode(currentMode = _playMode.value)
-
-    fun disconnect(activity: Activity) = musicServiceConnection.disconnect()
+        musicServiceConnection.changePlayMode(currentMode = playMode.value)
 
     fun getQueueTrack() = TrackRepository.queueTrack
 
     override fun onCleared() {
         super.onCleared()
 
-        // Remove the permanent observers from the MusicServiceConnection.
         musicServiceConnection.playbackState.removeObserver(playbackStateObserver)
         musicServiceConnection.nowPlaying.removeObserver(mediaMetadataObserver)
 
-        // Stop updating the position
+        // 停止加载进度
+        updatePosition = false
     }
 
     class Factory(
@@ -122,10 +138,6 @@ class TrackViewModel constructor(
             return TrackViewModel(musicServiceConnection) as T
         }
     }
-
-    private val TAG = this::class.java.simpleName
 }
 
-
-
-
+private const val TAG = "TrackViewModel"

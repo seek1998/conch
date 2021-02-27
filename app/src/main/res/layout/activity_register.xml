@@ -23,13 +23,13 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginHorizontal="48dp"
-            android:layout_marginTop="64dp"
             android:text="创建账号"
             android:textColor="@color/primary_text"
-            android:textSize="24sp"
-            android:textStyle="bold"
+            android:textSize="32sp"
+            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0.1" />
 
         <com.google.android.material.textfield.TextInputLayout
             android:id="@+id/textInputLayout"
@@ -37,9 +37,13 @@
             android:layout_height="wrap_content"
             android:layout_marginHorizontal="48dp"
             android:layout_marginTop="24dp"
+            app:boxCornerRadiusTopEnd="@dimen/register_text_box_top_corner_radius"
+            app:boxCornerRadiusTopStart="@dimen/register_text_box_top_corner_radius"
+            app:layout_constraintBottom_toTopOf="@+id/btn_register"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/materialTextView">
+            app:layout_constraintTop_toBottomOf="@+id/materialTextView"
+            app:layout_constraintVertical_bias="0.1">
 
             <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/edit_email"
@@ -57,6 +61,8 @@
             android:layout_height="wrap_content"
             android:layout_marginHorizontal="48dp"
             android:layout_marginTop="16dp"
+            app:boxCornerRadiusTopEnd="@dimen/register_text_box_top_corner_radius"
+            app:boxCornerRadiusTopStart="@dimen/register_text_box_top_corner_radius"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/textInputLayout">
 
@@ -91,6 +97,8 @@
             android:layout_height="wrap_content"
             android:layout_marginHorizontal="48dp"
             android:layout_marginTop="16dp"
+            app:boxCornerRadiusTopEnd="@dimen/register_text_box_top_corner_radius"
+            app:boxCornerRadiusTopStart="@dimen/register_text_box_top_corner_radius"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/textInputLayout2">
@@ -110,6 +118,8 @@
             android:layout_height="wrap_content"
             android:layout_marginHorizontal="48dp"
             android:layout_marginTop="16dp"
+            app:boxCornerRadiusTopEnd="@dimen/register_text_box_top_corner_radius"
+            app:boxCornerRadiusTopStart="@dimen/register_text_box_top_corner_radius"
             app:layout_constraintEnd_toEndOf="@+id/textInputLayout3"
             app:layout_constraintStart_toStartOf="@+id/textInputLayout3"
             app:layout_constraintTop_toBottomOf="@+id/textInputLayout3">
@@ -127,13 +137,15 @@
             android:id="@+id/btn_register"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginTop="24dp"
+            android:backgroundTint="@color/icons"
             android:padding="16dp"
             android:text="@string/register"
             app:cornerRadius="24dp"
+            android:textStyle="bold"
+            android:layout_marginBottom="32dp"
+            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="@+id/textInputLayout4"
-            app:layout_constraintStart_toStartOf="@+id/textInputLayout4"
-            app:layout_constraintTop_toBottomOf="@+id/textInputLayout4" />
+            app:layout_constraintStart_toStartOf="@+id/textInputLayout4" />
 
 
     </androidx.constraintlayout.widget.ConstraintLayout>

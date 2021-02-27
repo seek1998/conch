@@ -16,15 +16,15 @@ import com.example.conch.utils.InjectUtil
 
 class LocalFragment : BaseFragment<FragmentLocalBinding, LocalViewModel>() {
 
-    private val TAG = this.javaClass.simpleName
+    private lateinit var localTrackAdapter: LocalTrackAdapter
 
     companion object {
         fun newInstance() = LocalFragment()
     }
 
     override fun processLogic() {
-
-        val localTrackAdapter = LocalTrackAdapter { track -> itemOnClick(track) }
+        viewModel.getLocalTrackList(requireContext())
+        localTrackAdapter = LocalTrackAdapter { track -> itemOnClick(track) }
         binding.rv.apply {
             adapter = localTrackAdapter
             isSaveEnabled = true
@@ -44,11 +44,10 @@ class LocalFragment : BaseFragment<FragmentLocalBinding, LocalViewModel>() {
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         super.onCreateView(inflater, container, savedInstanceState)
         val toolbar = container!!.findViewById<androidx.appcompat.widget.Toolbar>(R.id.tool_bar)
         (activity as AppCompatActivity?)!!.setSupportActionBar(toolbar)
-        viewModel.getLocalTrackList(requireContext())
         return binding.root
     }
 
@@ -57,15 +56,14 @@ class LocalFragment : BaseFragment<FragmentLocalBinding, LocalViewModel>() {
         startActivity(Intent(requireActivity(), TrackActivity::class.java))
     }
 
-    override fun onSaveInstanceState(outState: Bundle) {
-        super.onSaveInstanceState(outState)
-    }
-
 
     override fun onViewStateRestored(savedInstanceState: Bundle?) {
         super.onViewStateRestored(savedInstanceState)
     }
 
+    override fun onSaveInstanceState(outState: Bundle) {
+        super.onSaveInstanceState(outState)
+    }
 
     override fun onStart() {
         super.onStart()
@@ -78,3 +76,6 @@ class LocalFragment : BaseFragment<FragmentLocalBinding, LocalViewModel>() {
     override fun getViewModelClass() = LocalViewModel::class.java
 
 }
+
+
+private const val TAG = "LocalFragment"

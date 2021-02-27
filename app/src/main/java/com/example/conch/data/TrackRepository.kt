@@ -11,6 +11,8 @@ object TrackRepository {
 
     private var currentPlaylists: List<Track> = emptyList()
 
+    private var cachedLocalTracks: List<Track> = emptyList()
+
     val queueTrack = mutableListOf<String>()
 
     suspend fun getCurrentPlaylist(context: Context): List<Track> {
@@ -23,8 +25,12 @@ object TrackRepository {
         return currentPlaylists
     }
 
-    suspend fun getMemoryCachedLocalTracks() {
+    suspend fun getCachedLocalTracks(context: Context, refresh: Boolean = false): List<Track> {
 
+        if (cachedLocalTracks.isEmpty() || refresh)
+            cachedLocalTracks = fetchTracksFromLocation(context)
+
+        return cachedLocalTracks
     }
 
     suspend fun fetchTrackFromRemote(uid: Long): List<Track> {

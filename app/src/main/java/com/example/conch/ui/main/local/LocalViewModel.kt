@@ -25,10 +25,9 @@ class LocalViewModel(
 
     fun getLocalTrackList(context: Context) {
         GlobalScope.launch(Dispatchers.IO) {
-            val list = TrackRepository.fetchTracksFromLocation(context)
+            val list = TrackRepository.getCachedLocalTracks(context)
             localTracksLiveData.postValue(list)
         }
-
     }
 
     fun playTrack(track: Track, pauseAllowed: Boolean = true) {
@@ -43,8 +42,7 @@ class LocalViewModel(
                         if (pauseAllowed) transportControls.pause() else Unit
                     playbackState.isPlayEnabled -> transportControls.play()
                     else -> {
-                        Log.w(
-                            "RDM", "Playable item clicked but neither play nor pause are enabled!" +
+                        Log.w(TAG, "Playable item clicked but neither play nor pause are enabled!" +
                                     " (mediaId=${track.id})"
                         )
                     }
@@ -55,3 +53,5 @@ class LocalViewModel(
         }
     }
 }
+
+private const val TAG = "LocalViewModel"

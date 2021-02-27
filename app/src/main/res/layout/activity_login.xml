@@ -16,14 +16,31 @@
 
         <com.google.android.material.imageview.ShapeableImageView
             android:id="@+id/shapeableImageView"
-            android:layout_width="96dp"
-            android:layout_height="96dp"
-            android:src="@drawable/ic_music_note"
+            android:layout_width="128dp"
+            android:layout_height="128dp"
+            android:src="@drawable/ic_conch"
+            android:elevation="8dp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.1" />
+            app:layout_constraintVertical_bias="0.05" />
+
+        <com.google.android.material.textview.MaterialTextView
+            android:id="@+id/materialTextView4"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:text="@string/app_name"
+            android:padding="8dp"
+            android:elevation="8dp"
+            android:layout_marginTop="8dp"
+            android:textColor="@color/primary_text"
+            android:textSize="32sp"
+            android:textStyle="italic"
+            app:layout_constraintEnd_toEndOf="@+id/shapeableImageView"
+            app:layout_constraintStart_toStartOf="@+id/shapeableImageView"
+            app:layout_constraintTop_toBottomOf="@+id/shapeableImageView" />
 
 
         <com.google.android.material.textfield.TextInputLayout
@@ -32,13 +49,15 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="32dp"
-            app:boxCornerRadiusBottomEnd="32dp"
-            app:boxCornerRadiusBottomStart="32dp"
-            app:boxCornerRadiusTopEnd="32dp"
-            app:boxCornerRadiusTopStart="32dp"
+            app:boxCornerRadiusBottomEnd="@dimen/login_text_box_corner_radius"
+            app:boxCornerRadiusBottomStart="@dimen/login_text_box_corner_radius"
+            app:boxCornerRadiusTopEnd="@dimen/login_text_box_corner_radius"
+            app:boxCornerRadiusTopStart="@dimen/login_text_box_corner_radius"
+            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/shapeableImageView"
+            app:layout_constraintTop_toBottomOf="@+id/materialTextView4"
+            app:layout_constraintVertical_bias="0.1"
             app:startIconDrawable="@drawable/ic_email">
 
             <com.google.android.material.textfield.TextInputEditText
@@ -57,11 +76,11 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="16dp"
+            app:boxCornerRadiusBottomEnd="@dimen/login_text_box_corner_radius"
+            app:boxCornerRadiusBottomStart="@dimen/login_text_box_corner_radius"
+            app:boxCornerRadiusTopEnd="@dimen/login_text_box_corner_radius"
+            app:boxCornerRadiusTopStart="@dimen/login_text_box_corner_radius"
             app:endIconMode="password_toggle"
-            app:boxCornerRadiusBottomEnd="32dp"
-            app:boxCornerRadiusTopEnd="32dp"
-            app:boxCornerRadiusBottomStart="32dp"
-            app:boxCornerRadiusTopStart="32dp"
             app:layout_constraintEnd_toEndOf="@+id/textInputLayout1"
             app:layout_constraintStart_toStartOf="@+id/textInputLayout1"
             app:layout_constraintTop_toBottomOf="@+id/textInputLayout1"
@@ -81,24 +100,29 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginTop="32dp"
-            android:text="@string/login"
-            android:padding="16dp"
-            app:cornerRadius="32dp"
             android:enabled="false"
+            android:padding="16dp"
+            android:text="@string/login"
+            android:textStyle="bold"
             android:theme="@style/Theme.MaterialComponents.Light"
-            app:layout_constraintEnd_toEndOf="@+id/textInputLayout2"
-            app:layout_constraintStart_toStartOf="@+id/textInputLayout2"
-            app:layout_constraintTop_toBottomOf="@+id/textInputLayout2" />
+            app:cornerRadius="32dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/textInputLayout2"
+            app:layout_constraintVertical_bias="0.4" />
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/btn_register"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginTop="16dp"
+            android:backgroundTint="@color/icons"
             android:padding="16dp"
             android:text="@string/register"
             android:theme="@style/Theme.MaterialComponents.Light"
             app:cornerRadius="32dp"
+            android:textStyle="bold"
             app:layout_constraintEnd_toEndOf="@+id/btn_login"
             app:layout_constraintStart_toStartOf="@+id/btn_login"
             app:layout_constraintTop_toBottomOf="@+id/btn_login" />

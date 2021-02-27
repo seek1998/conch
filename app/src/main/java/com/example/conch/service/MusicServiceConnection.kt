@@ -5,13 +5,14 @@ import android.content.Context
 import android.support.v4.media.MediaBrowserCompat
 import android.support.v4.media.MediaMetadataCompat
 import android.support.v4.media.session.MediaControllerCompat
+import android.support.v4.media.session.MediaSessionCompat
 import android.support.v4.media.session.PlaybackStateCompat
 import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import com.example.conch.extension.id
+import com.example.conch.extension.toMediaMetadataCompat
 
 private const val TAG = "MusicServiceConnection"
-
 
 class MusicServiceConnection(context: Context) {
 
@@ -26,6 +27,11 @@ class MusicServiceConnection(context: Context) {
         postValue(SupportedPlayMode.REPEAT)
     }
 
+    //播放队列
+    val queueTracks = MutableLiveData<List<MediaMetadataCompat>>().apply {
+        postValue(EMPTY_QUEUE)
+    }
+
     lateinit var mediaController: MediaControllerCompat
 
     val transportControls: MediaControllerCompat.TransportControls
@@ -37,7 +43,6 @@ class MusicServiceConnection(context: Context) {
         ComponentName(context, MusicService::class.java),
         mediaBrowserConnectionCallback, null
     ).apply { connect() }
-
 
     private inner class MediaBrowserConnectionCallback(private val context: Context) :
         MediaBrowserCompat.ConnectionCallback() {
@@ -110,7 +115,14 @@ class MusicServiceConnection(context: Context) {
             } else if (repeatMode == PlaybackStateCompat.REPEAT_MODE_ONE) {
                 playMode.postValue(SupportedPlayMode.REPEAT_ONE)
             }
+        }
 
+        override fun onQueueChanged(queue: MutableList<MediaSessionCompat.QueueItem>?) {
+            super.onQueueChanged(queue)
+            if (!queue.isNullOrEmpty()) {
+                val newQueue = queue.toMediaMetadataCompat()
+                queueTracks.postValue(newQueue)
+            }
         }
     }
 
@@ -187,3 +199,8 @@ val NOTHING_PLAYING: MediaMetadataCompat = MediaMetadataCompat.Builder()
     .putString(MediaMetadataCompat.METADATA_KEY_MEDIA_ID, "")
     .putLong(MediaMetadataCompat.METADATA_KEY_DURATION, 0)
     .build()
+
+@Suppress("PropertyName")
+val EMPTY_QUEUE: List<MediaMetadataCompat> = mutableListOf(
+    NOTHING_PLAYING
+)

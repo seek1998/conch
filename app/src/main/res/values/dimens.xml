@@ -6,4 +6,8 @@
     <dimen name="normal_play_icon_size">48dp</dimen>
     <dimen name="small_play_icon_size">32dp</dimen>
 
+    <dimen name="login_text_box_corner_radius">16dp</dimen>
+
+    <dimen name="register_text_box_top_corner_radius">8dp</dimen>
+
 </resources>

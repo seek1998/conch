@@ -12,14 +12,10 @@ import java.io.IOException
 import java.io.InputStream
 
 class LocalTrackSource(private val contentResolver: ContentResolver) {
-    private val TAG = LocalTrackSource::class.java.simpleName
 
     suspend fun getTracks(): List<Track> {
-        val Tracks = mutableListOf<Track>()
-        /**
-         * Working with [ContentResolver]s can be slow, so we'll do this off the main
-         * thread inside a coroutine.
-         */
+        val tracks = mutableListOf<Track>()
+
         withContext(Dispatchers.IO) {
             val projection = arrayOf(
                 MediaStore.Audio.Media._ID,
@@ -67,13 +63,13 @@ class LocalTrackSource(private val contentResolver: ContentResolver) {
                         coverPath = cover,
                         localUri = contentUri
                     )
-                    Tracks += Track
+                    tracks += Track
                     Log.v(TAG, "Added Tracks: $Track")
                 }
             }
         }
 
-        return Tracks
+        return tracks
     }
 
     private fun getAlbumCoverPathFromAlbumId(
@@ -96,3 +92,5 @@ class LocalTrackSource(private val contentResolver: ContentResolver) {
         }
     }
 }
+
+private val TAG = LocalTrackSource::class.java.simpleName
