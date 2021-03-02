@@ -58,6 +58,8 @@ class MusicService : MediaBrowserServiceCompat(), CoroutineScope by MainScope() 
 
     private lateinit var storage: PersistentStorage
 
+    private var trackRepository = TrackRepository.getInstance()
+
     private val dataSourceFactory: DefaultDataSourceFactory by lazy {
         DefaultDataSourceFactory(this, Util.getUserAgent(this, MUSIC_USER_AGENT), null)
     }
@@ -94,7 +96,7 @@ class MusicService : MediaBrowserServiceCompat(), CoroutineScope by MainScope() 
         initMediaSessionConnector()
 
         launch {
-            mediaSource = TrackRepository.fetchTracksFromLocation(this@MusicService)
+            mediaSource = trackRepository.fetchTracksFromLocation(this@MusicService)
                 .toMediaMetadataCompat()
                 .toMediaSource(dataSourceFactory)
         }
@@ -165,14 +167,14 @@ class MusicService : MediaBrowserServiceCompat(), CoroutineScope by MainScope() 
             launch {
                 //根据mediaID从本地找到对应的音频文件
                 val itemToPlay: MediaMetadataCompat? =
-                    TrackRepository.fetchTracksFromLocation(this@MusicService).find { item ->
+                    trackRepository.fetchTracksFromLocation(this@MusicService).find { item ->
                         item.id.toString() == mediaId
                     }?.toMediaMetadataCompat()
 
                 Log.d(TAG, "itemToPlay:${itemToPlay?.title.toString()}")
 
-                val playlist = TrackRepository.getCurrentPlaylist(this@MusicService)
-                    .toMediaMetadataCompat()
+                //TODO 替换为当前播放列表
+                val playlist = trackRepository.getCachedLocalTracks(this@MusicService).toMediaMetadataCompat()
 
                 val playbackStartPositionMs =
                     extras?.getLong(

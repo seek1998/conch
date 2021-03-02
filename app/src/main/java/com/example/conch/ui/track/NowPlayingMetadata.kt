@@ -19,7 +19,7 @@ data class NowPlayingMetadata(
             val minutes = totalSeconds / 60
             val remainingSeconds = totalSeconds - (minutes * 60)
             return if (position < 0) "--:--"
-            else "%d:%02d".format(minutes, remainingSeconds)
+            else "%02d:%02d".format(minutes, remainingSeconds)
         }
     }
 }

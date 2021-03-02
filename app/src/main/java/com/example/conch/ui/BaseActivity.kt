@@ -10,8 +10,6 @@ import androidx.lifecycle.ViewModelProvider
 
 abstract class BaseActivity<VDB : ViewDataBinding, VM : BaseViewModel> : AppCompatActivity() {
 
-    protected lateinit var TAG: String
-
     protected lateinit var binding: VDB
 
     protected lateinit var viewModel: VM
@@ -40,6 +38,4 @@ abstract class BaseActivity<VDB : ViewDataBinding, VM : BaseViewModel> : AppComp
     abstract fun getViewModelInstance(): VM
 
     abstract fun getViewModelClass(): Class<VM>
-
-
 }

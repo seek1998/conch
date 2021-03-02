@@ -1,5 +1,6 @@
 package com.example.conch.data.local
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.content.SharedPreferences
 import android.net.Uri
@@ -15,9 +16,6 @@ import kotlinx.coroutines.withContext
 
 class PersistentStorage private constructor(val context: Context) {
 
-    /**
-     * Store any data which must persist between restarts, such as the most recently played song.
-     */
     private var preferences: SharedPreferences = context.getSharedPreferences(
         PREFERENCES_NAME,
         Context.MODE_PRIVATE
@@ -25,6 +23,7 @@ class PersistentStorage private constructor(val context: Context) {
 
     companion object {
 
+        @SuppressLint("StaticFieldLeak")
         @Volatile
         private var instance: PersistentStorage? = null
 
@@ -38,12 +37,6 @@ class PersistentStorage private constructor(val context: Context) {
 
         withContext(Dispatchers.IO) {
 
-            /**
-             * After booting, Android will attempt to build static media controls for the most
-             * recently played song. Artwork for these media controls should not be loaded
-             * from the network as it may be too slow or unavailable immediately after boot. Instead
-             * we convert the iconUri to point to the Glide on-disk cache.
-             */
             /**
              * After booting, Android will attempt to build static media controls for the most
              * recently played song. Artwork for these media controls should not be loaded

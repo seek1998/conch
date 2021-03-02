@@ -6,10 +6,12 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.appcompat.app.AppCompatActivity
+import androidx.fragment.app.activityViewModels
 import com.example.conch.R
 import com.example.conch.data.model.Track
 import com.example.conch.databinding.FragmentLocalBinding
 import com.example.conch.ui.BaseFragment
+import com.example.conch.ui.main.MainViewModel
 import com.example.conch.ui.track.TrackActivity
 import com.example.conch.utils.InjectUtil
 
@@ -17,6 +19,10 @@ import com.example.conch.utils.InjectUtil
 class LocalFragment : BaseFragment<FragmentLocalBinding, LocalViewModel>() {
 
     private lateinit var localTrackAdapter: LocalTrackAdapter
+
+    private val mainViewModel by activityViewModels<MainViewModel>{
+        InjectUtil.provideMainViewModelFactory(requireActivity())
+    }
 
     companion object {
         fun newInstance() = LocalFragment()
@@ -52,7 +58,7 @@ class LocalFragment : BaseFragment<FragmentLocalBinding, LocalViewModel>() {
     }
 
     private fun itemOnClick(track: Track) {
-        viewModel.playTrack(track)
+        mainViewModel.playTrack(track)
         startActivity(Intent(requireActivity(), TrackActivity::class.java))
     }
 

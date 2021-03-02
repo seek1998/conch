@@ -13,12 +13,14 @@ import kotlinx.coroutines.withContext
 
 class LoginViewModel(application: Application) : BaseViewModel(application) {
 
+    val userRepository = UserRepository.getInstance()
+
     var loginResult = MutableLiveData<Result<User>>()
 
     fun login(email: String, password: String) {
         GlobalScope.launch(Dispatchers.Main) {
             val result = withContext(Dispatchers.IO) {
-                UserRepository.login(email, password)
+                userRepository.login(email, password)
             }
             loginResult.value = result
         }

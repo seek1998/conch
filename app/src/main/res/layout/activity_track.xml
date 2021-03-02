@@ -50,7 +50,6 @@
             android:clickable="false"
             app:cardCornerRadius="16dp"
             app:cardElevation="8dp"
-            android:padding="2dp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
@@ -63,6 +62,7 @@
                 android:id="@+id/iv_album_image"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
+                android:background="@color/divider"
                 android:contentDescription="专辑图片"
                 android:src="@drawable/ic_music_note_big" />
         </com.google.android.material.card.MaterialCardView>
@@ -77,11 +77,11 @@
             android:progressTint="@color/icons"
             android:secondaryProgressTint="@color/secondary_text"
             android:thumbTint="@color/icons"
-            app:layout_constraintBottom_toBottomOf="@+id/track_progress_current"
+            app:layout_constraintBottom_toTopOf="@+id/btn_play"
             app:layout_constraintEnd_toStartOf="@+id/track_progress_max"
             app:layout_constraintStart_toEndOf="@+id/track_progress_current"
-            app:layout_constraintTop_toTopOf="@+id/track_progress_current"
-            app:layout_constraintVertical_bias="0.613"
+            app:layout_constraintTop_toBottomOf="@+id/cv_track"
+            app:layout_constraintVertical_bias="0.85"
             app:thumbColor="@color/icons"
             app:thumbRadius="8dp" />
 
@@ -90,28 +90,26 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="16dp"
-            android:layout_marginBottom="16dp"
             android:background="?attr/selectableItemBackgroundBorderless"
-            android:gravity="center_vertical|start"
+            android:gravity="center_vertical|end"
             android:maxLines="1"
-            android:padding="8dp"
+            android:padding="4dp"
             android:text="00:00"
             android:textSize="10sp"
-            app:layout_constraintBottom_toTopOf="@+id/btn_play"
+            app:layout_constraintBottom_toBottomOf="@+id/seekbar"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/tv_track_artist"
-            app:layout_constraintVertical_bias="0.95"
+            app:layout_constraintTop_toTopOf="@+id/seekbar"
             tools:ignore="SmallSp" />
 
         <TextView
             android:id="@+id/track_progress_max"
-            android:layout_width="0dp"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginEnd="16dp"
             android:background="?attr/selectableItemBackgroundBorderless"
-            android:gravity="center_vertical|end"
+            android:gravity="center_vertical|start"
             android:maxLines="1"
-            android:padding="8dp"
+            android:padding="4dp"
             android:text="00:00"
             android:textSize="10sp"
             app:layout_constraintBottom_toBottomOf="@+id/seekbar"
@@ -160,7 +158,7 @@
             app:layout_constraintTop_toTopOf="@+id/appBarLayout"
             app:layout_constraintVertical_bias="0.95"
             app:shapeAppearance="@style/circleImageStyle"
-            app:strokeColor="@color/divider"
+            app:strokeColor="@color/secondary_text"
             app:strokeWidth="1dp" />
 
         <com.google.android.material.imageview.ShapeableImageView
@@ -168,11 +166,10 @@
             style="@style/ExoMediaButton.Previous"
             android:layout_width="@dimen/normal_play_icon_size"
             android:layout_height="@dimen/normal_play_icon_size"
+            android:layout_marginEnd="24dp"
             android:src="@drawable/ic_skip_previous"
             app:layout_constraintBottom_toBottomOf="@+id/btn_play"
             app:layout_constraintEnd_toStartOf="@+id/btn_play"
-            app:layout_constraintHorizontal_bias="0.8"
-            app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="@+id/btn_play" />
 
 
@@ -181,10 +178,9 @@
             style="@style/ExoMediaButton.Next"
             android:layout_width="@dimen/normal_play_icon_size"
             android:layout_height="@dimen/normal_play_icon_size"
+            android:layout_marginStart="24dp"
             android:src="@drawable/ic_skip_next"
             app:layout_constraintBottom_toBottomOf="@+id/btn_play"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.2"
             app:layout_constraintStart_toEndOf="@+id/btn_play"
             app:layout_constraintTop_toTopOf="@+id/btn_play" />
 
@@ -193,11 +189,10 @@
             style="@style/ExoMediaButton"
             android:layout_width="@dimen/small_play_icon_size"
             android:layout_height="@dimen/small_play_icon_size"
+            android:layout_marginEnd="24dp"
             android:src="@drawable/playmode"
             app:layout_constraintBottom_toBottomOf="@+id/btn_previous_track"
             app:layout_constraintEnd_toStartOf="@+id/btn_previous_track"
-            app:layout_constraintHorizontal_bias="0.6"
-            app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="@+id/btn_previous_track" />
 
         <com.google.android.material.imageview.ShapeableImageView
@@ -205,10 +200,9 @@
             style="@style/ExoMediaButton"
             android:layout_width="@dimen/small_play_icon_size"
             android:layout_height="@dimen/small_play_icon_size"
+            android:layout_marginStart="24dp"
             android:src="@drawable/ic_queue_music_32"
             app:layout_constraintBottom_toBottomOf="@+id/btn_next_track"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.4"
             app:layout_constraintStart_toEndOf="@+id/btn_next_track"
             app:layout_constraintTop_toTopOf="@+id/btn_next_track" />
 

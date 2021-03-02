@@ -1,17 +1,24 @@
 package com.example.conch
 
 import android.app.Application
-import android.content.Intent
-import com.example.conch.service.MusicService
-import dagger.hilt.android.HiltAndroidApp
+import com.example.conch.data.TrackRepository
+import com.example.conch.data.UserRepository
+import com.example.conch.data.db.ConchRoomDatabase
 
-@HiltAndroidApp
 class MyApplication : Application() {
+
     override fun onCreate() {
         super.onCreate()
-        fun getApplication() = this
+        initRepository()
 
-        startForegroundService(Intent(this, MusicService::class.java))
+    }
+
+    private fun getDatabase(): ConchRoomDatabase = ConchRoomDatabase.getDatabase(this)
+
+    private fun initRepository() {
+        val database = getDatabase()
+        TrackRepository.init(database)
+        UserRepository.init(database)
     }
 
 }

@@ -9,6 +9,7 @@ import android.support.v4.media.session.MediaSessionCompat
 import android.support.v4.media.session.PlaybackStateCompat
 import android.util.Log
 import androidx.lifecycle.MutableLiveData
+import com.example.conch.data.TrackRepository
 import com.example.conch.extension.id
 import com.example.conch.extension.toMediaMetadataCompat
 
@@ -33,6 +34,8 @@ class MusicServiceConnection(context: Context) {
     }
 
     lateinit var mediaController: MediaControllerCompat
+
+    private val trackRepository = TrackRepository.getInstance()
 
     val transportControls: MediaControllerCompat.TransportControls
         get() = mediaController.transportControls
@@ -122,6 +125,7 @@ class MusicServiceConnection(context: Context) {
             if (!queue.isNullOrEmpty()) {
                 val newQueue = queue.toMediaMetadataCompat()
                 queueTracks.postValue(newQueue)
+                trackRepository.queueTracks = newQueue
             }
         }
     }

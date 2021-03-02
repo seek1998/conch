@@ -36,5 +36,9 @@
 
     <string name="unknown_error">出现未知错误</string>
     <string name="queue_track">播放队列</string>
+    <string name="favorite_tracks">我喜欢的音乐</string>
+    <string name="local_user">本地用户</string>
+    <string name="title_favorite_music">我喜欢的音乐</string>
+    <string name="playlist_has_nothing">该歌单中没有歌曲</string>
 
 </resources>

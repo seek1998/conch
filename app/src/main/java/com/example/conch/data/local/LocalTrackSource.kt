@@ -61,7 +61,7 @@ class LocalTrackSource(private val contentResolver: ContentResolver) {
                         albumId = albumId,
                         albumName = album,
                         coverPath = cover,
-                        localUri = contentUri
+                        localPath = contentUri.toString()
                     )
                     tracks += Track
                     Log.v(TAG, "Added Tracks: $Track")

@@ -1,22 +1,24 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    style="@style/ExoMediaButton"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content">
+    android:layout_height="wrap_content"
+    android:clickable="true">
 
 
     <com.google.android.material.imageview.ShapeableImageView
         android:id="@+id/item_local_track_cover"
-        android:layout_width="48dp"
-        android:layout_height="48dp"
-        android:src="@drawable/ic_music_note"
-        android:layout_marginStart="16dp"
+        android:layout_width="36dp"
+        android:layout_height="36dp"
         android:layout_marginVertical="16dp"
+        android:layout_marginStart="16dp"
         android:background="@color/divider"
-        app:shapeAppearance="@style/itemLocalTrackImageStyle"
+        android:src="@drawable/ic_music_note"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"
+        app:shapeAppearance="@style/itemLocalTrackImageStyle" />
 
 
     <com.google.android.material.textview.MaterialTextView
@@ -24,14 +26,13 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
-        android:layout_marginTop="2dp"
         android:ellipsize="end"
         android:gravity="center"
         android:maxEms="8"
         android:maxLines="1"
         android:text="@string/track_title"
         android:textColor="@color/primary_text"
-        android:textSize="16sp"
+        android:textSize="14sp"
         app:layout_constraintBottom_toTopOf="@+id/center_guideline"
         app:layout_constraintStart_toEndOf="@+id/item_local_track_cover"
         app:layout_constraintTop_toTopOf="@+id/item_local_track_cover" />
@@ -41,20 +42,21 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
+        android:ellipsize="end"
         android:gravity="center"
         android:text="@string/track_artist"
         android:textColor="@color/secondary_text"
         android:textSize="12sp"
-        android:ellipsize="end"
         app:layout_constraintStart_toEndOf="@+id/item_local_track_cover"
         app:layout_constraintTop_toTopOf="@+id/center_guideline" />
 
 
     <com.google.android.material.imageview.ShapeableImageView
+        style="@style/ExoMediaButton"
         android:layout_width="wrap_content"
         android:layout_height="0dp"
-        android:layout_margin="8dp"
-        android:layout_marginHorizontal="16dp"
+        android:clickable="true"
+        android:padding="8dp"
         android:src="@drawable/ic_more_vert"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
@@ -66,5 +68,14 @@
         android:layout_height="wrap_content"
         android:orientation="horizontal"
         app:layout_constraintGuide_percent="0.5" />
+
+    <com.google.android.material.internal.BaselineLayout
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:alpha="0.25"
+        android:background="@color/divider"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -1,5 +1,6 @@
 package com.example.conch.ui.track
 
+import android.app.Application
 import android.os.Handler
 import android.os.Looper
 import android.support.v4.media.MediaMetadataCompat
@@ -16,15 +17,17 @@ import com.example.conch.service.SupportedPlayMode
 import kotlin.math.floor
 
 class TrackViewModel constructor(
-    musicServiceConnection: MusicServiceConnection,
-) : ViewModel() {
+    musicServiceConnection: MusicServiceConnection, application: Application,
+) : AndroidViewModel(application) {
+
+    private var trackRepository = TrackRepository.getInstance()
 
     val nowPlayingMetadata: MutableLiveData<NowPlayingMetadata> =
         MutableLiveData(NowPlayingMetadata())
 
     val playMode: LiveData<SupportedPlayMode> = musicServiceConnection.playMode
 
-    val queueTracks : LiveData<List<MediaMetadataCompat>> = musicServiceConnection.queueTracks
+    val queueTracks: LiveData<List<MediaMetadataCompat>> = musicServiceConnection.queueTracks
 
     private var playbackState: PlaybackStateCompat = EMPTY_PLAYBACK_STATE
 
@@ -117,7 +120,16 @@ class TrackViewModel constructor(
     fun changePlayMode() =
         musicServiceConnection.changePlayMode(currentMode = playMode.value)
 
-    fun getQueueTrack() = TrackRepository.queueTrack
+    fun getQueueTrack(): MutableList<String> {
+        val tracks = mutableListOf<String>()
+        val queue = queueTracks.value
+        queue!!.forEach {
+            tracks.add(it.title!!)
+        }
+
+        return tracks
+    }
+
 
     override fun onCleared() {
         super.onCleared()
@@ -130,12 +142,13 @@ class TrackViewModel constructor(
     }
 
     class Factory(
-        private val musicServiceConnection: MusicServiceConnection
+        private val musicServiceConnection: MusicServiceConnection,
+        private val application: Application
     ) : ViewModelProvider.NewInstanceFactory() {
 
         @Suppress("unchecked_cast")
         override fun <T : ViewModel?> create(modelClass: Class<T>): T {
-            return TrackViewModel(musicServiceConnection) as T
+            return TrackViewModel(musicServiceConnection, application) as T
         }
     }
 }

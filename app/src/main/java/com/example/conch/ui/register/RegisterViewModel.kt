@@ -13,6 +13,8 @@ import kotlinx.coroutines.withContext
 
 class RegisterViewModel(application: Application) : BaseViewModel(application) {
 
+    private val userRepository = UserRepository.getInstance()
+
     var captchaResult = MutableLiveData<Result<Nothing>>()
 
     var registerResult = MutableLiveData<Result<Nothing>>()
@@ -20,7 +22,7 @@ class RegisterViewModel(application: Application) : BaseViewModel(application) {
     fun getCaptcha(email: String) {
         GlobalScope.launch(Dispatchers.Main) {
             val result = withContext(Dispatchers.IO) {
-                UserRepository.getCaptcha(email, UserRepository.USAGE_REGISTER)
+                userRepository.getCaptcha(email, UserRepository.USAGE_REGISTER)
             }
             captchaResult.value = result
         }
@@ -29,7 +31,7 @@ class RegisterViewModel(application: Application) : BaseViewModel(application) {
     fun register(registerInfo: RegisterInfoVO) {
         GlobalScope.launch(Dispatchers.Main) {
             val result = withContext(Dispatchers.IO) {
-                UserRepository.register(registerInfo)
+                userRepository.register(registerInfo)
             }
             registerResult.value = result
         }

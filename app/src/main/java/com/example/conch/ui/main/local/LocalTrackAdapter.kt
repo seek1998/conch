@@ -27,8 +27,6 @@ class LocalTrackAdapter(private val onClick: (Track) -> Unit) :
     class LocalTrackViewHolder(itemView: View, val onClick: (Track) -> Unit) :
         RecyclerView.ViewHolder(itemView) {
 
-        private val remoteCoverPath = "http://conch-music.oss-cn-hangzhou.aliyuncs.com/image/"
-
         private val trackTitle = itemView.findViewById<TextView>(R.id.item_local_track_title)
         private val trackArtist = itemView.findViewById<TextView>(R.id.item_local_track_artist)
         private val trackCover = itemView.findViewById<ImageView>(R.id.item_local_track_cover)
@@ -58,23 +56,25 @@ class LocalTrackAdapter(private val onClick: (Track) -> Unit) :
                     .override(120, 120)
                     .diskCacheStrategy(DiskCacheStrategy.ALL)
                     .into(trackCover)
-            } else {
-                Glide.with(context)
-                    .load(R.drawable.ic_music_note)
-                    .into(trackCover)
+                return
             }
+
+            Glide.with(context)
+                .load(R.drawable.ic_music_note)
+                .into(trackCover)
+
         }
     }
 
     override fun onCreateViewHolder(
         parent: ViewGroup,
         viewType: Int
-    ): LocalTrackViewHolder {
+    ): LocalTrackAdapter.LocalTrackViewHolder {
         val view = LayoutInflater.from(parent.context)
             .inflate(R.layout.item_local_track, parent, false)
         this.context = parent.context
 
-        return LocalTrackViewHolder(view, onClick)
+        return LocalTrackAdapter.LocalTrackViewHolder(view, onClick)
     }
 
     override fun onBindViewHolder(holder: LocalTrackViewHolder, position: Int) {

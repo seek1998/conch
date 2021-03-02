@@ -52,21 +52,21 @@ class Network {
                     title = "Genshin Main",
                     artist = "hoyo mix",
                     coverPath = remoteCoverPath + 1 + ".jpg",
-                    localUri = Uri.parse(remoteTrackPath + 1 + ".mp3")
+                    localPath = Uri.parse(remoteTrackPath + 1 + ".mp3").toString()
                 ),
                 Track(
                     id = 2,
                     title = "Liyue",
                     artist = "hoyo mix",
                     coverPath = remoteCoverPath + 2 + ".jpg",
-                    localUri = Uri.parse(remoteTrackPath + 2 + ".mp3")
+                    localPath = Uri.parse(remoteTrackPath + 2 + ".mp3").toString()
                 ),
                 Track(
                     id = 2,
                     title = "Qingce",
                     artist = "hoyo mix",
                     coverPath = remoteCoverPath + 3 + ".jpg",
-                    localUri = Uri.parse(remoteTrackPath + 3 + ".mp3")
+                    localPath = Uri.parse(remoteTrackPath + 3 + ".mp3").toString()
                 )
             )
         }
