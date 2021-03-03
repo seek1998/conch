@@ -6,20 +6,20 @@ import androidx.room.Relation
 import com.example.conch.data.model.Playlist
 import com.example.conch.data.model.Track
 
-data class PlaylistWithTracks(
-    @field:Embedded
-    val playlist: Playlist,
+
+data class TrackWithPlaylists(
+
+    @Embedded
+    val track: Track,
 
     @Relation(
         parentColumn = "id",
         entityColumn = "id",
         associateBy = Junction(
             PlaylistTrackCrossRef::class,
-            parentColumn = "playlistId",
-            entityColumn = "trackId"
+            parentColumn = "trackId",
+            entityColumn = "playlistId"
         )
     )
-    val tracks: List<Track>
+    val playlists: List<Playlist>
 )
-
-

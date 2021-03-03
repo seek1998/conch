@@ -59,18 +59,11 @@ class PlaylistViewModel(
 
     fun getPlaylistTracks(id: Long) {
         viewModelScope.launch {
-            val result =  trackRepository.getTracksByPlayListId(pid = id)
+            val result =  trackRepository.getTracksByPlaylistId(playlistId = id)
             Log.d(TAG, result.toString())
             tracksLiveData.postValue(result)
         }
     }
-
-    fun test() {
-        viewModelScope.launch {
-            trackRepository.insertFakeData()
-        }
-    }
-
 
     class Factory(
         private val application: Application,

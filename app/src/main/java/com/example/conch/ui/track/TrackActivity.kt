@@ -2,12 +2,11 @@ package com.example.conch.ui.track
 
 import android.content.DialogInterface
 import android.net.Uri
-import android.os.Bundle
 import android.text.TextUtils
 import android.util.Log
 import android.widget.SeekBar
 import android.widget.Toast
-import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.ContextCompat
 import androidx.databinding.DataBindingUtil
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.engine.DiskCacheStrategy
@@ -15,28 +14,24 @@ import com.example.conch.R
 import com.example.conch.databinding.ActivityTrackBinding
 import com.example.conch.extension.getFormattedDuration
 import com.example.conch.service.SupportedPlayMode
+import com.example.conch.ui.BaseActivity
 import com.example.conch.utils.InjectUtil
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import kotlin.math.floor
 
-class TrackActivity : AppCompatActivity() {
+class TrackActivity : BaseActivity<ActivityTrackBinding, TrackViewModel>() {
 
-    private lateinit var binding: ActivityTrackBinding
-
-    private lateinit var viewModel: TrackViewModel
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_track)
-
-        viewModel = InjectUtil.provideTrackViewModel(this)
+    override fun processLogic() {
 
         initDataBinding()
         setUpButtons()
         setUpSeekBar()
+        setUpToolBar()
 
         viewModel.nowPlayingMetadata.observe(this) {
-            updateUI(it)
+            it?.let {
+                updateUI(it)
+            }
         }
 
         viewModel.mediaPosition.observe(this) {
@@ -66,7 +61,42 @@ class TrackActivity : AppCompatActivity() {
                     else -> 0
                 }
             )
+        }
+    }
 
+    private fun setUpToolBar() {
+
+        viewModel.isFavorite.observe(this, {
+
+            binding.toolBar.menu.findItem(R.id.favorite).icon =
+                if (it) {
+                    ContextCompat.getDrawable(this, R.drawable.ic_favorite)
+                } else {
+                    ContextCompat.getDrawable(this, R.drawable.ic_favorite_border)
+                }
+        })
+
+        binding.toolBar.setOnMenuItemClickListener {
+            when (it.itemId) {
+                R.id.favorite -> {
+                    val isFavorite = viewModel.isFavorite.value!!
+                    if (isFavorite) {
+                        toast("取消收藏")
+                    } else {
+                        toast("加入收藏")
+                    }
+                    
+                    viewModel.changeFavoriteMode()
+                    true
+                }
+                R.id.library_add -> {
+                    true
+                }
+                R.id.more -> {
+                    true
+                }
+                else -> false
+            }
         }
     }
 
@@ -125,14 +155,6 @@ class TrackActivity : AppCompatActivity() {
         }
     }
 
-    override fun onStart() {
-        super.onStart()
-    }
-
-    override fun onStop() {
-        super.onStop()
-    }
-
     private fun updateUI(metadata: NowPlayingMetadata) = with(binding) {
 
         uiNowPlayingMetadata = metadata
@@ -179,6 +201,13 @@ class TrackActivity : AppCompatActivity() {
 
         })
     }
+
+    override fun getLayoutId(): Int = R.layout.activity_track
+
+    override fun getViewModelInstance(): TrackViewModel =
+        InjectUtil.provideTrackViewModel(this)
+
+    override fun getViewModelClass(): Class<TrackViewModel> = TrackViewModel::class.java
 }
 
 private const val TAG = "TrackActivity"

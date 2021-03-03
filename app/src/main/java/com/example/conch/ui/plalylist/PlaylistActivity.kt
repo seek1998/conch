@@ -1,7 +1,6 @@
 package com.example.conch.ui.plalylist
 
 import android.content.Intent
-import android.util.Log
 import android.widget.Toast
 import com.example.conch.R
 import com.example.conch.data.model.Playlist
@@ -17,8 +16,6 @@ class PlaylistActivity : BaseActivity<ActivityPlaylistBinding, PlaylistViewModel
     private lateinit var trackAdapter: LocalTrackAdapter
 
     override fun processLogic() {
-
-        viewModel.test()
 
         viewModel.playlistLiveData.postValue(intent.getParcelableExtra("playlist") ?: Playlist())
 
@@ -40,11 +37,11 @@ class PlaylistActivity : BaseActivity<ActivityPlaylistBinding, PlaylistViewModel
 
         viewModel.tracksLiveData.observe(this, {
 
-            Log.d(TAG, it.toString())
             it?.let {
 
                 if (it.isEmpty()) {
-                    ToastMessage(getString(R.string.playlist_has_nothing))
+                    toast(getString(R.string.playlist_has_nothing))
+                    binding.toolBarLayout.subtitle = getString(R.string.no_track)
                     return@let
                 }
 
@@ -60,7 +57,7 @@ class PlaylistActivity : BaseActivity<ActivityPlaylistBinding, PlaylistViewModel
         finish()
     }
 
-    private fun ToastMessage(msg: String) {
+    private fun toast(msg: String) {
         Toast.makeText(this, msg, Toast.LENGTH_SHORT).show()
     }
 

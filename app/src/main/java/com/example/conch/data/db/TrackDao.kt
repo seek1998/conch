@@ -1,17 +1,16 @@
 package com.example.conch.data.db
 
-import androidx.room.Dao
-import androidx.room.Insert
-import androidx.room.OnConflictStrategy
+import androidx.room.*
 import com.example.conch.data.model.Track
 
 @Dao
 interface TrackDao {
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insert(track: Track)
+    suspend fun insert(vararg track: Track)
 
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insert(tracks: List<Track>)
+    @Transaction
+    @Query("SELECT * FROM Track WHERE id = :trackId")
+    suspend fun getPlaylistWithTracks(trackId: Long): List<TrackWithPlaylists>
 
 }

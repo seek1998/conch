@@ -4,9 +4,11 @@ import android.Manifest
 import android.os.Bundle
 import android.os.PersistableBundle
 import android.util.Log
+import android.view.View
 import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
+import androidx.cardview.widget.CardView
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.setupWithNavController
 import com.example.conch.R
@@ -16,6 +18,8 @@ import com.permissionx.guolindev.PermissionX
 import kotlin.system.exitProcess
 
 class MainActivity : AppCompatActivity() {
+
+    private lateinit var playCard: CardView
 
     private val viewModel by viewModels<MainViewModel> {
         InjectUtil.provideMainViewModelFactory(this)
@@ -29,9 +33,19 @@ class MainActivity : AppCompatActivity() {
 
         initPermission()
 
+        playCard = findViewById(R.id.main_card)
+
         val navHostFragment =
             supportFragmentManager.findFragmentById(R.id.nav_host_fragment) as NavHostFragment
-        val navController = navHostFragment.navController
+        val navController = navHostFragment.navController.apply {
+            addOnDestinationChangedListener { controller, destination, arguments ->
+                playCard.visibility = if (destination.id == R.id.navigation_account) {
+                    View.GONE
+                } else {
+                    View.VISIBLE
+                }
+            }
+        }
 
         val navView = findViewById<BottomNavigationView>(R.id.nav_view)
         navView.setupWithNavController(navController)
@@ -63,7 +77,7 @@ class MainActivity : AppCompatActivity() {
 
     override fun onBackPressed() {
 
-        var nowTime = System.currentTimeMillis()
+        val nowTime = System.currentTimeMillis()
         if (nowTime - pressedTime > 2000) {
             Toast.makeText(this, "再按一次退出应用", Toast.LENGTH_SHORT).show()
             pressedTime = nowTime

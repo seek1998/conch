@@ -40,5 +40,6 @@
     <string name="local_user">本地用户</string>
     <string name="title_favorite_music">我喜欢的音乐</string>
     <string name="playlist_has_nothing">该歌单中没有歌曲</string>
+    <string name="no_track">没有歌曲</string>
 
 </resources>

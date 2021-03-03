@@ -1,13 +1,13 @@
 plugins {
     id 'com.android.application'
     id 'kotlin-android'
+    id 'kotlin-parcelize'
 }
 
 apply plugin: 'kotlin-kapt'
 //apply plugin: 'dagger.hilt.android.plugin'
 apply plugin: 'com.android.application'
 apply plugin: 'kotlin-android'
-apply plugin: 'kotlin-android-extensions'
 
 android {
     compileSdkVersion 30
@@ -44,11 +44,6 @@ android {
     testOptions {
         unitTests.returnDefaultValues = true
     }
-
-    androidExtensions {
-        features = ["parcelize"]
-    }
-
 }
 
 dependencies {

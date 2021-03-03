@@ -11,7 +11,7 @@ import kotlinx.coroutines.withContext
 import java.io.IOException
 import java.io.InputStream
 
-class LocalTrackSource(private val contentResolver: ContentResolver) {
+class LocalMediaSource(private val contentResolver: ContentResolver) {
 
     suspend fun getTracks(): List<Track> {
         val tracks = mutableListOf<Track>()
@@ -93,4 +93,4 @@ class LocalTrackSource(private val contentResolver: ContentResolver) {
     }
 }
 
-private val TAG = LocalTrackSource::class.java.simpleName
+private val TAG = LocalMediaSource::class.java.simpleName

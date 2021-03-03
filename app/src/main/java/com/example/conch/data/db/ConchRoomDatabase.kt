@@ -9,7 +9,7 @@ import com.example.conch.data.model.Track
 import com.example.conch.data.model.User
 
 @Database(
-    entities = [Playlist::class, Track::class, User::class],
+    entities = [Playlist::class, Track::class, User::class, PlaylistTrackCrossRef::class],
     version = 1,
     exportSchema = false
 )
@@ -18,6 +18,8 @@ abstract class ConchRoomDatabase : RoomDatabase() {
     abstract fun playlistDao(): PlaylistDao
 
     abstract fun trackDao(): TrackDao
+
+    abstract fun crossRefDao(): CrossRefDao
 
     companion object {
         @Volatile

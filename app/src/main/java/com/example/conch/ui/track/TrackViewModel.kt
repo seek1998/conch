@@ -9,21 +9,25 @@ import android.util.Log
 import androidx.lifecycle.*
 import com.example.conch.R
 import com.example.conch.data.TrackRepository
+import com.example.conch.data.model.Playlist
 import com.example.conch.extension.*
 import com.example.conch.service.EMPTY_PLAYBACK_STATE
 import com.example.conch.service.MusicServiceConnection
 import com.example.conch.service.NOTHING_PLAYING
 import com.example.conch.service.SupportedPlayMode
+import com.example.conch.ui.BaseViewModel
+import kotlinx.coroutines.launch
 import kotlin.math.floor
 
 class TrackViewModel constructor(
     musicServiceConnection: MusicServiceConnection, application: Application,
-) : AndroidViewModel(application) {
+) : BaseViewModel(application) {
 
     private var trackRepository = TrackRepository.getInstance()
 
-    val nowPlayingMetadata: MutableLiveData<NowPlayingMetadata> =
-        MutableLiveData(NowPlayingMetadata())
+    val nowPlayingMetadata: MutableLiveData<NowPlayingMetadata> = MutableLiveData()
+
+    val isFavorite: MutableLiveData<Boolean> = MutableLiveData(false)
 
     val playMode: LiveData<SupportedPlayMode> = musicServiceConnection.playMode
 
@@ -68,16 +72,15 @@ class TrackViewModel constructor(
             checkPlaybackPosition()
     }, 100L)
 
-
     private fun updateState(
         playbackState: PlaybackStateCompat,
         newMetadata: MediaMetadataCompat
     ) {
-
         if (newMetadata.duration == 0L) return
 
+        //若歌曲没有信息改变，则不更新NowPlayingMetadata
         if (newMetadata.id.toString() != nowPlayingMetadata.value?.id) {
-            onMetadataChanged(newMetadata)//若歌曲没有信息改变，则不更新NowPlayingMetadata
+            onMetadataChanged(newMetadata)
         }
 
         mediaButtonRes.postValue(
@@ -85,10 +88,21 @@ class TrackViewModel constructor(
                 true -> intArrayOf(-R.attr.state_play, R.attr.state_pause) //Set pause
                 else -> intArrayOf(R.attr.state_play, -R.attr.state_pause) //Set play
             }
+
+
         )
     }
 
     private fun onMetadataChanged(newMetadata: MediaMetadataCompat) {
+
+        viewModelScope.launch {
+
+            val trackId = newMetadata.id.orEmpty()
+            if (trackId.isNotEmpty()){
+                val result = trackRepository.isFavorite(trackId.toLong())
+                isFavorite.postValue(result)
+            }
+        }
 
         val nowPlayingMetadata = NowPlayingMetadata(
             id = newMetadata.id.orEmpty(),
@@ -140,6 +154,26 @@ class TrackViewModel constructor(
         // 停止加载进度
         updatePosition = false
     }
+
+    fun changeFavoriteMode() =
+        viewModelScope.launch {
+            if (isFavorite.value!!) {
+                //如果已经在喜欢列表中，则取消喜欢
+                trackRepository.removeTrackFromPlaylist(
+                    trackId = nowPlayingMetadata.value!!.id.toLong(),
+                    playlistId = Playlist.PLAYLIST_FAVORITE_ID
+                )
+
+                isFavorite.postValue(false)
+            } else {
+                trackRepository.addTrackToPlaylist(
+                    trackId = nowPlayingMetadata.value!!.id.toLong(),
+                    playlistId = Playlist.PLAYLIST_FAVORITE_ID
+                )
+                isFavorite.postValue(true)
+            }
+        }
+
 
     class Factory(
         private val musicServiceConnection: MusicServiceConnection,

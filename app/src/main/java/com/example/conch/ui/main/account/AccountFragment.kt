@@ -13,7 +13,7 @@ class AccountFragment : BaseFragment<FragmentAccountBinding, AccountViewModel>()
     override fun processLogic() {
 
         binding.btnToFavorite.setOnClickListener {
-            val playlist = Playlist(id = 1, "我喜欢的音乐", description = "没有描述信息", 0L)
+            val playlist = Playlist(id = 1, "我喜欢的音乐", description = "没有描述信息", size = 0)
 
             val intent = Intent(this.activity, PlaylistActivity::class.java).apply {
                 putExtra("playlist", playlist)

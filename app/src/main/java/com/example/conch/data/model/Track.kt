@@ -3,21 +3,19 @@ package com.example.conch.data.model
 import android.os.Parcelable
 import androidx.room.Entity
 import androidx.room.Ignore
-import kotlinx.android.parcel.Parcelize
+import androidx.room.PrimaryKey
+import kotlinx.parcelize.Parcelize
 
-@Entity(
-    primaryKeys = ["mediaStoreId", "pid"]
-)
+@Entity
 @Parcelize
 data class Track(
     //由服务端生成的ID
-    var id: Long = 0,
+    @field:PrimaryKey(autoGenerate = false) var id: Long = 0,
     //本地生成的id
     var mediaStoreId: Long = 0,
 
-    var uid: Long = 0,
+    var uid: Long = User.LOCAL_USER,
 
-    var pid: Long = 0,
     //歌曲名称
     var title: String = "标题",
     //作者
@@ -37,4 +35,13 @@ data class Track(
     //云端路径
     @field:Ignore
     val RemotePath: String = ""
-) : Parcelable
+) : Parcelable {
+    companion object {
+        @Ignore
+        const val NOT_IN_ANY_PLAYLIST = 0L
+
+        @Ignore
+        const val IS_FAVORITE = 1L
+    }
+}
+

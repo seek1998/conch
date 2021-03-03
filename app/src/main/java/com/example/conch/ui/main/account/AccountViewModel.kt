@@ -27,7 +27,7 @@ class AccountViewModel(application: Application) : BaseViewModel(application) {
     fun createNewPlaylist(newPlaylist: Playlist) {
         newPlaylist.uid = user.id
         GlobalScope.launch {
-            trackRepository.create(newPlaylist)
+            trackRepository.createPlaylist(newPlaylist)
         }
     }
 

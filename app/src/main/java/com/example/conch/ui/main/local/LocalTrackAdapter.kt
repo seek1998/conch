@@ -31,7 +31,6 @@ class LocalTrackAdapter(private val onClick: (Track) -> Unit) :
         private val trackArtist = itemView.findViewById<TextView>(R.id.item_local_track_artist)
         private val trackCover = itemView.findViewById<ImageView>(R.id.item_local_track_cover)
 
-
         private var currentTrack: Track? = null
 
         init {

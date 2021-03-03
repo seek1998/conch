@@ -4,6 +4,8 @@ import android.app.Application
 import com.example.conch.data.TrackRepository
 import com.example.conch.data.UserRepository
 import com.example.conch.data.db.ConchRoomDatabase
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
 
 class MyApplication : Application() {
 
@@ -11,6 +13,9 @@ class MyApplication : Application() {
         super.onCreate()
         initRepository()
 
+        GlobalScope.launch {
+            TrackRepository.getInstance().updateDateBase(applicationContext)
+        }
     }
 
     private fun getDatabase(): ConchRoomDatabase = ConchRoomDatabase.getDatabase(this)
