@@ -7,12 +7,16 @@ import android.net.Uri
 import android.os.Bundle
 import android.support.v4.media.MediaBrowserCompat
 import android.support.v4.media.MediaDescriptionCompat
+import android.util.Log
 import com.bumptech.glide.Glide
+import com.example.conch.data.model.Track
 import com.example.conch.extension.asAlbumArtContentUri
 import com.example.conch.service.MEDIA_DESCRIPTION_EXTRAS_START_PLAYBACK_POSITION_MS
 import com.example.conch.service.NOTIFICATION_LARGE_ICON_SIZE
+import com.google.gson.Gson
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
+import java.util.*
 
 class PersistentStorage private constructor(val context: Context) {
 
@@ -20,6 +24,8 @@ class PersistentStorage private constructor(val context: Context) {
         PREFERENCES_NAME,
         Context.MODE_PRIVATE
     )
+
+    private val gson = Gson()
 
     companion object {
 
@@ -31,6 +37,40 @@ class PersistentStorage private constructor(val context: Context) {
             instance ?: synchronized(this) {
                 instance ?: PersistentStorage(context).also { instance = it }
             }
+    }
+
+    suspend fun saveRecentPlayList(list: List<Track>) {
+
+        preferences.edit()
+            .putInt(RECENT_PLAY_LIST_SIZE, list.size)
+            .apply()
+
+        list.forEach {
+            val json = gson.toJson(it)
+            preferences.edit()
+                .putString(RECENT_PLAY_LIST_ITEM + list.indexOf(it), json)
+                .apply()
+        }
+    }
+
+    suspend fun loadRecentPlaylist(): List<Track> {
+        val size = preferences.getInt(RECENT_PLAY_LIST_SIZE, 0)
+
+        if (size == 0) return emptyList()
+
+        val list = ArrayList<Track>(20)
+        for (index in 1 until size) {
+            val json = preferences.getString(RECENT_PLAY_LIST_ITEM + index.toString(), "")
+            val item = gson.fromJson(json, Track::class.java)
+
+            if (item == null) {
+                Log.i(TAG, "$index is null")
+                continue
+            }
+
+            list.add(item)
+        }
+        return list
     }
 
     suspend fun saveRecentSong(description: MediaDescriptionCompat, position: Long) {
@@ -80,9 +120,14 @@ class PersistentStorage private constructor(val context: Context) {
     }
 }
 
+private const val TAG = "PersistentStorage"
+
 private const val PREFERENCES_NAME = "conch"
 private const val RECENT_SONG_MEDIA_ID_KEY = "recent_song_media_id"
 private const val RECENT_SONG_TITLE_KEY = "recent_song_title"
 private const val RECENT_SONG_SUBTITLE_KEY = "recent_song_subtitle"
 private const val RECENT_SONG_ICON_URI_KEY = "recent_song_icon_uri"
 private const val RECENT_SONG_POSITION_KEY = "recent_song_position"
+
+private const val RECENT_PLAY_LIST_ITEM = "recent_play_list_item"
+private const val RECENT_PLAY_LIST_SIZE = "recent_play_list_size"

@@ -12,10 +12,14 @@ import androidx.lifecycle.MutableLiveData
 import com.example.conch.data.TrackRepository
 import com.example.conch.extension.id
 import com.example.conch.extension.toMediaMetadataCompat
+import com.example.conch.extension.toTrack
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.MainScope
+import kotlinx.coroutines.SupervisorJob
 
 private const val TAG = "MusicServiceConnection"
 
-class MusicServiceConnection(context: Context) {
+class MusicServiceConnection(context: Context) : CoroutineScope by MainScope() {
 
     val isConnected = MutableLiveData<Boolean>()
         .apply { postValue(false) }
@@ -27,6 +31,8 @@ class MusicServiceConnection(context: Context) {
     val playMode = MutableLiveData<SupportedPlayMode>().apply {
         postValue(SupportedPlayMode.REPEAT)
     }
+
+    private val scope = CoroutineScope(coroutineContext + SupervisorJob())
 
     //播放队列
     val queueTracks = MutableLiveData<List<MediaMetadataCompat>>().apply {
@@ -97,6 +103,7 @@ class MusicServiceConnection(context: Context) {
                 if (metadata?.id == null) {
                     NOTHING_PLAYING
                 } else {
+
                     //sendWidgetMetadataIntent(metadata)
                     metadata
                 }
@@ -125,7 +132,7 @@ class MusicServiceConnection(context: Context) {
             if (!queue.isNullOrEmpty()) {
                 val newQueue = queue.toMediaMetadataCompat()
                 queueTracks.postValue(newQueue)
-                trackRepository.queueTracks = newQueue
+                trackRepository.currentQueueTracks = newQueue.toTrack()
             }
         }
     }

@@ -41,5 +41,7 @@
     <string name="title_favorite_music">我喜欢的音乐</string>
     <string name="playlist_has_nothing">该歌单中没有歌曲</string>
     <string name="no_track">没有歌曲</string>
+    <string name="playlist">歌单</string>
+    <string name="no_recent_play">无最近播放</string>
 
 </resources>

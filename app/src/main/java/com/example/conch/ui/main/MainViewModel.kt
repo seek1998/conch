@@ -1,7 +1,10 @@
 package com.example.conch.ui.main
 
 import android.app.Application
+import android.os.Handler
+import android.os.Looper
 import android.util.Log
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import com.example.conch.data.TrackRepository
@@ -22,6 +25,20 @@ class MainViewModel(
     private val trackRepository = TrackRepository.getInstance()
 
     private val userRepository = UserRepository.getInstance()
+
+    private val handler = Handler(Looper.getMainLooper())
+
+    val recentPlay = MutableLiveData<List<Track>>()
+
+    private var updateRecentPlay = true
+
+    fun checkRecentPlay(): Boolean = handler.postDelayed({
+        val newData = trackRepository.getRecentPlay()
+        if (recentPlay.value != newData)
+            recentPlay.postValue(newData)
+        if (updateRecentPlay)
+            checkRecentPlay()
+    }, 1000L)
 
     fun playTrack(track: Track, pauseAllowed: Boolean = true) {
         val nowPlaying = musicServiceConnection.nowPlaying.value
@@ -49,6 +66,11 @@ class MainViewModel(
         } else {
             transportControls.playFromMediaId(track.id.toString(), null)
         }
+    }
+
+    override fun onCleared() {
+        super.onCleared()
+        updateRecentPlay = false
     }
 
     class Factory(

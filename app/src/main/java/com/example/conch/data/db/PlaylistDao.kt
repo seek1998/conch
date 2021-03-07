@@ -6,7 +6,7 @@ import com.example.conch.data.model.Playlist
 @Dao
 interface PlaylistDao {
 
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    @Insert(onConflict = OnConflictStrategy.IGNORE)
     suspend fun insert(playlist: Playlist)
 
     @Update

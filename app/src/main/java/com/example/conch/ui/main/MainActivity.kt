@@ -50,10 +50,8 @@ class MainActivity : AppCompatActivity() {
         val navView = findViewById<BottomNavigationView>(R.id.nav_view)
         navView.setupWithNavController(navController)
 
-    }
+        viewModel.checkRecentPlay()
 
-    override fun onSaveInstanceState(outState: Bundle, outPersistentState: PersistableBundle) {
-        super.onSaveInstanceState(outState, outPersistentState)
     }
 
     private fun initPermission() {

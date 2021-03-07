@@ -1,7 +1,6 @@
 package com.example.conch.ui.main.account
 
 import android.app.Application
-import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.example.conch.data.TrackRepository
 import com.example.conch.data.UserRepository
@@ -18,11 +17,9 @@ class AccountViewModel(application: Application) : BaseViewModel(application) {
 
     private val user = userRepository.loggedInUser
 
-    private val playlists = MutableLiveData<List<Playlist>>().apply {
+    val playlists = MutableLiveData<List<Playlist>>().apply {
         emptyList<Playlist>()
     }
-
-    val _playlist: LiveData<List<Playlist>> = playlists
 
     fun createNewPlaylist(newPlaylist: Playlist) {
         newPlaylist.uid = user.id
@@ -38,5 +35,12 @@ class AccountViewModel(application: Application) : BaseViewModel(application) {
         }
     }
 
+    fun getFavoritePlaylist(): Playlist {
+        return playlists.value!!.first {
+            it.id == Playlist.PLAYLIST_FAVORITE_ID
+        }
+    }
 
 }
+
+private const val TAG = "AccountViewModel"

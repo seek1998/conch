@@ -41,7 +41,6 @@ class MusicNotificationManager(
         ).apply {
             setMediaSessionToken(sessionToken)
             setSmallIcon(R.drawable.ic_music_note)
-            // Don't display the rewind or fast-forward buttons.
             setRewindIncrementMs(0)
             setFastForwardIncrementMs(0)
         }
@@ -77,8 +76,6 @@ class MusicNotificationManager(
             val iconUri = controller.metadata.description.iconUri
             return if (currentIconUri != iconUri || currentBitmap == null) {
 
-                // Cache the bitmap for the current song so that successive calls to
-                // `getCurrentLargeIcon` don't cause the bitmap to be recreated.
                 currentIconUri = iconUri
                 launch {
                     currentBitmap = iconUri?.let {
@@ -97,7 +94,6 @@ class MusicNotificationManager(
 
         private suspend fun resolveUriAsBitmap(uri: Uri): Bitmap? {
             return withContext(Dispatchers.IO) {
-                // Block on downloading artwork.
                 //TODO 设置占位图，防止闪动
                 Glide.with(context).applyDefaultRequestOptions(glideOptions)
                     .asBitmap()

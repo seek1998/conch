@@ -4,6 +4,7 @@ import android.graphics.Bitmap
 import android.net.Uri
 import android.support.v4.media.MediaDescriptionCompat
 import android.support.v4.media.MediaMetadataCompat
+import com.example.conch.data.model.Track
 import com.google.android.exoplayer2.MediaItem
 import com.google.android.exoplayer2.source.ConcatenatingMediaSource
 import com.google.android.exoplayer2.source.ProgressiveMediaSource
@@ -237,4 +238,20 @@ fun List<MediaMetadataCompat>.toMediaSource(
  */
 private fun MediaMetadataCompat.toMediaSource(dataSourceFactory: DataSource.Factory) =
     ProgressiveMediaSource.Factory(dataSourceFactory).createMediaSource(MediaItem.fromUri(mediaUri))
+
+fun MediaMetadataCompat.toTrack(): Track {
+    val track = Track(
+        id = id?.toLong()!!,
+        title = title!!,
+        artist = artist!!,
+        coverPath = albumArtUri.toString(),
+        localPath = mediaUri.toString(),
+        albumName = displayDescription!!
+    )
+    return track
+}
+
+fun List<MediaMetadataCompat>.toTrack(): List<Track> = this.map {
+    it.toTrack()
+}
 

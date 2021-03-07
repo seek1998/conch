@@ -13,4 +13,7 @@ interface TrackDao {
     @Query("SELECT * FROM Track WHERE id = :trackId")
     suspend fun getPlaylistWithTracks(trackId: Long): List<TrackWithPlaylists>
 
+    @Query("SELECT * FROM track WHERE id = :trackId")
+    suspend fun getTrack(trackId: Long): Track?
+
 }

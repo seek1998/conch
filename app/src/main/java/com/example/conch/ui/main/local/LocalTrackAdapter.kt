@@ -1,56 +1,50 @@
 package com.example.conch.ui.main.local
 
-import android.content.Context
 import android.net.Uri
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
-import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.example.conch.R
 import com.example.conch.data.model.Track
+import com.example.conch.utils.TrackDiffCallback
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.MainScope
+import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.launch
 
 
 class LocalTrackAdapter(private val onClick: (Track) -> Unit) :
-    ListAdapter<Track, LocalTrackAdapter.LocalTrackViewHolder>(TrackDiffCallback),
+    ListAdapter<Track, LocalTrackAdapter.ViewHolder>(TrackDiffCallback),
     CoroutineScope by MainScope() {
 
-    private lateinit var context: Context
+    private val scope = CoroutineScope(coroutineContext + SupervisorJob())
 
-    class LocalTrackViewHolder(itemView: View, val onClick: (Track) -> Unit) :
+    class ViewHolder(itemView: View, val onClick: (Track) -> Unit) :
         RecyclerView.ViewHolder(itemView) {
 
         private val trackTitle = itemView.findViewById<TextView>(R.id.item_local_track_title)
         private val trackArtist = itemView.findViewById<TextView>(R.id.item_local_track_artist)
         private val trackCover = itemView.findViewById<ImageView>(R.id.item_local_track_cover)
 
-        private var currentTrack: Track? = null
+        fun bind(track: Track) {
 
-        init {
             itemView.setOnClickListener {
-                currentTrack?.let {
-                    onClick(it)
-                }
+                onClick(track)
             }
-
-        }
-
-        fun bind(track: Track, context: Context) {
-            currentTrack = track
 
             trackTitle.text = track.title
             trackArtist.text = track.artist
 
+
             if (track.coverPath.trim().isNotEmpty()) {
 
-                Glide.with(context)
+                Glide.with(trackCover)
                     .load(Uri.parse(track.coverPath))
                     .override(120, 120)
                     .diskCacheStrategy(DiskCacheStrategy.ALL)
@@ -58,9 +52,14 @@ class LocalTrackAdapter(private val onClick: (Track) -> Unit) :
                 return
             }
 
-            Glide.with(context)
+
+            Glide.with(trackCover)
                 .load(R.drawable.ic_music_note)
                 .into(trackCover)
+
+        }
+
+        fun bindLastItem(track: Track) {
 
         }
     }
@@ -68,29 +67,35 @@ class LocalTrackAdapter(private val onClick: (Track) -> Unit) :
     override fun onCreateViewHolder(
         parent: ViewGroup,
         viewType: Int
-    ): LocalTrackAdapter.LocalTrackViewHolder {
+    ): ViewHolder {
         val view = LayoutInflater.from(parent.context)
             .inflate(R.layout.item_local_track, parent, false)
-        this.context = parent.context
 
-        return LocalTrackAdapter.LocalTrackViewHolder(view, onClick)
+        return ViewHolder(view, onClick)
     }
 
-    override fun onBindViewHolder(holder: LocalTrackViewHolder, position: Int) {
+    override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val track = getItem(position)
-        holder.bind(track, context)
+        scope.launch {
+
+            if (track.id == 0L) {
+                holder.bindLastItem(track)
+                return@launch
+            }
+
+            holder.bind(track)
+
+        }
     }
 
+    override fun submitList(list: MutableList<Track>?) {
+        super.submitList(list)
 
-}
+        //用于标记列表末尾
+        val newItem = Track(id = 0L)
 
-object TrackDiffCallback : DiffUtil.ItemCallback<Track>() {
-    override fun areItemsTheSame(oldItem: Track, newItem: Track): Boolean {
-        return oldItem == newItem
+        if (list?.find { it.id == 0L } == null) {
+            list!!.add(newItem)
+        }
     }
-
-    override fun areContentsTheSame(oldItem: Track, newItem: Track): Boolean {
-        return oldItem.id == newItem.id
-    }
-
 }

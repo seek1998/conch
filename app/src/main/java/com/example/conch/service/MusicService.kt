@@ -174,7 +174,8 @@ class MusicService : MediaBrowserServiceCompat(), CoroutineScope by MainScope() 
                 Log.d(TAG, "itemToPlay:${itemToPlay?.title.toString()}")
 
                 //TODO 替换为当前播放列表
-                val playlist = trackRepository.getCachedLocalTracks(this@MusicService).toMediaMetadataCompat()
+                val playlist =
+                    trackRepository.getCachedLocalTracks(this@MusicService).toMediaMetadataCompat()
 
                 val playbackStartPositionMs =
                     extras?.getLong(
@@ -257,6 +258,20 @@ class MusicService : MediaBrowserServiceCompat(), CoroutineScope by MainScope() 
             }
         }
 
+
+        override fun onMediaItemTransition(mediaItem: MediaItem?, reason: Int) {
+            super.onMediaItemTransition(mediaItem, reason)
+            mediaItem?.let {
+                serviceScope.launch {
+                    val trackId =
+                        mediaItem.mediaId.substringAfter("content://media/external/audio/media/")
+                            .toLong()
+                    trackRepository.updateRecentPlay(trackId)
+                }
+            }
+
+        }
+
         override fun onPlayerError(error: ExoPlaybackException) {
             var message = "出现未知错误"
             when (error.type) {
@@ -284,7 +299,7 @@ class MusicService : MediaBrowserServiceCompat(), CoroutineScope by MainScope() 
                     Log.e(TAG, "TYPE_REMOTE: " + error.message)
                 }
                 ExoPlaybackException.TYPE_TIMEOUT -> {
-                    TODO()
+                    Log.e(TAG, "TYPE_TIMEOUT: " + error.message)
                 }
             }
             Toast.makeText(applicationContext, message, Toast.LENGTH_LONG).show()

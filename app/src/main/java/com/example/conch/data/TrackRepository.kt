@@ -1,17 +1,24 @@
 package com.example.conch.data
 
 import android.content.Context
-import android.support.v4.media.MediaMetadataCompat
 import android.util.Log
 import androidx.annotation.WorkerThread
 import com.example.conch.data.db.ConchRoomDatabase
 import com.example.conch.data.db.PlaylistTrackCrossRef
 import com.example.conch.data.local.LocalMediaSource
+import com.example.conch.data.local.PersistentStorage
 import com.example.conch.data.model.Playlist
 import com.example.conch.data.model.Track
 import com.example.conch.data.remote.Network
+import java.util.*
+import kotlin.collections.ArrayList
 
-class TrackRepository(database: ConchRoomDatabase) {
+class TrackRepository private constructor(
+    private val database: ConchRoomDatabase,
+    private val storage: PersistentStorage
+) {
+
+    private val recentPlay: Queue<Track> = LinkedList()
 
     private val playlistDao = database.playlistDao()
 
@@ -23,18 +30,84 @@ class TrackRepository(database: ConchRoomDatabase) {
 
     private var cachedLocalTracks: List<Track> = emptyList()
 
-    var queueTracks: List<MediaMetadataCompat> = emptyList()
+    //当前播放队队列
+    var currentQueueTracks: List<Track> = emptyList()
+
+    //
+    private suspend fun saveRecentPlay() {
+        val MAX_RECORD_NUMBER = 20
+
+        val list = recentPlay.toList()
+        if (list.size >= MAX_RECORD_NUMBER) {
+            storage.saveRecentPlayList(list.subList(0, 20))
+        } else {
+            storage.saveRecentPlayList(list)
+        }
+
+    }
+
+    suspend fun updateRecentPlay(trackId: Long) {
+
+        trackDao.getTrack(trackId)?.let {
+            recentPlay.remove(it)
+            recentPlay.offer(it)
+            saveRecentPlay()
+        }
+    }
+
+    suspend fun loadOldRecentPlay() {
+        if (recentPlay.isEmpty()) {
+            storage.loadRecentPlaylist().let {
+                if (it.isEmpty()) {
+                    return@let
+                } else {
+                    Log.i(TAG, "old recent play list: $it")
+                    it.asReversed().forEach { recentPlay.offer(it) }
+                }
+            }
+        }
+    }
+
+
+    fun getRecentPlay(): ArrayList<Track> {
+        var recentPlay = ArrayList<Track>().apply {
+            //越近的记录, index越小
+            addAll(recentPlay.toList().asReversed())
+        }
+        return recentPlay
+    }
 
     suspend fun isFavorite(trackId: Long): Boolean {
         val result = crossRefDao.find(trackId = trackId, playlistId = Playlist.PLAYLIST_FAVORITE_ID)
         return result != null
     }
 
+    suspend fun getPlaylistCoverPath(id: Long): String {
+        val tracks = getTracksByPlaylistId(id)
+
+        if (tracks.isEmpty()) {
+            return ""
+        }
+
+        //返回第一个有封面的歌曲的封面，作为歌单封面
+        tracks.forEach {
+            if (it.coverPath.isNotEmpty()) {
+                return it.coverPath
+            }
+        }
+
+        return ""
+    }
+
     suspend fun getPlaylists(uid: Long): List<Playlist> {
+        val fakedata = Playlist(id = 2L, "电子音乐", 0, "我喜欢的", 0L)
+        playlistDao.insert(fakedata)
         return playlistDao.getPlaylistByUid(uid)
     }
 
     suspend fun insertTracks(vararg track: Track) = trackDao.insert(*track)
+
+    suspend fun getPlaylistById(id: Long) = playlistDao.getPlaylistById(id)
 
     suspend fun updatePlaylist(playlist: Playlist) = playlistDao.update(playlist)
 
@@ -164,14 +237,15 @@ class TrackRepository(database: ConchRoomDatabase) {
         }
     }
 
+
     companion object {
 
         @Volatile
         private var instance: TrackRepository? = null
 
-        fun init(database: ConchRoomDatabase) {
+        fun init(database: ConchRoomDatabase, storage: PersistentStorage) {
             synchronized(this) {
-                instance ?: TrackRepository(database)
+                instance ?: TrackRepository(database, storage)
                     .also { instance = it }
             }
         }

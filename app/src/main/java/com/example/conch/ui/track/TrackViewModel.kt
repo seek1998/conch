@@ -63,7 +63,6 @@ class TrackViewModel constructor(
         checkPlaybackPosition()
     }
 
-
     private fun checkPlaybackPosition(): Boolean = handler.postDelayed({
         val currentPosition = playbackState.currentPlayBackPosition
         if (mediaPosition.value != currentPosition)
