@@ -4,6 +4,9 @@ import android.content.Intent
 import android.os.Handler
 import android.os.Looper
 import android.util.Log
+import android.view.LayoutInflater
+import android.widget.TextView
+import android.widget.Toast
 import androidx.fragment.app.activityViewModels
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.conch.R
@@ -22,6 +25,10 @@ import com.google.android.material.dialog.MaterialAlertDialogBuilder
 class AccountFragment : BaseFragment<FragmentAccountBinding, AccountViewModel>() {
 
     private val handler = Handler(Looper.getMainLooper())
+
+    private lateinit var tvPlaylistTitle: TextView
+
+    private lateinit var tvPlaylistDescription: TextView
 
     private val mainViewModel by activityViewModels<MainViewModel> {
         InjectUtil.provideMainViewModelFactory(requireActivity())
@@ -104,15 +111,52 @@ class AccountFragment : BaseFragment<FragmentAccountBinding, AccountViewModel>()
 
                 if (it.isEmpty()) return@observe
 
-                playlistAdapter.submitList(it as MutableList<Playlist>)
+                val newList =
+                    it.dropWhile { playlist -> playlist.id == Playlist.PLAYLIST_FAVORITE_ID }
+
+                playlistAdapter.submitList(newList as MutableList<Playlist>)
             }
         })
     }
 
     private fun createNewPlaylist() {
-        MaterialAlertDialogBuilder(requireContext())
+
+        val contentView = LayoutInflater.from(requireContext())
+            .inflate(R.layout.fragment_dialog_create_playlist, null)
+
+        this.tvPlaylistTitle = contentView.findViewById(R.id.fg_tv_playlist_title)
+        this.tvPlaylistDescription = contentView.findViewById(R.id.fg_tv_playlist_description)
+
+        val dialog = MaterialAlertDialogBuilder(requireContext())
             .setTitle("新建歌单")
-            .create()
+            .setView(contentView)
+            .setPositiveButton(getString(R.string.yes)) { dialog, which ->
+                run {
+
+
+                    val title = tvPlaylistTitle.text.trim().toString()
+                    val description = tvPlaylistDescription.text.trim().toString()
+
+                    if (title.isEmpty()) {
+                        toast(getString(R.string.empty_playlist_title_error))
+                        return@run
+                    }
+
+                    viewModel.createNewPlaylist(title, description)
+                }
+            }
+            .setNegativeButton(getString(R.string.cancel)) { dialog, which ->
+                {
+                    run {
+                        dialog.cancel()
+                    }
+                }
+            }
+            .show()
+    }
+
+    private fun toast(msg: String) {
+        Toast.makeText(requireContext(), msg, Toast.LENGTH_SHORT).show()
     }
 
     private fun playlistItemOnClick(playlist: Playlist) {

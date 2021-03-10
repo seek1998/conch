@@ -10,6 +10,7 @@ import androidx.lifecycle.*
 import com.example.conch.R
 import com.example.conch.data.TrackRepository
 import com.example.conch.data.model.Playlist
+import com.example.conch.data.model.Track
 import com.example.conch.extension.*
 import com.example.conch.service.EMPTY_PLAYBACK_STATE
 import com.example.conch.service.MusicServiceConnection
@@ -26,6 +27,10 @@ class TrackViewModel constructor(
     private var trackRepository = TrackRepository.getInstance()
 
     val nowPlayingMetadata: MutableLiveData<NowPlayingMetadata> = MutableLiveData()
+
+    var nextTrack: Track? = null
+
+    var previousTrack: Track? = null
 
     val isFavorite: MutableLiveData<Boolean> = MutableLiveData(false)
 
@@ -53,7 +58,7 @@ class TrackViewModel constructor(
     private val handler = Handler(Looper.getMainLooper())
 
     private val mediaMetadataObserver = Observer<MediaMetadataCompat> {
-        Log.d(TAG, "监测到数据变化， 新id:${it.id}")
+        Log.d(TAG, "监测到mediaMetaData变化， 新id:${it.id}")
         onMetadataChanged(it)
     }
 
@@ -88,22 +93,21 @@ class TrackViewModel constructor(
                 else -> intArrayOf(R.attr.state_play, -R.attr.state_pause) //Set play
             }
 
-
         )
     }
 
     private fun onMetadataChanged(newMetadata: MediaMetadataCompat) {
+        val trackId = newMetadata.id.orEmpty()
 
         viewModelScope.launch {
-
-            val trackId = newMetadata.id.orEmpty()
-            if (trackId.isNotEmpty()){
+            if (trackId.isNotEmpty()) {
                 val result = trackRepository.isFavorite(trackId.toLong())
                 isFavorite.postValue(result)
+                updatePreviousAndNextTrack(trackId.toLong())
             }
         }
 
-        val nowPlayingMetadata = NowPlayingMetadata(
+        val newNowPlayingMetadata = NowPlayingMetadata(
             id = newMetadata.id.orEmpty(),
             albumArtUri = newMetadata.displayIconUri,
             title = newMetadata.displayTitle?.trim(),
@@ -112,7 +116,32 @@ class TrackViewModel constructor(
             _duration = floor(newMetadata.duration / 1E3).toInt()
         )
 
-        this.nowPlayingMetadata.postValue(nowPlayingMetadata)
+        this.nowPlayingMetadata.postValue(newNowPlayingMetadata)
+    }
+
+    private fun updatePreviousAndNextTrack(trackId: Long) {
+        viewModelScope.launch {
+
+            queueTracks.value?.let { list ->
+
+                val index = list.indexOf(list.find { it.id == trackId.toString() })
+
+                previousTrack = if (index == 0) {
+                    null
+                } else {
+                    val previousTrackId = list[index - 1].id!!.toLong()
+                    trackRepository.getTrack(previousTrackId)
+                }
+
+                nextTrack = if (index == list.size - 1) {
+                    null
+                } else {
+                    val nextTrackId = list[index + 1].id!!.toLong()
+                    trackRepository.getTrack(nextTrackId)
+                }
+
+            }
+        }
     }
 
     fun skipToNext() = musicServiceConnection.transportControls.skipToNext()
@@ -172,7 +201,6 @@ class TrackViewModel constructor(
                 isFavorite.postValue(true)
             }
         }
-
 
     class Factory(
         private val musicServiceConnection: MusicServiceConnection,

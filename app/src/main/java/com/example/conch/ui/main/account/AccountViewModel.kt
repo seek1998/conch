@@ -2,11 +2,11 @@ package com.example.conch.ui.main.account
 
 import android.app.Application
 import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.viewModelScope
 import com.example.conch.data.TrackRepository
 import com.example.conch.data.UserRepository
 import com.example.conch.data.model.Playlist
 import com.example.conch.ui.BaseViewModel
-import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 
 class AccountViewModel(application: Application) : BaseViewModel(application) {
@@ -21,15 +21,21 @@ class AccountViewModel(application: Application) : BaseViewModel(application) {
         emptyList<Playlist>()
     }
 
-    fun createNewPlaylist(newPlaylist: Playlist) {
-        newPlaylist.uid = user.id
-        GlobalScope.launch {
+    fun createNewPlaylist(title: String, description: String) {
+        val newPlaylist = Playlist(
+            title = title,
+            size = 0,
+            uid = userRepository.loggedInUser.id,
+            description = description
+        )
+        viewModelScope.launch {
             trackRepository.createPlaylist(newPlaylist)
+            loadAllPlaylist()
         }
     }
 
     fun loadAllPlaylist() {
-        GlobalScope.launch {
+        viewModelScope.launch {
             val result = trackRepository.getPlaylists(user.id)
             playlists.postValue(result)
         }

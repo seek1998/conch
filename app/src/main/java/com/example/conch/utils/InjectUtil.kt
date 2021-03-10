@@ -28,10 +28,10 @@ object InjectUtil {
         return LocalViewModel(activity.application, musicServiceConnection)
     }
 
-    fun provideMainViewModelFactory(context: Context): MainViewModel.Factory {
-        val applicationContext = context.applicationContext
-        val musicServiceConnection = provideMusicServiceConnection(applicationContext)
-        return MainViewModel.Factory(applicationContext as Application, musicServiceConnection)
+    fun provideMainViewModelFactory(activity: Activity): MainViewModel.Factory {
+
+        val musicServiceConnection = provideMusicServiceConnection(activity)
+        return MainViewModel.Factory(activity.application, musicServiceConnection)
     }
 
     fun providePlaylistViewModelFactory(context: Context): PlaylistViewModel.Factory {
@@ -41,3 +41,5 @@ object InjectUtil {
     }
 
 }
+
+private const val TAG = "InjectUtil"

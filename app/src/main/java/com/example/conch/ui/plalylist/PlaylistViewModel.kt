@@ -26,6 +26,8 @@ class PlaylistViewModel(
 
     val playlistLiveData = MutableLiveData<Playlist>()
 
+    val coverPathLiveData = MutableLiveData<String>()
+
     val tracksLiveData = MutableLiveData<List<Track>>()
 
     fun playTrack(track: Track, pauseAllowed: Boolean = true) {
@@ -59,9 +61,16 @@ class PlaylistViewModel(
 
     fun getPlaylistTracks(id: Long) {
         viewModelScope.launch {
-            val result =  trackRepository.getTracksByPlaylistId(playlistId = id)
+            val result = trackRepository.getTracksByPlaylistId(playlistId = id)
             Log.d(TAG, result.toString())
             tracksLiveData.postValue(result)
+        }
+    }
+
+    fun getPlaylistCover(id: Long) {
+        viewModelScope.launch {
+            val result = trackRepository.getPlaylistCoverPath(id)
+            coverPathLiveData.postValue(result)
         }
     }
 

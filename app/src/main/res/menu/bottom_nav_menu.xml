@@ -7,7 +7,7 @@
 
     <item
         android:id="@+id/navigation_cloud"
-        android:icon="@drawable/ic_cloud"
+        android:icon="@drawable/ic_cloud_border"
         android:title="@string/title_cloud" />
 
     <item

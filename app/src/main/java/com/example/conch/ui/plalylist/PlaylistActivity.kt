@@ -1,7 +1,11 @@
 package com.example.conch.ui.plalylist
 
 import android.content.Intent
+import android.graphics.Color
+import android.view.View
 import android.widget.Toast
+import com.bumptech.glide.Glide
+import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.example.conch.R
 import com.example.conch.data.model.Playlist
 import com.example.conch.data.model.Track
@@ -17,6 +21,8 @@ class PlaylistActivity : BaseActivity<ActivityPlaylistBinding, PlaylistViewModel
 
     override fun processLogic() {
 
+        changeStatusBar()
+
         viewModel.playlistLiveData.postValue(intent.getParcelableExtra("playlist") ?: Playlist())
 
         trackAdapter = LocalTrackAdapter { track -> itemOnClick(track) }
@@ -26,11 +32,16 @@ class PlaylistActivity : BaseActivity<ActivityPlaylistBinding, PlaylistViewModel
             isSaveEnabled = true
         }
 
+        binding.toolBar.setNavigationOnClickListener {
+            finish()
+        }
+
         viewModel.playlistLiveData.observe(this, {
 
             it?.let {
                 binding.toolBarLayout.title = it.title
                 viewModel.getPlaylistTracks(it.id)
+                viewModel.getPlaylistCover(it.id)
             }
 
         })
@@ -47,8 +58,28 @@ class PlaylistActivity : BaseActivity<ActivityPlaylistBinding, PlaylistViewModel
 
                 trackAdapter.submitList(it as MutableList<Track>)
                 binding.toolBarLayout.subtitle = "共有${it.size}首歌曲"
+                binding.acPlaylistRvBottom.visibility = View.VISIBLE
             }
         })
+
+        viewModel.coverPathLiveData.observe(this, {
+            it?.let {
+                if (it.isEmpty() || it.isBlank()) {
+                    return@let
+                }
+
+                Glide.with(this)
+                    .load(it)
+                    .override(512, 512)
+                    .diskCacheStrategy(DiskCacheStrategy.RESOURCE)
+                    .into(binding.acPlaylistCover)
+            }
+        })
+    }
+
+    private fun changeStatusBar() {
+        window.statusBarColor = Color.TRANSPARENT
+        window.decorView.systemUiVisibility = View.SYSTEM_UI_FLAG_FULLSCREEN
     }
 
     private fun itemOnClick(track: Track) {

@@ -1,21 +1,30 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
-    tools:context=".ui.main.MainActivity"
-    android:layout_marginEnd="8dp">
+    android:layout_marginEnd="8dp"
+    android:orientation="vertical"
+    tools:context=".ui.main.MainActivity">
 
     <com.google.android.material.imageview.ShapeableImageView
         android:id="@+id/item_recent_play_cover"
         android:layout_width="64dp"
         android:layout_height="64dp"
-        android:src="@drawable/ic_music_note"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
+        android:src="@drawable/ic_play_arrow_blue900"
         app:shapeAppearance="@style/itemPlaylistImageStyle" />
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+    <com.google.android.material.textview.MaterialTextView
+        android:id="@+id/item_recent_play_title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:ellipsize="end"
+        android:maxEms="4"
+        android:maxLines="1"
+        android:text="@string/track_title"
+        android:textColor="@color/primary_text"
+        android:textSize="@dimen/small_text_size" />
+
+</LinearLayout>

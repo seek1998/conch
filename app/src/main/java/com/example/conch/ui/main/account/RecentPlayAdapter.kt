@@ -14,6 +14,7 @@ import com.example.conch.R
 import com.example.conch.data.model.Track
 import com.example.conch.utils.TrackDiffCallback
 import com.google.android.material.imageview.ShapeableImageView
+import com.google.android.material.textview.MaterialTextView
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.SupervisorJob
@@ -32,7 +33,8 @@ class RecentPlayAdapter(private val onClick: (Track) -> Unit, private val contex
 
         private val recentPlayCover =
             itemView.findViewById<ShapeableImageView>(R.id.item_recent_play_cover)
-
+        private val recentPlayTitle =
+            itemView.findViewById<MaterialTextView>(R.id.item_recent_play_title)
 
         fun bind(track: Track) {
 
@@ -41,6 +43,8 @@ class RecentPlayAdapter(private val onClick: (Track) -> Unit, private val contex
             }
 
             val coverPath = track.coverPath
+
+            recentPlayTitle.text = track.title
 
             if (coverPath.trim().isNotEmpty()) {
 
@@ -53,12 +57,12 @@ class RecentPlayAdapter(private val onClick: (Track) -> Unit, private val contex
                 return
             }
 
-            // 没有封面，则加载默认封面
-            recentPlayCover.setBackgroundColor(context.getColor(R.color.divider))
-            recentPlayCover.alpha = 0.5F
-            Glide.with(context)
-                .load(R.drawable.ic_music_note)
-                .into(recentPlayCover)
+//            // 没有封面，则加载默认封面
+//            recentPlayCover.alpha = 0.5F
+//            recentPlayCover.setPadding(4 * 3)
+//            Glide.with(context)
+//                .load(R.drawable.ic_music_note)
+//                .into(recentPlayCover)
         }
     }
 

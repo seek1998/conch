@@ -58,14 +58,14 @@ class PlaylistAdapter(
                 Glide.with(playlistCover)
                     .load(Uri.parse(coverPath))
                     .override(256, 256)
-                    .diskCacheStrategy(DiskCacheStrategy.ALL)
+                    .diskCacheStrategy(DiskCacheStrategy.RESOURCE)
                     .into(playlistCover)
 
                 return
             }
 
             // 没有封面，则加载默认封面
-            playlistCover.setPadding(16 * 3)
+            playlistCover.setPadding(32 * 3)
             Glide.with(playlistCover)
                 .load(R.drawable.ic_conch)
                 .into(playlistCover)
@@ -79,10 +79,10 @@ class PlaylistAdapter(
             }
 
             playlistTitle.text = playlist.title
-            playlistCover.setPadding(16 * 3)
+            playlistCover.setPadding(24 * 3)
 
             Glide.with(playlistCover)
-                .load(R.drawable.ic_add)
+                .load(R.drawable.ic_add_108)
                 .override(256, 256)
                 .diskCacheStrategy(DiskCacheStrategy.ALL)
                 .into(playlistCover)
@@ -102,7 +102,7 @@ class PlaylistAdapter(
         scope.launch {
             val playlistItem = getItem(position)
 
-            if (playlistItem.id == Playlist.PLAYLIST_FAVORITE_ID) return@launch
+            Log.i(TAG, "position = $position, playlist = $playlistItem")
 
             if (playlistItem.id == 0L) {
                 holder.bindLastItem(playlistItem)
@@ -117,7 +117,7 @@ class PlaylistAdapter(
     override fun submitList(list: MutableList<Playlist>?) {
         super.submitList(list)
         //从歌单中，去除“我喜欢的音乐”
-        Log.i(TAG, list.toString())
+
         val newItem = Playlist(id = 0L, "新建歌单")
 
         if (list?.find { it.id == 0L } == null) {

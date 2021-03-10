@@ -13,8 +13,8 @@
             android:id="@+id/app_bar"
             android:layout_width="match_parent"
             android:layout_height="176dp"
-            app:expanded="false"
-            android:theme="@style/AppTheme.AppBarOverlay">
+            android:theme="@style/AppTheme.AppBarOverlay"
+            app:expanded="false">
 
             <com.google.android.material.appbar.SubtitleCollapsingToolbarLayout
                 android:id="@+id/tool_bar_layout"
@@ -27,7 +27,7 @@
                 app:expandedTitleMarginBottom="8dp"
                 app:expandedTitleMarginStart="16dp"
                 app:expandedTitleTextAppearance="@style/MyExpandedTitleTextAppearance"
-                app:layout_scrollFlags="scroll|exitUntilCollapsed"
+                app:layout_scrollFlags="scroll|exitUntilCollapsed|snap"
                 app:subtitle="共有xxx首歌曲"
                 app:title="@string/title_local"
                 app:toolbarId="@+id/tool_bar">
@@ -43,29 +43,54 @@
 
         </com.google.android.material.appbar.AppBarLayout>
 
-        <androidx.core.widget.NestedScrollView
-            android:id="@+id/nsv"
+        <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+            android:id="@+id/srl"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_marginBottom="48dp"
-            app:layout_behavior="@string/appbar_scrolling_view_behavior">
+            app:layout_behavior="@string/appbar_scrolling_view_behavior"
+            android:paddingBottom="48dp">
 
-            <LinearLayout
-                android:id="@+id/rv_container"
+            <androidx.core.widget.NestedScrollView
+                android:id="@+id/nsv"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:orientation="vertical">
+                android:layout_marginBottom="48dp">
 
-                <androidx.recyclerview.widget.RecyclerView
-                    android:id="@+id/rv"
+                <LinearLayout
+                    android:id="@+id/rv_container"
                     android:layout_width="match_parent"
-                    android:scrollbars="vertical"
                     android:layout_height="match_parent"
-                    app:layoutManager="LinearLayoutManager"
-                    tools:listitem="@layout/item_local_track"/>
-            </LinearLayout>
+                    android:orientation="vertical">
 
-        </androidx.core.widget.NestedScrollView>
+                    <androidx.recyclerview.widget.RecyclerView
+                        android:id="@+id/rv"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:scrollbars="vertical"
+                        android:scrollbarStyle="insideOverlay"
+                        android:overScrollMode="never"
+                        app:layoutManager="LinearLayoutManager"
+                        tools:listitem="@layout/item_local_track" />
+
+                    <com.google.android.material.textview.MaterialTextView
+                        android:id="@+id/rv_playlist_bottom"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:background="@drawable/local_track_list_bottom_shape"
+                        android:gravity="center"
+                        android:paddingTop="16dp"
+                        android:layout_marginTop="16dp"
+                        android:paddingBottom="96dp"
+                        android:textSize="@dimen/small_text_size"
+                        android:text="@string/hint_no_more_content"
+                        android:textColor="@color/white"
+                        android:visibility="gone" />
+
+                </LinearLayout>
+
+            </androidx.core.widget.NestedScrollView>
+
+        </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
 
     </androidx.coordinatorlayout.widget.CoordinatorLayout>
 </layout>

@@ -85,12 +85,11 @@
             android:layout_height="72dp"
             android:layout_marginHorizontal="16dp"
             android:layout_marginTop="16dp"
-            android:backgroundTint="@color/primary_text"
+            android:backgroundTint="@color/blue_900"
             android:gravity="start|center_vertical"
             android:text="@string/favorite_tracks"
             app:cornerRadius="16dp"
             app:icon="@drawable/ic_favorite_border"
-            app:iconSize="24dp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/materialCardView" />
@@ -126,11 +125,12 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
             android:paddingStart="16dp"
-            tools:listitem="@layout/item_recent_play"
             app:layout_constraintEnd_toEndOf="parent"
+            android:overScrollMode="never"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/tv_recent_play"
-            tools:ignore="RtlSymmetry" />
+            tools:ignore="RtlSymmetry"
+            tools:listitem="@layout/item_recent_play" />
 
         <com.google.android.material.textview.MaterialTextView
             android:id="@+id/materialTextView3"
@@ -149,8 +149,8 @@
             android:id="@+id/rv_playlist"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:overScrollMode="never"
             android:layout_marginTop="8dp"
+            android:overScrollMode="never"
             android:paddingHorizontal="16dp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"

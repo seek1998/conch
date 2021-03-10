@@ -1,10 +1,10 @@
 package com.example.conch.ui.main.local
 
-import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.activityViewModels
 import com.example.conch.R
@@ -12,7 +12,6 @@ import com.example.conch.data.model.Track
 import com.example.conch.databinding.FragmentLocalBinding
 import com.example.conch.ui.BaseFragment
 import com.example.conch.ui.main.MainViewModel
-import com.example.conch.ui.track.TrackActivity
 import com.example.conch.utils.InjectUtil
 
 
@@ -20,7 +19,7 @@ class LocalFragment : BaseFragment<FragmentLocalBinding, LocalViewModel>() {
 
     private lateinit var localTrackAdapter: LocalTrackAdapter
 
-    private val mainViewModel by activityViewModels<MainViewModel>{
+    private val mainViewModel by activityViewModels<MainViewModel> {
         InjectUtil.provideMainViewModelFactory(requireActivity())
     }
 
@@ -41,8 +40,22 @@ class LocalFragment : BaseFragment<FragmentLocalBinding, LocalViewModel>() {
             it?.let {
                 localTrackAdapter.submitList(it as MutableList<Track>)
                 binding.toolBarLayout.subtitle = "共有${it.size}首歌曲"
+                binding.rvPlaylistBottom.visibility = View.VISIBLE
             }
         })
+
+        setupSwipeRefreshLayout()
+    }
+
+    private fun setupSwipeRefreshLayout() {
+        binding.srl.apply {
+            setColorSchemeResources(R.color.blue_900)
+            setOnRefreshListener {
+                isRefreshing = false
+                viewModel.refreshLocalData(requireContext())
+                Toast.makeText(requireContext(), "即将刷新本地数据", Toast.LENGTH_SHORT).show()
+            }
+        }
     }
 
 
@@ -59,20 +72,6 @@ class LocalFragment : BaseFragment<FragmentLocalBinding, LocalViewModel>() {
 
     private fun itemOnClick(track: Track) {
         mainViewModel.playTrack(track)
-        startActivity(Intent(requireActivity(), TrackActivity::class.java))
-    }
-
-
-    override fun onViewStateRestored(savedInstanceState: Bundle?) {
-        super.onViewStateRestored(savedInstanceState)
-    }
-
-    override fun onSaveInstanceState(outState: Bundle) {
-        super.onSaveInstanceState(outState)
-    }
-
-    override fun onStart() {
-        super.onStart()
     }
 
     override fun getLayoutId() = R.layout.fragment_local

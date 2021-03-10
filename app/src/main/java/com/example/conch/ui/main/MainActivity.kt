@@ -1,25 +1,39 @@
 package com.example.conch.ui.main
 
 import android.Manifest
+import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
-import android.os.PersistableBundle
 import android.util.Log
-import android.view.View
 import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.cardview.widget.CardView
+import androidx.core.content.ContextCompat
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.setupWithNavController
+import com.bumptech.glide.Glide
+import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.example.conch.R
+import com.example.conch.ui.track.TrackActivity
 import com.example.conch.utils.InjectUtil
 import com.google.android.material.bottomnavigation.BottomNavigationView
+import com.google.android.material.imageview.ShapeableImageView
+import com.google.android.material.textview.MaterialTextView
 import com.permissionx.guolindev.PermissionX
 import kotlin.system.exitProcess
 
 class MainActivity : AppCompatActivity() {
 
-    private lateinit var playCard: CardView
+    private lateinit var mainPlayCard: CardView
+
+    private lateinit var tvNowPlayingTitle: MaterialTextView
+
+    private lateinit var tvNowPlayingArtist: MaterialTextView
+
+    private lateinit var ivNowPlayingCover: ShapeableImageView
+
+    private lateinit var btnPlayPause: ShapeableImageView
 
     private val viewModel by viewModels<MainViewModel> {
         InjectUtil.provideMainViewModelFactory(this)
@@ -33,25 +47,73 @@ class MainActivity : AppCompatActivity() {
 
         initPermission()
 
-        playCard = findViewById(R.id.main_card)
+        mainPlayCard = findViewById(R.id.main_card)
+        tvNowPlayingTitle = findViewById(R.id.main_tv_title)
+        tvNowPlayingArtist = findViewById(R.id.main_tv_artist)
+        ivNowPlayingCover = findViewById(R.id.main_iv_cover)
+        btnPlayPause = findViewById(R.id.main_btn_playpause)
 
         val navHostFragment =
             supportFragmentManager.findFragmentById(R.id.nav_host_fragment) as NavHostFragment
-        val navController = navHostFragment.navController.apply {
-            addOnDestinationChangedListener { controller, destination, arguments ->
-                playCard.visibility = if (destination.id == R.id.navigation_account) {
-                    View.GONE
-                } else {
-                    View.VISIBLE
-                }
-            }
-        }
-
+        val navController = navHostFragment.navController
         val navView = findViewById<BottomNavigationView>(R.id.nav_view)
         navView.setupWithNavController(navController)
-
         viewModel.checkRecentPlay()
 
+        viewModel.nowPlayingMetadata.observe(this, {
+            it?.let {
+                Log.i(TAG, it.toString())
+
+                it.title?.let { str ->
+                    if (str.isNotEmpty()) {
+                        tvNowPlayingTitle.text = str
+                    }
+                }
+
+                it.subtitle?.let { str ->
+                    if (str.isNotEmpty()) {
+                        tvNowPlayingArtist.text = str
+                    }
+                }
+
+                setupAlbumArt(it.albumArtUri)
+            }
+        })
+
+        viewModel.btnPlayPauseLevel.observe(this, {
+            it?.let {
+                btnPlayPause.setImageLevel(it)
+            }
+        })
+
+        btnPlayPause.setOnClickListener {
+            viewModel.playOrPause()
+        }
+
+        mainPlayCard.setOnClickListener {
+            val intent = Intent(this, TrackActivity::class.java).apply {
+                putExtra("now_playing", viewModel.nowPlayingMetadata.value)
+            }
+            startActivity(intent)
+        }
+
+    }
+
+    private fun setupAlbumArt(uri: Uri) {
+
+        if (uri == Uri.EMPTY) {
+            Glide.with(this)
+                .load(ContextCompat.getDrawable(this, R.drawable.ic_round_play_arrow_16_write))
+                .into(ivNowPlayingCover)
+            return
+        }
+
+        Glide.with(this)
+            .load(uri)
+            .placeholder(ivNowPlayingCover.drawable)
+            .skipMemoryCache(false)
+            .diskCacheStrategy(DiskCacheStrategy.RESOURCE)
+            .into(ivNowPlayingCover)
     }
 
     private fun initPermission() {
@@ -71,7 +133,7 @@ class MainActivity : AppCompatActivity() {
 
     }
 
-    var pressedTime = 0L
+    private var pressedTime = 0L
 
     override fun onBackPressed() {
 

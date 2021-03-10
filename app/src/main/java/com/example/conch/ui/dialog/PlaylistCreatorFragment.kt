@@ -15,10 +15,10 @@ private const val ARG_PARAM2 = "param2"
 
 /**
  * A simple [Fragment] subclass.
- * Use the [PlaylistFragment.newInstance] factory method to
+ * Use the [PlaylistCreatorFragment.newInstance] factory method to
  * create an instance of this fragment.
  */
-class PlaylistFragment : DialogFragment() {
+class PlaylistCreatorFragment : DialogFragment() {
     // TODO: Rename and change types of parameters
     private var param1: String? = null
     private var param2: String? = null
@@ -36,7 +36,7 @@ class PlaylistFragment : DialogFragment() {
         savedInstanceState: Bundle?
     ): View? {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_dialog_playlist, container, false)
+        return inflater.inflate(R.layout.fragment_dialog_create_playlist, container, false)
     }
 
     companion object {
@@ -51,7 +51,7 @@ class PlaylistFragment : DialogFragment() {
         // TODO: Rename and change types and number of parameters
         @JvmStatic
         fun newInstance(param1: String, param2: String) =
-            PlaylistFragment().apply {
+            PlaylistCreatorFragment().apply {
                 arguments = Bundle().apply {
                     putString(ARG_PARAM1, param1)
                     putString(ARG_PARAM2, param2)

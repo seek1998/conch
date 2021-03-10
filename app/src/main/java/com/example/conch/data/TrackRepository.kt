@@ -33,12 +33,10 @@ class TrackRepository private constructor(
     //当前播放队队列
     var currentQueueTracks: List<Track> = emptyList()
 
-    //
     private suspend fun saveRecentPlay() {
-        val MAX_RECORD_NUMBER = 20
 
         val list = recentPlay.toList()
-        if (list.size >= MAX_RECORD_NUMBER) {
+        if (list.size >= MAX_RECORD_RECENT_PLAY_NUMBER) {
             storage.saveRecentPlayList(list.subList(0, 20))
         } else {
             storage.saveRecentPlayList(list)
@@ -67,7 +65,6 @@ class TrackRepository private constructor(
             }
         }
     }
-
 
     fun getRecentPlay(): ArrayList<Track> {
         var recentPlay = ArrayList<Track>().apply {
@@ -140,62 +137,6 @@ class TrackRepository private constructor(
         crossRefDao.delete(newCrossRef)
     }
 
-//    suspend fun insertFakeData() {
-//        val fakedata = listOf(
-//            Track(
-//                id = 44807,
-//                mediaStoreId = 44807,
-//                uid = 0,
-//                title = "Starfall",
-//                artist = "袁娅维",
-//                localPath = "content://media/external/audio/media/44807",
-//                duration = 0,
-//                albumId = 16,
-//                albumName = "Starfall",
-//                coverPath = "content://media/external/audio/albumart/16",
-//                RemotePath = ""
-//            ),
-//
-//            Track(
-//                id = 44799,
-//                mediaStoreId = 44799,
-//                uid = 0,
-//                title = "M18",
-//                artist = "梶浦由記",
-//                localPath = "content://media/external/audio/media/44799",
-//                duration = 0,
-//                albumId = 15,
-//                albumName = "空の境界 Vol.2 殺人考察(前)",
-//                coverPath = "content://media/external/audio/albumart/15",
-//                RemotePath = ""
-//            ),
-//
-//            Track(
-//                id = 44792,
-//                mediaStoreId = 44792,
-//                uid = 0,
-//                title = "Rubia",
-//                artist = "多多poi",
-//                localPath = "content://media/external/audio/media/44792",
-//                duration = 0,
-//                albumId = 14,
-//                albumName = "多多翻唱",
-//                coverPath = "",
-//                RemotePath = ""
-//            )
-//        )
-//
-//        val list = Playlist(id = 1, "我喜欢的音乐", description = "没有描述信息", size = 3)
-//        val corssRef1 = PlaylistTrackCrossRef(playlistId = 1, trackId = 44792)
-//        val corssRef2 = PlaylistTrackCrossRef(playlistId = 1, trackId = 44807)
-//        val corssRef3 = PlaylistTrackCrossRef(playlistId = 1, trackId = 44799)
-//        playlistDao.insert(list)
-//        trackDao.insert(fakedata)
-//        crossRefDao.insert(corssRef1)
-//        crossRefDao.insert(corssRef2)
-//        crossRefDao.insert(corssRef3)
-//    }
-
     @WorkerThread
     suspend fun getTracksByPlaylistId(playlistId: Long): List<Track> {
 
@@ -210,6 +151,8 @@ class TrackRepository private constructor(
 
         return emptyList()
     }
+
+    suspend fun getTrack(id: Long) = trackDao.getTrack(id)
 
     suspend fun getCachedLocalTracks(context: Context, refresh: Boolean = false): List<Track> {
 
@@ -253,5 +196,7 @@ class TrackRepository private constructor(
         fun getInstance() = instance!!
     }
 }
+
+private const val MAX_RECORD_RECENT_PLAY_NUMBER = 20
 
 private const val TAG = "TrackRepository"

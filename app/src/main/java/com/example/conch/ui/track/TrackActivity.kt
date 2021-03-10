@@ -4,9 +4,9 @@ import android.content.DialogInterface
 import android.net.Uri
 import android.text.TextUtils
 import android.util.Log
+import android.widget.ImageView
 import android.widget.SeekBar
 import android.widget.Toast
-import androidx.core.content.ContextCompat
 import androidx.databinding.DataBindingUtil
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.engine.DiskCacheStrategy
@@ -27,6 +27,10 @@ class TrackActivity : BaseActivity<ActivityTrackBinding, TrackViewModel>() {
         setUpButtons()
         setUpSeekBar()
         setUpToolBar()
+
+        intent.getParcelableExtra<NowPlayingMetadata>("now_playing")?.let {
+            viewModel.nowPlayingMetadata.postValue(it)
+        }
 
         viewModel.nowPlayingMetadata.observe(this) {
             it?.let {
@@ -62,83 +66,85 @@ class TrackActivity : BaseActivity<ActivityTrackBinding, TrackViewModel>() {
                 }
             )
         }
+
+        viewModel.isFavorite.observe(this, {
+
+            binding.btnFavorite.setImageLevel(
+                if (it) {
+                    1
+                } else {
+                    0
+                }
+            )
+
+        })
     }
 
     private fun setUpToolBar() {
 
-        viewModel.isFavorite.observe(this, {
-
-            binding.toolBar.menu.findItem(R.id.favorite).icon =
-                if (it) {
-                    ContextCompat.getDrawable(this, R.drawable.ic_favorite)
-                } else {
-                    ContextCompat.getDrawable(this, R.drawable.ic_favorite_border)
-                }
-        })
-
-        binding.toolBar.setOnMenuItemClickListener {
-            when (it.itemId) {
-                R.id.favorite -> {
-                    val isFavorite = viewModel.isFavorite.value!!
-                    if (isFavorite) {
-                        toast("取消收藏")
-                    } else {
-                        toast("加入收藏")
+        binding.toolBar.apply {
+            setOnMenuItemClickListener {
+                when (it.itemId) {
+                    R.id.more -> {
+                        true
                     }
-                    
-                    viewModel.changeFavoriteMode()
-                    true
+                    else -> false
                 }
-                R.id.library_add -> {
-                    true
-                }
-                R.id.more -> {
-                    true
-                }
-                else -> false
+            }
+
+            setNavigationOnClickListener {
+                this@TrackActivity.finish()
             }
         }
     }
-
 
     private fun toast(message: String) {
         Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
     }
 
-    private fun setUpButtons() {
+    private fun setUpButtons() = with(binding) {
 
-        binding.toolBar.apply {
-            setNavigationOnClickListener {
-                this@TrackActivity.finish()
-            }
-
-        }
-
-        binding.btnPlay.setOnClickListener {
+        btnPlay.setOnClickListener {
             viewModel.playOrPause()
         }
 
-        binding.btnNextTrack.setOnClickListener {
+        btnNextTrack.setOnClickListener {
             viewModel.skipToNext()
         }
 
-        binding.btnPreviousTrack.setOnClickListener {
+        btnPreviousTrack.setOnClickListener {
             viewModel.skipToPrevious()
         }
 
-        binding.btnPlayMode.setOnClickListener {
+        btnPlayMode.setOnClickListener {
             viewModel.changePlayMode()
         }
 
-        binding.btnQueueTrack.setOnClickListener {
+        btnQueueTrack.setOnClickListener {
             val items = viewModel.getQueueTrack().toTypedArray()
 
-            MaterialAlertDialogBuilder(this)
+            MaterialAlertDialogBuilder(this@TrackActivity)
                 .setTitle(getString(R.string.queue_track))
                 .setItems(items, DialogInterface.OnClickListener { dialog, which ->
 
                 })
                 .show()
+        }
+
+        btnFavorite.setOnClickListener {
+            val isFavorite = viewModel.isFavorite.value!!
+
+            if (isFavorite) {
+                toast("取消收藏")
+            } else {
+                toast("加入收藏")
+            }
+
+            viewModel.changeFavoriteMode()
+        }
+
+        btnLibraryAdd.setOnClickListener {
+            toast("添加到歌单")
         }
     }
 
@@ -161,26 +167,38 @@ class TrackActivity : BaseActivity<ActivityTrackBinding, TrackViewModel>() {
         seekbar.max = metadata._duration
         trackProgressMax.text = metadata.duration
         //更新图片
-        setupAlbumArt(metadata.albumArtUri)
+        setupAlbumArt(metadata.albumArtUri, binding.ivAlbumImage)
+        setupLastAndNextTrackCover()
+    }
+
+    private fun setupLastAndNextTrackCover() {
+
+        viewModel.previousTrack?.let {
+            setupAlbumArt(Uri.parse(it.coverPath), binding.ivPreviousAlbumImage)
+        }
+
+        viewModel.nextTrack?.let {
+            setupAlbumArt(Uri.parse(it.coverPath), binding.ivNextAlbumImage)
+        }
     }
 
     //加载专辑图片
-    private fun setupAlbumArt(uri: Uri) {
+    private fun setupAlbumArt(uri: Uri, target: ImageView) {
 
-        if (uri.toString() == "") {
+        if (uri.toString() == "" || uri == Uri.EMPTY) {
             Glide.with(this)
                 .load(R.drawable.ic_music_note_big)
-                .into(binding.ivAlbumImage)
+                .into(target)
 
             return
         }
 
         Glide.with(this)
             .load(uri)
-            .placeholder(binding.ivAlbumImage.drawable)
+            .placeholder(target.drawable)
             .skipMemoryCache(false)
-            .diskCacheStrategy(DiskCacheStrategy.ALL)
-            .into(binding.ivAlbumImage)
+            .diskCacheStrategy(DiskCacheStrategy.RESOURCE)
+            .into(target)
 
     }
 

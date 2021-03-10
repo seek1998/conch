@@ -8,7 +8,7 @@ fun MediaSessionCompat.QueueItem.toMediaMetadataCompat():
 
     return MediaMetadataCompat.Builder().also {
         it.id = description.mediaId ?: ""
-        it.title = description.title ?.toString()
+        it.title = description.title?.toString()
         it.artist = description.subtitle?.toString()
         it.albumArtUri = description.iconUri?.toString()
         it.mediaUri = description.mediaUri?.toString()
@@ -19,5 +19,5 @@ fun MediaSessionCompat.QueueItem.toMediaMetadataCompat():
     }.build()
 }
 
-fun List<MediaSessionCompat.QueueItem>.toMediaMetadataCompat()
-    =this.map { it.toMediaMetadataCompat() }
+fun List<MediaSessionCompat.QueueItem>.toMediaMetadataCompat() =
+    this.map { it.toMediaMetadataCompat() }

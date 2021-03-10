@@ -3,6 +3,7 @@ package com.example.conch.ui.main.local
 import android.app.Application
 import android.content.Context
 import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.viewModelScope
 import com.example.conch.data.TrackRepository
 import com.example.conch.data.model.Track
 import com.example.conch.service.MusicServiceConnection
@@ -26,6 +27,15 @@ class LocalViewModel(
             localTracksLiveData.postValue(list)
         }
     }
+
+    fun refreshLocalData(context: Context) {
+        viewModelScope.launch {
+            trackRepository.updateDateBase(context.applicationContext)
+            trackRepository.getCachedLocalTracks(context, true)
+            getLocalTrackList(context)
+        }
+    }
+
 
 }
 
