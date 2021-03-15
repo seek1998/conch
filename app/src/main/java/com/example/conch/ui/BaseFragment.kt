@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.annotation.LayoutRes
 import androidx.databinding.DataBindingUtil
 import androidx.databinding.ViewDataBinding
@@ -38,6 +39,12 @@ abstract class BaseFragment<VDB : ViewDataBinding, VM : BaseViewModel> : Fragmen
         processLogic()
     }
 
+    fun toast(msg: String) {
+        Toast.makeText(requireContext(), msg, Toast.LENGTH_SHORT).apply {
+            setText(msg)
+            show()
+        }
+    }
 
     abstract fun processLogic()
 
@@ -47,7 +54,6 @@ abstract class BaseFragment<VDB : ViewDataBinding, VM : BaseViewModel> : Fragmen
     abstract fun getViewModelInstance(): VM
 
     abstract fun getViewModelClass(): Class<VM>
-
 
 
 }

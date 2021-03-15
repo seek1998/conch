@@ -7,16 +7,20 @@
 
     </data>
 
-    <androidx.constraintlayout.widget.ConstraintLayout
+
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:orientation="vertical"
         tools:context=".ui.main.account.AccountFragment">
 
         <com.google.android.material.card.MaterialCardView
             android:id="@+id/materialCardView"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_margin="16dp"
+            android:layout_marginHorizontal="16dp"
+            android:layout_marginTop="16dp"
+            android:clickable="true"
             android:elevation="8dp"
             app:cardCornerRadius="16dp"
             app:layout_constraintStart_toStartOf="parent"
@@ -25,7 +29,7 @@
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:background="#44BDBDBD"
+                android:background="@color/transparent"
                 android:padding="8dp">
 
                 <com.google.android.material.imageview.ShapeableImageView
@@ -79,32 +83,47 @@
 
         </com.google.android.material.card.MaterialCardView>
 
-        <com.google.android.material.button.MaterialButton
-            android:id="@+id/btn_to_favorite"
+        <com.google.android.material.internal.BaselineLayout
+            android:id="@+id/baselineLayout"
             android:layout_width="match_parent"
-            android:layout_height="72dp"
-            android:layout_marginHorizontal="16dp"
-            android:layout_marginTop="16dp"
-            android:backgroundTint="@color/blue_900"
-            android:gravity="start|center_vertical"
-            android:text="@string/favorite_tracks"
-            app:cornerRadius="16dp"
-            app:icon="@drawable/ic_favorite_border"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/materialCardView" />
+            android:layout_height="0.5dp"
+            android:layout_margin="16dp"
+            android:alpha="0.25"
+            android:background="@color/divider" />
 
-        <androidx.appcompat.widget.AppCompatImageView
-            style="@style/ExoMediaButton"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginEnd="16dp"
-            android:clickable="true"
-            android:src="@drawable/ic_arrow_forward"
-            android:translationZ="16dp"
-            app:layout_constraintBottom_toBottomOf="@+id/btn_to_favorite"
-            app:layout_constraintEnd_toEndOf="@+id/btn_to_favorite"
-            app:layout_constraintTop_toTopOf="@+id/btn_to_favorite" />
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btn_to_favorite"
+                android:layout_width="match_parent"
+                android:layout_height="72dp"
+                android:layout_marginHorizontal="16dp"
+                android:backgroundTint="@color/blue_900"
+                android:elevation="0dp"
+                android:gravity="start|center_vertical"
+                android:text="@string/favorite_tracks"
+                app:cornerRadius="16dp"
+                app:icon="@drawable/ic_favorite_border"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <androidx.appcompat.widget.AppCompatImageView
+                style="@style/ExoMediaButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="16dp"
+                android:clickable="true"
+                android:src="@drawable/ic_arrow_forward"
+                android:translationZ="16dp"
+                app:layout_constraintBottom_toBottomOf="@+id/btn_to_favorite"
+                app:layout_constraintEnd_toEndOf="@+id/btn_to_favorite"
+                app:layout_constraintTop_toTopOf="@+id/btn_to_favorite" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
 
         <com.google.android.material.textview.MaterialTextView
             android:id="@+id/tv_recent_play"
@@ -114,19 +133,17 @@
             android:layout_marginTop="16dp"
             android:text="@string/recent_playlist"
             android:textColor="@color/primary_text"
-            android:textSize="18sp"
-            android:textStyle="bold"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/btn_to_favorite" />
+            android:textSize="@dimen/big_text_size"
+            android:textStyle="bold" />
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/rv_recent_play"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
+            android:overScrollMode="never"
             android:paddingStart="16dp"
             app:layout_constraintEnd_toEndOf="parent"
-            android:overScrollMode="never"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/tv_recent_play"
             tools:ignore="RtlSymmetry"
@@ -140,10 +157,8 @@
             android:layout_marginTop="16dp"
             android:text="@string/my_playlist"
             android:textColor="@color/primary_text"
-            android:textSize="18sp"
-            android:textStyle="bold"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/rv_recent_play" />
+            android:textSize="@dimen/big_text_size"
+            android:textStyle="bold" />
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/rv_playlist"
@@ -152,11 +167,7 @@
             android:layout_marginTop="8dp"
             android:overScrollMode="never"
             android:paddingHorizontal="16dp"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/materialTextView3"
             tools:listitem="@layout/item_playlist" />
+    </LinearLayout>
 
-
-    </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

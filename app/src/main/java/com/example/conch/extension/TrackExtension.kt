@@ -19,3 +19,4 @@ fun Track.toMediaMetadataCompat(): MediaMetadataCompat =
 
 fun List<Track>.toMediaMetadataCompat(): List<MediaMetadataCompat> =
     this.map { it.toMediaMetadataCompat() }
+

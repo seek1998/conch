@@ -12,7 +12,8 @@ import com.bumptech.glide.Glide
 import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.example.conch.R
 import com.example.conch.data.model.Track
-import com.example.conch.utils.TrackDiffCallback
+import com.example.conch.ui.adapter.TrackDiffCallback
+import com.google.android.material.imageview.ShapeableImageView
 import com.google.android.material.internal.BaselineLayout
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.MainScope
@@ -20,23 +21,36 @@ import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.launch
 
 
-class LocalTrackAdapter(private val onClick: (Track) -> Unit) :
+class LocalTrackAdapter(
+    private val onClick: (Track) -> Unit,
+    private val onOptionsClick: (Track) -> Unit
+) :
     ListAdapter<Track, LocalTrackAdapter.ViewHolder>(TrackDiffCallback),
     CoroutineScope by MainScope() {
 
     private val scope = CoroutineScope(coroutineContext + SupervisorJob())
 
-    class ViewHolder(itemView: View, val onClick: (Track) -> Unit) :
+    class ViewHolder(
+        itemView: View,
+        val onClick: (Track) -> Unit,
+        val onOptionsClick: (Track) -> Unit
+    ) :
         RecyclerView.ViewHolder(itemView) {
 
         private val trackTitle = itemView.findViewById<TextView>(R.id.item_local_track_title)
         private val trackArtist = itemView.findViewById<TextView>(R.id.item_local_track_artist)
         private val trackCover = itemView.findViewById<ImageView>(R.id.item_local_track_cover)
+        private val trackOptions =
+            itemView.findViewById<ShapeableImageView>(R.id.item_local_track_options)
 
         fun bind(track: Track, isLastItem: Boolean = false) {
 
             itemView.setOnClickListener {
                 onClick(track)
+            }
+
+            trackOptions.setOnClickListener {
+                onOptionsClick(track)
             }
 
             trackTitle.text = track.title
@@ -68,7 +82,7 @@ class LocalTrackAdapter(private val onClick: (Track) -> Unit) :
         val view = LayoutInflater.from(parent.context)
             .inflate(R.layout.item_local_track, parent, false)
 
-        return ViewHolder(view, onClick)
+        return ViewHolder(view, onClick, onOptionsClick)
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {

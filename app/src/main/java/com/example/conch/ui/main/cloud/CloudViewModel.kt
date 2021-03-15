@@ -1,7 +1,8 @@
 package com.example.conch.ui.main.cloud
 
-import androidx.lifecycle.ViewModel
+import android.app.Application
+import com.example.conch.ui.BaseViewModel
 
-class CloudViewModel : ViewModel() {
+class CloudViewModel(application: Application) : BaseViewModel(application) {
     // TODO: Implement the ViewModel
 }

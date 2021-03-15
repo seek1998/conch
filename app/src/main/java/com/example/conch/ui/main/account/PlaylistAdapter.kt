@@ -13,7 +13,7 @@ import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.example.conch.R
 import com.example.conch.data.TrackRepository
 import com.example.conch.data.model.Playlist
-import com.example.conch.utils.PlaylistDiffCallback
+import com.example.conch.ui.adapter.PlaylistDiffCallback
 import com.google.android.material.imageview.ShapeableImageView
 import com.google.android.material.textview.MaterialTextView
 import kotlinx.coroutines.CoroutineScope
@@ -65,7 +65,10 @@ class PlaylistAdapter(
             }
 
             // 没有封面，则加载默认封面
-            playlistCover.setPadding(32 * 3)
+            playlistCover.apply {
+                setPadding(32 * 3)
+                alpha = 0.25F
+            }
             Glide.with(playlistCover)
                 .load(R.drawable.ic_conch)
                 .into(playlistCover)
@@ -79,7 +82,10 @@ class PlaylistAdapter(
             }
 
             playlistTitle.text = playlist.title
-            playlistCover.setPadding(24 * 3)
+            playlistCover.apply {
+                setPadding(32 * 3)
+                alpha = 0.25F
+            }
 
             Glide.with(playlistCover)
                 .load(R.drawable.ic_add_108)

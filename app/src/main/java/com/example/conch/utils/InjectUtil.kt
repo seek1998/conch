@@ -5,8 +5,9 @@ import android.app.Application
 import android.content.Context
 import com.example.conch.service.MusicServiceConnection
 import com.example.conch.ui.main.MainViewModel
+import com.example.conch.ui.main.cloud.CloudViewModel
 import com.example.conch.ui.main.local.LocalViewModel
-import com.example.conch.ui.plalylist.PlaylistViewModel
+import com.example.conch.ui.playlist.PlaylistViewModel
 import com.example.conch.ui.track.TrackViewModel
 
 object InjectUtil {
@@ -38,6 +39,11 @@ object InjectUtil {
         val applicationContext = context.applicationContext
         val musicServiceConnection = provideMusicServiceConnection(applicationContext)
         return PlaylistViewModel.Factory(applicationContext as Application, musicServiceConnection)
+    }
+
+    fun provideCloudViewModel(activity: Activity): CloudViewModel {
+        val application = activity.application
+        return CloudViewModel(application)
     }
 
 }

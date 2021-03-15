@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/dialog_playlist"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@drawable/dialog_track_options_shape"
+    android:orientation="vertical"
+    tools:ignore="HardcodedText">
+
+    <com.google.android.material.textview.MaterialTextView
+        android:id="@+id/dialog_playlist_tv_title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal|start"
+        android:layout_marginStart="24dp"
+        android:layout_marginTop="24dp"
+        android:layout_marginBottom="8dp"
+        android:padding="4dp"
+        android:text="添加到歌单"
+        android:textColor="@color/primary_text"
+        android:textSize="@dimen/normal_text_size"
+        android:textStyle="bold" />
+
+    <com.google.android.material.internal.BaselineLayout
+        android:layout_width="match_parent"
+        android:layout_height="0.5dp"
+        android:layout_marginHorizontal="24dp"
+        android:alpha="0.25"
+        android:background="@color/divider" />
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/dialog_playlist_rv"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingEnd="16dp"
+        android:layout_marginVertical="8dp"
+        android:layout_marginStart="24dp"
+        android:orientation="horizontal"
+        android:overScrollMode="never"
+        tools:listitem="@layout/item_playlist"
+        tools:ignore="RtlSymmetry" />
+
+    <com.google.android.material.internal.BaselineLayout
+        android:layout_width="match_parent"
+        android:layout_height="0.5dp"
+        android:layout_marginHorizontal="24dp"
+        android:alpha="0.25"
+        android:background="@color/divider" />
+
+
+    <com.google.android.material.textview.MaterialTextView
+        android:id="@+id/dialog_playlist_tv_cancel"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:clickable="true"
+        android:gravity="center"
+        android:padding="16dp"
+        android:text="@string/cancel" />
+
+
+</LinearLayout>

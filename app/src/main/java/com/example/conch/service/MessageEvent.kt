@@ -109,6 +109,6 @@ data class MessageEvent(var type: MessageType) {
 }
 
 enum class MessageType {
-    currduration,
-    playbackstate,
+    action,
+    data
 }

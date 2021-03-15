@@ -15,4 +15,7 @@ interface CrossRefDao {
     @Query("SELECT * FROM playlisttrackcrossref WHERE trackId = :trackId AND playlistId = :playlistId")
     suspend fun find(trackId: Long, playlistId: Long): PlaylistTrackCrossRef?
 
+    @Query("DELETE FROM playlisttrackcrossref WHERE playlistId = :playlistId")
+    suspend fun deleteByPlaylistId(playlistId: Long)
+
 }

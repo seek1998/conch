@@ -24,7 +24,11 @@ data class Track(
     @field:Ignore
     val localPath: String = "",
     //时长
-    var duration: Int = 0,
+    var duration: String = "",
+    //单位byte
+    var size: Long = 0L,
+    //MIME文件类型
+    var type: String = "",
     //专辑ID
     var albumId: Long = 0,
     //专辑名称
@@ -35,13 +39,5 @@ data class Track(
     //云端路径
     @field:Ignore
     val RemotePath: String = ""
-) : Parcelable {
-    companion object {
-        @Ignore
-        const val NOT_IN_ANY_PLAYLIST = 0L
-
-        @Ignore
-        const val IS_FAVORITE = 1L
-    }
-}
+) : Parcelable
 

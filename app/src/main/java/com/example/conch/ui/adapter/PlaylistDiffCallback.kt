@@ -1,4 +1,4 @@
-package com.example.conch.utils
+package com.example.conch.ui.adapter
 
 import androidx.recyclerview.widget.DiffUtil
 import com.example.conch.data.model.Playlist

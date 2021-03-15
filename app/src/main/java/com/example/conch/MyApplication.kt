@@ -1,60 +1,10 @@
 package com.example.conch
 
 import android.app.Application
-import com.example.conch.data.TrackRepository
-import com.example.conch.data.UserRepository
-import com.example.conch.data.db.ConchRoomDatabase
-import com.example.conch.data.local.PersistentStorage
-import com.example.conch.data.model.Playlist
-import com.example.conch.data.model.User
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.launch
+
 
 class MyApplication : Application() {
 
-    private lateinit var trackRepository: TrackRepository
-
-    override fun onCreate() {
-        super.onCreate()
-        initRepository()
-
-        GlobalScope.launch {
-            trackRepository = TrackRepository.getInstance().apply {
-                updateDateBase(applicationContext)
-            }
-
-            createFavoritePlaylist()
-            trackRepository.loadOldRecentPlay()
-        }
-    }
-
-    private suspend fun createFavoritePlaylist() {
-        trackRepository.getPlaylistById(1L).let {
-            if (it == null) {
-                trackRepository.createPlaylist(
-                    Playlist(
-                        1,
-                        "我喜欢的音乐",
-                        size = Playlist.NO_TRACK,
-                        "无描述信息",
-                        User.LOCAL_USER
-                    )
-                )
-            }
-        }
-    }
-
-
-    private fun getDatabase(): ConchRoomDatabase = ConchRoomDatabase.getDatabase(applicationContext)
-
-    private fun getStorage(): PersistentStorage = PersistentStorage.getInstance(applicationContext)
-
-    private fun initRepository() {
-        val database = getDatabase()
-        val storage = getStorage()
-        TrackRepository.init(database, storage)
-        UserRepository.init(database)
-    }
 
     /**
      * TODO Android部分
@@ -75,3 +25,5 @@ class MyApplication : Application() {
      */
 
 }
+
+private const val TAG = "MyApplication"

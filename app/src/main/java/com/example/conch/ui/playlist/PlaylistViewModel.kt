@@ -1,4 +1,4 @@
-package com.example.conch.ui.plalylist
+package com.example.conch.ui.playlist
 
 import android.app.Application
 import android.util.Log
@@ -71,6 +71,14 @@ class PlaylistViewModel(
         viewModelScope.launch {
             val result = trackRepository.getPlaylistCoverPath(id)
             coverPathLiveData.postValue(result)
+        }
+    }
+
+    fun deletePlaylist() {
+        viewModelScope.launch {
+            playlistLiveData.value?.let {
+                trackRepository.deletePlaylist(it)
+            }
         }
     }
 

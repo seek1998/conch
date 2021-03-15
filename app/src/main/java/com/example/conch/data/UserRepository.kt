@@ -7,12 +7,13 @@ import com.example.conch.data.remote.Network
 
 class UserRepository(database: ConchRoomDatabase) {
 
+    private val network = Network.getInstance()
 
     var loggedInUser: User = User()
         private set
 
     suspend fun login(email: String, password: String): Result<User> {
-        val result = Network.login(email, password)
+        val result = network.login(email, password)
 
         if (result is Result.Success) {
             loggedInUser = result.data as User
@@ -21,13 +22,9 @@ class UserRepository(database: ConchRoomDatabase) {
         return result
     }
 
-    suspend fun getCaptcha(email: String, usage: Int) = Network.getCaptcha(email, usage)
+    suspend fun getCaptcha(email: String, usage: Int) = network.getCaptcha(email, usage)
 
-    /**
-     * @user 用户填写的注册信息
-     * @captcha 邮箱验证码
-     */
-    suspend fun register(registerInfo: RegisterInfoVO) = Network.register(registerInfo)
+    suspend fun register(registerInfo: RegisterInfoVO) = network.register(registerInfo)
 
     companion object {
 

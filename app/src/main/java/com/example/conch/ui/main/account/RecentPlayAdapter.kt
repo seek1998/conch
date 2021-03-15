@@ -12,7 +12,7 @@ import com.bumptech.glide.Glide
 import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.example.conch.R
 import com.example.conch.data.model.Track
-import com.example.conch.utils.TrackDiffCallback
+import com.example.conch.ui.adapter.TrackDiffCallback
 import com.google.android.material.imageview.ShapeableImageView
 import com.google.android.material.textview.MaterialTextView
 import kotlinx.coroutines.CoroutineScope

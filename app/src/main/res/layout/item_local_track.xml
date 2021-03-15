@@ -6,20 +6,18 @@
     android:layout_height="wrap_content"
     android:clickable="true">
 
-
     <com.google.android.material.imageview.ShapeableImageView
         android:id="@+id/item_local_track_cover"
         android:layout_width="40dp"
         android:layout_height="40dp"
         android:layout_marginVertical="16dp"
         android:layout_marginStart="16dp"
-        android:src="@drawable/ic_round_play_arrow_16_write"
         android:background="@color/blue_900"
+        android:src="@drawable/ic_round_play_arrow_16_write"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:shapeAppearance="@style/itemLocalTrackImageStyle" />
-
 
     <com.google.android.material.textview.MaterialTextView
         android:id="@+id/item_local_track_title"
@@ -52,6 +50,7 @@
 
 
     <com.google.android.material.imageview.ShapeableImageView
+        android:id="@+id/item_local_track_options"
         style="@style/ExoMediaButton"
         android:layout_width="wrap_content"
         android:layout_height="0dp"
@@ -72,8 +71,9 @@
     <com.google.android.material.internal.BaselineLayout
         android:id="@+id/item_local_track_divider"
         android:layout_width="match_parent"
-        android:layout_height="1dp"
+        android:layout_height="0.5dp"
         android:alpha="0.25"
+        android:layout_marginStart="56dp"
         android:background="@color/divider"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"

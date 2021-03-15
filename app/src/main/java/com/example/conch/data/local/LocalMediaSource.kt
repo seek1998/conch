@@ -13,6 +13,12 @@ import java.io.InputStream
 
 class LocalMediaSource(private val contentResolver: ContentResolver) {
 
+
+    suspend fun deleteTrack(track: Track) {
+        val uri = Uri.parse(track.localPath)
+        contentResolver.delete(uri, null, null)
+    }
+
     suspend fun getTracks(): List<Track> {
         val tracks = mutableListOf<Track>()
 
@@ -22,7 +28,10 @@ class LocalMediaSource(private val contentResolver: ContentResolver) {
                 MediaStore.Audio.Media.TITLE,
                 MediaStore.Audio.Media.ARTIST,
                 MediaStore.Audio.Media.ALBUM_ID,
-                MediaStore.Audio.Media.ALBUM
+                MediaStore.Audio.Media.ALBUM,
+                MediaStore.Audio.Media.DURATION,
+                MediaStore.Audio.Media.SIZE,
+                MediaStore.Audio.Media.MIME_TYPE
             )
             val selection = null
             val selectionArgs = null
@@ -40,6 +49,9 @@ class LocalMediaSource(private val contentResolver: ContentResolver) {
                 val artistColumn = cursor.getColumnIndexOrThrow(MediaStore.Audio.Media.ARTIST)
                 val albumIdColumn = cursor.getColumnIndexOrThrow(MediaStore.Audio.Media.ALBUM_ID)
                 val albumColumn = cursor.getColumnIndexOrThrow(MediaStore.Audio.Media.ALBUM)
+                val audioDuration = cursor.getColumnIndexOrThrow(MediaStore.Audio.Media.DURATION)
+                val fileSize = cursor.getColumnIndexOrThrow(MediaStore.Audio.Media.SIZE)
+                val fileType = cursor.getColumnIndexOrThrow(MediaStore.Audio.Media.MIME_TYPE)
 
                 Log.i(TAG, "Found ${cursor.count} Tracks")
 
@@ -49,11 +61,14 @@ class LocalMediaSource(private val contentResolver: ContentResolver) {
                     val artist = cursor.getString(artistColumn)
                     val albumId = cursor.getLong(albumIdColumn)
                     val album = cursor.getString(albumColumn)
+                    val duration = cursor.getString(audioDuration)
+                    val size = cursor.getLong(fileSize)
                     val cover = getAlbumCoverPathFromAlbumId(contentResolver, albumId)
                     val contentUri: Uri =
                         ContentUris.withAppendedId(MediaStore.Audio.Media.EXTERNAL_CONTENT_URI, id)
+                    val contentType = cursor.getString(fileType)
 
-                    val Track = Track(
+                    val item = Track(
                         id = id,
                         mediaStoreId = id,
                         title = title,
@@ -61,10 +76,14 @@ class LocalMediaSource(private val contentResolver: ContentResolver) {
                         albumId = albumId,
                         albumName = album,
                         coverPath = cover,
-                        localPath = contentUri.toString()
+                        localPath = contentUri.toString(),
+                        duration = duration,
+                        size = size,
+                        type = contentType
                     )
-                    tracks += Track
-                    Log.v(TAG, "Added Tracks: $Track")
+
+                    tracks += item
+                    Log.v(TAG, "Added Tracks: $item")
                 }
             }
         }
@@ -93,4 +112,4 @@ class LocalMediaSource(private val contentResolver: ContentResolver) {
     }
 }
 
-private val TAG = LocalMediaSource::class.java.simpleName
+private const val TAG = "LocalMediaSource"

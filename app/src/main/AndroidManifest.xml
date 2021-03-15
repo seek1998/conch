@@ -5,6 +5,9 @@
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
 
     <application
         android:name=".MyApplication"
@@ -15,7 +18,14 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.Conch"
         android:usesCleartextTraffic="true">
-        <activity android:name=".ui.plalylist.PlaylistActivity"></activity>
+        <activity android:name=".StartActivity">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+        <activity android:name=".ui.playlist.PlaylistActivity" />
 
         <service android:name=".service.MusicService">
             <intent-filter>
@@ -25,14 +35,8 @@
 
         <activity android:name=".ui.track.TrackActivity" />
         <activity android:name=".ui.register.RegisterActivity" />
-        <activity android:name=".ui.login.LoginActivity"></activity>
-        <activity android:name=".ui.main.MainActivity">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
-        </activity>
+        <activity android:name=".ui.login.LoginActivity" />
+        <activity android:name=".ui.main.MainActivity" />
     </application>
 
 </manifest>

@@ -1,6 +1,5 @@
 package com.example.conch.ui.main
 
-import android.Manifest
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
@@ -15,12 +14,15 @@ import androidx.navigation.ui.setupWithNavController
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.example.conch.R
+import com.example.conch.service.MessageEvent
 import com.example.conch.ui.track.TrackActivity
 import com.example.conch.utils.InjectUtil
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.material.imageview.ShapeableImageView
 import com.google.android.material.textview.MaterialTextView
-import com.permissionx.guolindev.PermissionX
+import org.greenrobot.eventbus.EventBus
+import org.greenrobot.eventbus.Subscribe
+import org.greenrobot.eventbus.ThreadMode
 import kotlin.system.exitProcess
 
 class MainActivity : AppCompatActivity() {
@@ -42,11 +44,11 @@ class MainActivity : AppCompatActivity() {
     private val TAG = this::class.simpleName
 
     override fun onCreate(savedInstanceState: Bundle?) {
+
+        EventBus.getDefault().register(this)
+
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-
-        initPermission()
-
         mainPlayCard = findViewById(R.id.main_card)
         tvNowPlayingTitle = findViewById(R.id.main_tv_title)
         tvNowPlayingArtist = findViewById(R.id.main_tv_artist)
@@ -57,8 +59,12 @@ class MainActivity : AppCompatActivity() {
             supportFragmentManager.findFragmentById(R.id.nav_host_fragment) as NavHostFragment
         val navController = navHostFragment.navController
         val navView = findViewById<BottomNavigationView>(R.id.nav_view)
+
         navView.setupWithNavController(navController)
+
         viewModel.checkRecentPlay()
+
+        viewModel.loadAllPlaylist()
 
         viewModel.nowPlayingMetadata.observe(this, {
             it?.let {
@@ -99,6 +105,13 @@ class MainActivity : AppCompatActivity() {
 
     }
 
+    @Subscribe(threadMode = ThreadMode.MAIN, sticky = true)
+    fun onEvent(message: MessageEvent) {
+        when (message.getString()) {
+            "refresh_playlists" -> viewModel.loadAllPlaylist()
+        }
+    }
+
     private fun setupAlbumArt(uri: Uri) {
 
         if (uri == Uri.EMPTY) {
@@ -116,22 +129,6 @@ class MainActivity : AppCompatActivity() {
             .into(ivNowPlayingCover)
     }
 
-    private fun initPermission() {
-        PermissionX.init(this)
-            .permissions(
-                Manifest.permission.READ_EXTERNAL_STORAGE,
-                Manifest.permission.FOREGROUND_SERVICE,
-                Manifest.permission.CALL_PHONE
-            )
-            .request { allGranted, grantedList, deniedList ->
-                if (allGranted) {
-                    Log.i(TAG, "All permissions are granted")
-                } else {
-                    Log.i(TAG, "These permissions are denied: $deniedList")
-                }
-            }
-
-    }
 
     private var pressedTime = 0L
 

@@ -1,8 +1,11 @@
 package com.example.conch.data
 
 import android.content.Context
+import android.net.Uri
 import android.util.Log
+import android.webkit.MimeTypeMap
 import androidx.annotation.WorkerThread
+import androidx.lifecycle.MutableLiveData
 import com.example.conch.data.db.ConchRoomDatabase
 import com.example.conch.data.db.PlaylistTrackCrossRef
 import com.example.conch.data.local.LocalMediaSource
@@ -10,13 +13,18 @@ import com.example.conch.data.local.PersistentStorage
 import com.example.conch.data.model.Playlist
 import com.example.conch.data.model.Track
 import com.example.conch.data.remote.Network
+import com.example.conch.data.remote.RemoteMediaSource
 import java.util.*
 import kotlin.collections.ArrayList
 
 class TrackRepository private constructor(
     private val database: ConchRoomDatabase,
-    private val storage: PersistentStorage
+    private val storage: PersistentStorage,
+    private val localMediaSource: LocalMediaSource,
+    private val remoteMediaSource: RemoteMediaSource
 ) {
+
+    private val network = Network.getInstance()
 
     private val recentPlay: Queue<Track> = LinkedList()
 
@@ -25,8 +33,6 @@ class TrackRepository private constructor(
     private val trackDao = database.trackDao()
 
     private val crossRefDao = database.crossRefDao()
-
-    private var localMediaSource: LocalMediaSource? = null
 
     private var cachedLocalTracks: List<Track> = emptyList()
 
@@ -96,11 +102,7 @@ class TrackRepository private constructor(
         return ""
     }
 
-    suspend fun getPlaylists(uid: Long): List<Playlist> {
-        val fakedata = Playlist(id = 2L, "电子音乐", 0, "我喜欢的", 0L)
-        playlistDao.insert(fakedata)
-        return playlistDao.getPlaylistByUid(uid)
-    }
+    suspend fun getPlaylists(uid: Long): List<Playlist> = playlistDao.getPlaylistByUid(uid)
 
     suspend fun insertTracks(vararg track: Track) = trackDao.insert(*track)
 
@@ -108,7 +110,10 @@ class TrackRepository private constructor(
 
     suspend fun updatePlaylist(playlist: Playlist) = playlistDao.update(playlist)
 
-    suspend fun deletePlaylist(playlist: Playlist) = playlistDao.delete(playlist)
+    suspend fun deletePlaylist(playlist: Playlist) {
+        playlistDao.delete(playlist)
+        crossRefDao.deleteByPlaylistId(playlist.id)
+    }
 
     suspend fun createPlaylist(playlist: Playlist) = playlistDao.insert(playlist)
 
@@ -163,15 +168,11 @@ class TrackRepository private constructor(
     }
 
     suspend fun fetchTracksFromRemote(uid: Long): List<Track> {
-        return Network.fetchTracksByUID(uid)
+        return emptyList()
     }
 
     suspend fun fetchTracksFromLocation(context: Context): List<Track> {
-        if (localMediaSource == null) {
-            localMediaSource = LocalMediaSource(context.contentResolver)
-        }
-
-        return localMediaSource!!.getTracks()
+        return localMediaSource.getTracks()
     }
 
     suspend fun updateDateBase(context: Context) {
@@ -180,21 +181,43 @@ class TrackRepository private constructor(
         }
     }
 
+    fun uploadTrackFile(track: Track, uid: Long, uploadProcess: MutableLiveData<Int>) {
+
+        val uploadUri = Uri.parse(track.localPath)
+        val type = MimeTypeMap.getSingleton().getExtensionFromMimeType(track.type)
+        val folderName = "track"
+        val uploadKey = "$uid/$folderName/${track.title}.$type"
+        remoteMediaSource.uploadTrackFile(uploadKey, uploadUri, uploadProcess)
+    }
+
+    fun uploadTrackCover(track: Track, uid: Long) {
+        val uploadUri = Uri.parse(track.coverPath)
+        val type = ".jpg"
+        val folderName = "image"
+        val uploadKey = "$uid/$folderName/${track.id}.$type"
+        remoteMediaSource.uploadTrackCover(uploadKey, uploadUri)
+    }
 
     companion object {
 
         @Volatile
         private var instance: TrackRepository? = null
 
-        fun init(database: ConchRoomDatabase, storage: PersistentStorage) {
+        fun init(
+            database: ConchRoomDatabase,
+            storage: PersistentStorage,
+            localMediaSource: LocalMediaSource,
+            remoteMediaSource: RemoteMediaSource
+        ) {
             synchronized(this) {
-                instance ?: TrackRepository(database, storage)
+                instance ?: TrackRepository(database, storage, localMediaSource, remoteMediaSource)
                     .also { instance = it }
             }
         }
 
         fun getInstance() = instance!!
     }
+
 }
 
 private const val MAX_RECORD_RECENT_PLAY_NUMBER = 20

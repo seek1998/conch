@@ -77,12 +77,6 @@ class PersistentStorage private constructor(val context: Context) {
 
         withContext(Dispatchers.IO) {
 
-            /**
-             * After booting, Android will attempt to build static media controls for the most
-             * recently played song. Artwork for these media controls should not be loaded
-             * from the network as it may be too slow or unavailable immediately after boot. Instead
-             * we convert the iconUri to point to the Glide on-disk cache.
-             */
             val localIconUri = Glide.with(context).asFile().load(description.iconUri)
                 .submit(NOTIFICATION_LARGE_ICON_SIZE, NOTIFICATION_LARGE_ICON_SIZE).get()
                 .asAlbumArtContentUri()

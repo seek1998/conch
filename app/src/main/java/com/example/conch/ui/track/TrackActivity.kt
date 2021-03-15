@@ -6,7 +6,6 @@ import android.text.TextUtils
 import android.util.Log
 import android.widget.ImageView
 import android.widget.SeekBar
-import android.widget.Toast
 import androidx.databinding.DataBindingUtil
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.engine.DiskCacheStrategy
@@ -96,10 +95,6 @@ class TrackActivity : BaseActivity<ActivityTrackBinding, TrackViewModel>() {
                 this@TrackActivity.finish()
             }
         }
-    }
-
-    private fun toast(message: String) {
-        Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
     }
 
     private fun setUpButtons() = with(binding) {

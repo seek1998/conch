@@ -8,7 +8,8 @@ import retrofit2.http.Query
 interface TrackService {
 
     @GET("tracks")
-    suspend fun getTracksByUID(
+    fun getTracksByUID(
         @Query("uid") uid: Long
     ): ApiResponse<List<Track>>
+
 }

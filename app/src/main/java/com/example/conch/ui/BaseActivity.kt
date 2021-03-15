@@ -1,6 +1,7 @@
 package com.example.conch.ui
 
 import android.os.Bundle
+import android.widget.Toast
 import androidx.annotation.LayoutRes
 import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.DataBindingUtil
@@ -28,6 +29,13 @@ abstract class BaseActivity<VDB : ViewDataBinding, VM : BaseViewModel> : AppComp
         }).get(getViewModelClass())
 
         processLogic()
+    }
+
+    fun toast(msg: String) {
+        Toast.makeText(applicationContext, msg, Toast.LENGTH_SHORT).apply {
+            setText(msg)
+            show()
+        }
     }
 
     abstract fun processLogic()

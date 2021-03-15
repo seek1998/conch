@@ -1,32 +1,19 @@
 package com.example.conch.ui.main.cloud
 
-import android.os.Bundle
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
-import androidx.fragment.app.Fragment
-import androidx.lifecycle.ViewModelProvider
 import com.example.conch.R
+import com.example.conch.databinding.FragmentCloudBinding
+import com.example.conch.ui.BaseFragment
+import com.example.conch.utils.InjectUtil
 
-class CloudFragment : Fragment() {
+class CloudFragment : BaseFragment<FragmentCloudBinding, CloudViewModel>() {
 
-    companion object {
-        fun newInstance() = CloudFragment()
+    override fun processLogic() {
+
     }
 
-    private lateinit var viewModel: CloudViewModel
+    override fun getLayoutId() = R.layout.fragment_cloud
 
-    override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View? {
-        return inflater.inflate(R.layout.fragment_cloud, container, false)
-    }
+    override fun getViewModelInstance() = InjectUtil.provideCloudViewModel(requireActivity())
 
-    override fun onActivityCreated(savedInstanceState: Bundle?) {
-        super.onActivityCreated(savedInstanceState)
-        viewModel = ViewModelProvider(this).get(CloudViewModel::class.java)
-        // TODO: Use the ViewModel
-    }
-
+    override fun getViewModelClass() = CloudViewModel::class.java
 }

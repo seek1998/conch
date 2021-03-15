@@ -22,12 +22,14 @@ class AccountViewModel(application: Application) : BaseViewModel(application) {
     }
 
     fun createNewPlaylist(title: String, description: String) {
+
         val newPlaylist = Playlist(
             title = title,
             size = 0,
             uid = userRepository.loggedInUser.id,
             description = description
         )
+
         viewModelScope.launch {
             trackRepository.createPlaylist(newPlaylist)
             loadAllPlaylist()

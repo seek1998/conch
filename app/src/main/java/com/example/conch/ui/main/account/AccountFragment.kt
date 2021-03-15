@@ -6,7 +6,6 @@ import android.os.Looper
 import android.util.Log
 import android.view.LayoutInflater
 import android.widget.TextView
-import android.widget.Toast
 import androidx.fragment.app.activityViewModels
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.conch.R
@@ -16,7 +15,7 @@ import com.example.conch.databinding.FragmentAccountBinding
 import com.example.conch.ui.BaseFragment
 import com.example.conch.ui.login.LoginActivity
 import com.example.conch.ui.main.MainViewModel
-import com.example.conch.ui.plalylist.PlaylistActivity
+import com.example.conch.ui.playlist.PlaylistActivity
 import com.example.conch.ui.track.TrackActivity
 import com.example.conch.utils.InjectUtil
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
@@ -51,7 +50,6 @@ class AccountFragment : BaseFragment<FragmentAccountBinding, AccountViewModel>()
         binding.btnAccountLogin.setOnClickListener {
             startActivity(Intent(this.activity, LoginActivity::class.java))
         }
-
 
         setUpPlaylistRecycleView()
         setUpRecentPlayRecycleView()
@@ -109,11 +107,10 @@ class AccountFragment : BaseFragment<FragmentAccountBinding, AccountViewModel>()
 
             it?.let {
 
-                if (it.isEmpty()) return@observe
-
                 val newList =
                     it.dropWhile { playlist -> playlist.id == Playlist.PLAYLIST_FAVORITE_ID }
 
+                //TODO 新建歌单消失
                 playlistAdapter.submitList(newList as MutableList<Playlist>)
             }
         })
@@ -153,10 +150,6 @@ class AccountFragment : BaseFragment<FragmentAccountBinding, AccountViewModel>()
                 }
             }
             .show()
-    }
-
-    private fun toast(msg: String) {
-        Toast.makeText(requireContext(), msg, Toast.LENGTH_SHORT).show()
     }
 
     private fun playlistItemOnClick(playlist: Playlist) {

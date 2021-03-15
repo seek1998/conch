@@ -11,6 +11,8 @@ import android.util.Log
 import androidx.lifecycle.*
 import com.example.conch.data.TrackRepository
 import com.example.conch.data.UserRepository
+import com.example.conch.data.model.Playlist
+import com.example.conch.data.model.Playlist.Companion.PLAYLIST_FAVORITE_ID
 import com.example.conch.data.model.Track
 import com.example.conch.extension.*
 import com.example.conch.service.EMPTY_PLAYBACK_STATE
@@ -32,7 +34,17 @@ class MainViewModel(
 
     private val handler = Handler(Looper.getMainLooper())
 
+    val uploadProcessLiveData = MutableLiveData<Int>().apply {
+        0
+    }
+
+    val isTrackFavorite: MutableLiveData<Boolean> = MutableLiveData()
+
     val recentPlay = MutableLiveData<List<Track>>()
+
+    val playlists = MutableLiveData<List<Playlist>>().apply {
+        emptyList<Playlist>()
+    }
 
     private var updateRecentPlay = true
 
@@ -52,9 +64,7 @@ class MainViewModel(
 
     private val playbackStateObserver = Observer<PlaybackStateCompat> {
         playbackState = it ?: EMPTY_PLAYBACK_STATE
-
         val metadata = musicServiceConnection.nowPlaying.value ?: NOTHING_PLAYING
-
         updateState(playbackState, metadata)
     }
 
@@ -154,13 +164,33 @@ class MainViewModel(
         }
     }
 
+    fun isFavorite(trackId: Long) {
+        viewModelScope.launch {
+            val result = trackRepository.isFavorite(trackId)
+            isTrackFavorite.postValue(result)
+        }
+    }
+
+    fun changeFavoriteMode(trackId: Long, playlistId: Long = PLAYLIST_FAVORITE_ID) =
+        viewModelScope.launch {
+
+            isTrackFavorite.value?.let {
+                if (it) {
+                    //如果已经在喜欢列表中，则取消喜欢
+                    trackRepository.removeTrackFromPlaylist(trackId, playlistId)
+                    isTrackFavorite.postValue(false)
+                } else {
+                    trackRepository.addTrackToPlaylist(trackId, playlistId)
+                    isTrackFavorite.postValue(true)
+                }
+            }
+        }
 
     override fun onCleared() {
         super.onCleared()
         updateRecentPlay = false
         musicServiceConnection.playbackState.removeObserver(playbackStateObserver)
         musicServiceConnection.nowPlaying.removeObserver(mediaMetadataObserver)
-
     }
 
     fun refreshLocalData(context: Context) {
@@ -168,6 +198,30 @@ class MainViewModel(
             trackRepository.updateDateBase(context.applicationContext)
         }
     }
+
+    fun addTrackToPlaylist(trackId: Long, playlistId: Long) =
+        viewModelScope.launch {
+            trackRepository.addTrackToPlaylist(trackId, playlistId)
+        }
+
+    fun loadAllPlaylist() {
+        viewModelScope.launch {
+            val result = trackRepository.getPlaylists(userRepository.loggedInUser.id)
+            playlists.postValue(result)
+        }
+    }
+
+    fun uploadTrackFile(track: Track) =
+        viewModelScope.launch {
+            val userId = userRepository.loggedInUser.id
+            trackRepository.uploadTrackFile(track, userId, uploadProcessLiveData)
+        }
+
+    fun uploadTrackCover(track: Track) =
+        viewModelScope.launch {
+            val userId = userRepository.loggedInUser.id
+            trackRepository.uploadTrackCover(track, userId)
+        }
 
     class Factory(
         private val application: Application,
