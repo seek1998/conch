@@ -10,7 +10,7 @@ object TrackDiffCallback : DiffUtil.ItemCallback<Track>() {
     }
 
     override fun areContentsTheSame(oldItem: Track, newItem: Track): Boolean {
-        return oldItem.id == newItem.id
+        return oldItem.mediaStoreId == newItem.mediaStoreId
     }
 
 }

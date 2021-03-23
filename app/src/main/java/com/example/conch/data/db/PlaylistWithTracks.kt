@@ -12,7 +12,7 @@ data class PlaylistWithTracks(
 
     @Relation(
         parentColumn = "id",
-        entityColumn = "id",
+        entityColumn = "mediaStoreId",
         associateBy = Junction(
             PlaylistTrackCrossRef::class,
             parentColumn = "playlistId",

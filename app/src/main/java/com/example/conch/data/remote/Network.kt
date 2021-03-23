@@ -1,74 +1,70 @@
 package com.example.conch.data.remote
 
-import android.net.Uri
-import com.example.conch.data.Result
+import android.util.Log
+import com.example.conch.data.MyResult
 import com.example.conch.data.model.RegisterInfoVO
 import com.example.conch.data.model.Track
 import com.example.conch.data.model.User
+import com.example.conch.data.remote.api.TrackService
 import com.example.conch.data.remote.api.UserService
+
+private const val STATUS_OK = 1
 
 class Network private constructor() {
 
-    private val OK = 1
-
     private val userService: UserService = ServiceCreator.create(UserService::class.java)
 
-    val remoteTrackPath = "http://conch-music.oss-cn-hangzhou.aliyuncs.com/track/"
+    private val trackService: TrackService = ServiceCreator.create(TrackService::class.java)
 
-    val remoteCoverPath = "http://conch-music.oss-cn-hangzhou.aliyuncs.com/image/"
-
-    suspend fun login(email: String, password: String): Result<User> {
+    suspend fun login(email: String, password: String): MyResult<User> {
         val apiResponse = userService.login(email, password)
-        return if (apiResponse.code == OK) {
-            Result.Success(apiResponse.data)
+        return if (apiResponse.code == STATUS_OK) {
+            MyResult.Success(apiResponse.data)
         } else {
-            Result.Error(Exception(apiResponse.message))
+            MyResult.Error(Exception(apiResponse.message))
         }
 
     }
 
-    suspend fun register(registerInfo: RegisterInfoVO): Result<Nothing> {
+    suspend fun register(registerInfo: RegisterInfoVO): MyResult<Nothing> {
         val apiResponse = userService.register(registerInfo)
-        return if (apiResponse.code == OK) {
-            Result.Success(null)
+        return if (apiResponse.code == STATUS_OK) {
+            MyResult.Success(null)
         } else {
-            Result.Error(Exception(apiResponse.message))
+            MyResult.Error(Exception(apiResponse.message))
         }
     }
 
-    suspend fun getCaptcha(email: String, usage: Int): Result<Nothing> {
+    suspend fun getCaptcha(email: String, usage: Int): MyResult<Nothing> {
         val apiResponse = userService.getCaptcha(email, usage)
-        return if (apiResponse.code == OK) {
-            Result.Success(null)
+        return if (apiResponse.code == STATUS_OK) {
+            MyResult.Success(null)
         } else {
-            Result.Error(Exception(apiResponse.message))
+            MyResult.Error(Exception(apiResponse.message))
         }
     }
 
-    suspend fun fetchTracksByUID(uid: Long): List<Track> {
-        return mutableListOf(
-            Track(
-                id = 1,
-                title = "Genshin Main",
-                artist = "hoyo mix",
-                coverPath = remoteCoverPath + 1 + ".jpg",
-                localPath = Uri.parse(remoteTrackPath + 1 + ".mp3").toString()
-            ),
-            Track(
-                id = 2,
-                title = "Liyue",
-                artist = "hoyo mix",
-                coverPath = remoteCoverPath + 2 + ".jpg",
-                localPath = Uri.parse(remoteTrackPath + 2 + ".mp3").toString()
-            ),
-            Track(
-                id = 2,
-                title = "Qingce",
-                artist = "hoyo mix",
-                coverPath = remoteCoverPath + 3 + ".jpg",
-                localPath = Uri.parse(remoteTrackPath + 3 + ".mp3").toString()
-            )
-        )
+    suspend fun postTrack(track: Track): MyResult<Track> {
+        val apiResponse = trackService.postTrack(track)
+        Log.i(TAG, apiResponse.data.toString())
+        return if (apiResponse.code == STATUS_OK) {
+            val data = apiResponse.data?.apply {
+                albumArt = track.albumArt
+                contentUri = track.contentUri
+            }
+            MyResult.Success(data)
+        } else {
+            MyResult.Error(Exception(apiResponse.message))
+        }
+    }
+
+    suspend fun fetchTracksByUID(uid: Long): MyResult<List<Track>> {
+        val apiResponse = trackService.getAllTracksByUID(uid)
+        return if (apiResponse.code == STATUS_OK) {
+            MyResult.Success(data = apiResponse.data)
+        } else {
+            MyResult.Error(Exception(apiResponse.message))
+        }
     }
 
     companion object {
@@ -84,3 +80,5 @@ class Network private constructor() {
     }
 
 }
+
+private const val TAG = "Network"

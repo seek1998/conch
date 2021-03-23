@@ -12,10 +12,11 @@ import com.example.conch.databinding.ActivityPlaylistBinding
 import com.example.conch.service.MessageEvent
 import com.example.conch.service.MessageType
 import com.example.conch.ui.BaseActivity
-import com.example.conch.ui.main.local.LocalTrackAdapter
+import com.example.conch.ui.adapter.LocalTrackAdapter
 import com.example.conch.ui.track.TrackActivity
 import com.example.conch.utils.InjectUtil
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
+import com.jaeger.library.StatusBarUtil
 import org.greenrobot.eventbus.EventBus
 
 class PlaylistActivity : BaseActivity<ActivityPlaylistBinding, PlaylistViewModel>() {
@@ -26,7 +27,9 @@ class PlaylistActivity : BaseActivity<ActivityPlaylistBinding, PlaylistViewModel
 
         changeStatusBar()
 
-        viewModel.playlistLiveData.postValue(intent.getParcelableExtra("playlist") ?: Playlist())
+        val playlist = intent.getParcelableExtra<Playlist>("playlist")
+
+        viewModel.playlistLiveData.postValue(playlist)
 
         trackAdapter = LocalTrackAdapter({ track: Track -> itemOnClick(track) },
             { track: Track -> trackOptionsOnClick(track) })
@@ -34,6 +37,7 @@ class PlaylistActivity : BaseActivity<ActivityPlaylistBinding, PlaylistViewModel
         binding.rv.apply {
             adapter = trackAdapter
             isSaveEnabled = true
+            scheduleLayoutAnimation()
         }
 
         binding.toolBar.setNavigationOnClickListener {
@@ -57,7 +61,6 @@ class PlaylistActivity : BaseActivity<ActivityPlaylistBinding, PlaylistViewModel
             it?.let {
 
                 if (it.isEmpty()) {
-                    toast(getString(R.string.playlist_has_nothing))
                     binding.toolBarLayout.subtitle = getString(R.string.no_track)
                     return@let
                 }
@@ -95,14 +98,18 @@ class PlaylistActivity : BaseActivity<ActivityPlaylistBinding, PlaylistViewModel
             return
         }
 
-        binding.toolBar.setOnMenuItemClickListener {
-            when (it.itemId) {
-                R.id.navigation_delete -> {
-                    showDialogIfDeletePlaylist()
-                    true
+        binding.toolBar.apply {
+            setOnMenuItemClickListener {
+                when (it.itemId) {
+                    R.id.action_delete -> {
+                        showDialogIfDeletePlaylist()
+                        true
+                    }
+                    else -> true
                 }
-                else -> true
             }
+
+
         }
     }
 
@@ -114,7 +121,7 @@ class PlaylistActivity : BaseActivity<ActivityPlaylistBinding, PlaylistViewModel
                     viewModel.deletePlaylist()
                     this.finish()
                     EventBus.getDefault()
-                        .postSticky(MessageEvent(MessageType.action).put("refresh_playlists"))
+                        .postSticky(MessageEvent(MessageType.ACTION).put("refresh_playlists"))
                 }
             }
             .setNegativeButton(getText(R.string.cancel)) { dialog, _ -> dialog.cancel() }
@@ -122,8 +129,8 @@ class PlaylistActivity : BaseActivity<ActivityPlaylistBinding, PlaylistViewModel
     }
 
     private fun changeStatusBar() {
+        StatusBarUtil.setDarkMode(this)
         window.statusBarColor = Color.TRANSPARENT
-        window.decorView.systemUiVisibility = View.SYSTEM_UI_FLAG_FULLSCREEN
     }
 
     private fun itemOnClick(track: Track) {

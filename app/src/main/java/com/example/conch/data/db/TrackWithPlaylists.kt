@@ -13,7 +13,7 @@ data class TrackWithPlaylists(
     val track: Track,
 
     @Relation(
-        parentColumn = "id",
+        parentColumn = "mediaStoreId",
         entityColumn = "id",
         associateBy = Junction(
             PlaylistTrackCrossRef::class,
@@ -21,5 +21,6 @@ data class TrackWithPlaylists(
             entityColumn = "playlistId"
         )
     )
+
     val playlists: List<Playlist>
 )

@@ -47,8 +47,8 @@
             android:id="@+id/srl"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            app:layout_behavior="@string/appbar_scrolling_view_behavior"
-            android:paddingBottom="48dp">
+            android:paddingBottom="48dp"
+            app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
             <androidx.core.widget.NestedScrollView
                 android:id="@+id/nsv"
@@ -66,9 +66,11 @@
                         android:id="@+id/rv"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
-                        android:scrollbars="vertical"
-                        android:scrollbarStyle="insideOverlay"
+                        android:clipToPadding="false"
+                        android:layoutAnimation="@anim/recycle_view_animation"
                         android:overScrollMode="never"
+                        android:scrollbarStyle="insideOverlay"
+                        android:scrollbars="vertical"
                         app:layoutManager="LinearLayoutManager"
                         tools:listitem="@layout/item_local_track" />
 
@@ -76,14 +78,13 @@
                         android:id="@+id/rv_playlist_bottom"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:background="@drawable/local_track_list_bottom_shape"
+                        android:background="@color/windowBackground"
                         android:gravity="center"
                         android:paddingTop="16dp"
-                        android:layout_marginTop="16dp"
                         android:paddingBottom="96dp"
-                        android:textSize="@dimen/small_text_size"
                         android:text="@string/hint_no_more_content"
-                        android:textColor="@color/white"
+                        android:textColor="@color/secondary_text"
+                        android:textSize="@dimen/small_text_size"
                         android:visibility="gone" />
 
                 </LinearLayout>

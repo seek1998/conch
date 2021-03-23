@@ -1,8 +1,7 @@
-package com.example.conch.ui.main.account
+package com.example.conch.ui.adapter
 
 import android.content.Context
 import android.net.Uri
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -12,7 +11,6 @@ import com.bumptech.glide.Glide
 import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.example.conch.R
 import com.example.conch.data.model.Track
-import com.example.conch.ui.adapter.TrackDiffCallback
 import com.google.android.material.imageview.ShapeableImageView
 import com.google.android.material.textview.MaterialTextView
 import kotlinx.coroutines.CoroutineScope
@@ -42,7 +40,7 @@ class RecentPlayAdapter(private val onClick: (Track) -> Unit, private val contex
                 onClick(track)
             }
 
-            val coverPath = track.coverPath
+            val coverPath = track.albumArt
 
             recentPlayTitle.text = track.title
 
@@ -57,12 +55,6 @@ class RecentPlayAdapter(private val onClick: (Track) -> Unit, private val contex
                 return
             }
 
-//            // 没有封面，则加载默认封面
-//            recentPlayCover.alpha = 0.5F
-//            recentPlayCover.setPadding(4 * 3)
-//            Glide.with(context)
-//                .load(R.drawable.ic_music_note)
-//                .into(recentPlayCover)
         }
     }
 
@@ -73,14 +65,12 @@ class RecentPlayAdapter(private val onClick: (Track) -> Unit, private val contex
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        Log.d(TAG, position.toString())
         val track = getItem(position)
         holder.bind(track)
     }
 
     override fun submitList(list: MutableList<Track>?) {
         super.submitList(list)
-        Log.d(TAG, list.toString())
     }
 }
 

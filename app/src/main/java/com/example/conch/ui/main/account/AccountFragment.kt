@@ -3,7 +3,6 @@ package com.example.conch.ui.main.account
 import android.content.Intent
 import android.os.Handler
 import android.os.Looper
-import android.util.Log
 import android.view.LayoutInflater
 import android.widget.TextView
 import androidx.fragment.app.activityViewModels
@@ -13,6 +12,8 @@ import com.example.conch.data.model.Playlist
 import com.example.conch.data.model.Track
 import com.example.conch.databinding.FragmentAccountBinding
 import com.example.conch.ui.BaseFragment
+import com.example.conch.ui.adapter.PlaylistAdapter
+import com.example.conch.ui.adapter.RecentPlayAdapter
 import com.example.conch.ui.login.LoginActivity
 import com.example.conch.ui.main.MainViewModel
 import com.example.conch.ui.playlist.PlaylistActivity
@@ -39,11 +40,12 @@ class AccountFragment : BaseFragment<FragmentAccountBinding, AccountViewModel>()
 
         binding.btnToFavorite.setOnClickListener {
 
-            val favoritePlaylist = viewModel.getFavoritePlaylist()
+            val playlist = viewModel.getFavoritePlaylist()
 
             val intent = Intent(this.activity, PlaylistActivity::class.java).apply {
-                putExtra("playlist", favoritePlaylist)
+                putExtra("playlist", playlist)
             }
+
             startActivity(intent)
         }
 
@@ -52,8 +54,8 @@ class AccountFragment : BaseFragment<FragmentAccountBinding, AccountViewModel>()
         }
 
         setUpPlaylistRecycleView()
+
         setUpRecentPlayRecycleView()
-        binding.rvRecentPlay.isFocusable = true
     }
 
     private fun setUpRecentPlayRecycleView() {
@@ -73,16 +75,17 @@ class AccountFragment : BaseFragment<FragmentAccountBinding, AccountViewModel>()
 
         mainViewModel.recentPlay.observe(this, {
             it?.let {
-                Log.d(TAG, it.toString())
+
                 if (it.isEmpty()) {
                     binding.tvRecentPlay.text = getString(R.string.no_recent_play)
                     return@let
                 }
+
                 recentPlayAdapter.submitList(it as MutableList<Track>)
 
                 handler.postDelayed({
                     binding.rvRecentPlay.scrollToPosition(0)
-                }, 500)
+                }, 100)
 
             }
         })
@@ -110,7 +113,7 @@ class AccountFragment : BaseFragment<FragmentAccountBinding, AccountViewModel>()
                 val newList =
                     it.dropWhile { playlist -> playlist.id == Playlist.PLAYLIST_FAVORITE_ID }
 
-                //TODO 新建歌单消失
+                //TODO BUG 新建歌单消失
                 playlistAdapter.submitList(newList as MutableList<Playlist>)
             }
         })
@@ -143,10 +146,8 @@ class AccountFragment : BaseFragment<FragmentAccountBinding, AccountViewModel>()
                 }
             }
             .setNegativeButton(getString(R.string.cancel)) { dialog, which ->
-                {
-                    run {
-                        dialog.cancel()
-                    }
+                run {
+                    dialog.cancel()
                 }
             }
             .show()

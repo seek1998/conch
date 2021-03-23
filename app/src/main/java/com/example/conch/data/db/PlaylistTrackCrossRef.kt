@@ -7,5 +7,6 @@ import androidx.room.Entity
 )
 data class PlaylistTrackCrossRef(
     val playlistId: Long,
-    val trackId: Long
+    val trackId: Long,
+    val serialNumber: Int = 0
 )

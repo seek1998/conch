@@ -241,11 +241,11 @@ private fun MediaMetadataCompat.toMediaSource(dataSourceFactory: DataSource.Fact
 
 fun MediaMetadataCompat.toTrack(): Track {
     val track = Track(
-        id = id?.toLong()!!,
+        mediaStoreId = id?.toLong()!!,
         title = title!!,
         artist = artist!!,
-        coverPath = albumArtUri.toString(),
-        localPath = mediaUri.toString(),
+        albumArt = albumArtUri.toString(),
+        contentUri = mediaUri.toString(),
         albumName = displayDescription!!
     )
     return track

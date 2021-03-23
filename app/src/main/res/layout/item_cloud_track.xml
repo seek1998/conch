@@ -1,0 +1,148 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/item_cloud_track"
+    style="@style/ExoMediaButton"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:clickable="true"
+    tools:ignore="HardcodedText">
+
+    <com.google.android.material.textview.MaterialTextView
+        android:id="@+id/item_cloud_track_number"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:layout_marginVertical="16dp"
+        android:layout_marginStart="8dp"
+        android:gravity="center"
+        android:text="1024"
+        android:textSize="@dimen/normal_text_size"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:shapeAppearance="@style/itemLocalTrackImageStyle" />
+
+    <com.google.android.material.textview.MaterialTextView
+        android:id="@+id/item_cloud_track_title"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="8dp"
+        android:ellipsize="end"
+        android:gravity="center_vertical|start"
+        android:maxEms="12"
+        android:maxLines="1"
+        android:paddingVertical="2dp"
+        android:text="@string/track_title"
+        android:textColor="@color/primary_text"
+        android:textSize="@dimen/normal_text_size"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toTopOf="@+id/center_guideline"
+        app:layout_constraintEnd_toStartOf="@+id/item_cloud_track_loading"
+        app:layout_constraintStart_toEndOf="@+id/item_cloud_track_number" />
+
+    <com.google.android.material.textview.MaterialTextView
+        android:id="@+id/item_cloud_track_artist"
+        android:layout_width="wrap_content"
+        android:layout_height="16dp"
+        android:layout_marginStart="4dp"
+        android:ellipsize="end"
+        android:gravity="center_vertical|start"
+        android:maxEms="12"
+        android:maxLines="1"
+        android:text="@string/track_artist"
+        android:textColor="@color/secondary_text"
+        android:textSize="@dimen/small_text_size"
+        app:layout_constraintBottom_toBottomOf="@+id/item_cloud_track_file_size"
+        app:layout_constraintStart_toEndOf="@+id/item_cloud_track_file_size"
+        app:layout_constraintTop_toTopOf="@+id/item_cloud_track_file_size" />
+
+    <com.google.android.material.textview.MaterialTextView
+        android:id="@+id/item_cloud_track_file_size"
+        android:layout_width="wrap_content"
+        android:layout_height="16dp"
+        android:layout_marginStart="4dp"
+        android:background="@drawable/cloud_track_ext_shape"
+        android:ellipsize="end"
+        android:gravity="center_vertical"
+        android:maxEms="8"
+        android:maxLines="1"
+        android:paddingHorizontal="4dp"
+        android:text="34.68MB"
+        android:textAllCaps="true"
+        android:textColor="?attr/colorPrimaryVariant"
+        android:textSize="@dimen/extra_small_text_size"
+        app:layout_constraintBottom_toBottomOf="@+id/item_cloud_track_file_ext"
+        app:layout_constraintStart_toEndOf="@+id/item_cloud_track_file_ext"
+        app:layout_constraintTop_toTopOf="@+id/item_cloud_track_file_ext" />
+
+    <com.google.android.material.textview.MaterialTextView
+        android:id="@+id/item_cloud_track_file_ext"
+        android:layout_width="wrap_content"
+        android:layout_height="16dp"
+        android:background="@drawable/cloud_track_ext_shape"
+        android:ellipsize="end"
+        android:gravity="center_vertical"
+        android:maxEms="8"
+        android:maxLines="1"
+        android:layout_marginTop="2dp"
+        android:paddingHorizontal="4dp"
+        android:text="FLAC"
+        android:textAllCaps="true"
+        android:textColor="@color/light_green_700"
+        android:textSize="@dimen/extra_small_text_size"
+        app:layout_constraintStart_toEndOf="@+id/item_cloud_track_done"
+        app:layout_constraintTop_toTopOf="@+id/center_guideline" />
+
+    <com.google.android.material.imageview.ShapeableImageView
+        android:id="@+id/item_cloud_track_options"
+        style="@style/ExoMediaButton"
+        android:layout_width="wrap_content"
+        android:layout_height="0dp"
+        android:clickable="true"
+        android:padding="8dp"
+        android:src="@drawable/ic_more_vert"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/center_guideline"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintGuide_percent="0.5" />
+
+    <com.google.android.material.internal.BaselineLayout
+        android:id="@+id/item_cloud_track_divider"
+        android:layout_width="match_parent"
+        android:layout_height="0.5dp"
+        android:layout_marginStart="56dp"
+        android:alpha="0.25"
+        android:background="@color/divider"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <com.google.android.material.imageview.ShapeableImageView
+        android:id="@+id/item_cloud_track_done"
+        android:layout_width="20dp"
+        android:layout_height="20dp"
+        android:padding="2dp"
+        android:src="@drawable/ic_check_circle_outline_16_blue900"
+        android:visibility="gone"
+        app:layout_constraintStart_toStartOf="@+id/item_cloud_track_title"
+        app:layout_constraintTop_toBottomOf="@+id/item_cloud_track_title"
+        app:shapeAppearance="@style/circleImageStyle" />
+
+    <androidx.core.widget.ContentLoadingProgressBar
+        android:id="@+id/item_cloud_track_loading"
+        android:layout_width="24dp"
+        android:layout_height="24dp"
+        android:layout_marginEnd="16dp"
+        android:visibility="visible"
+        app:layout_constraintBottom_toTopOf="@+id/center_guideline"
+        app:layout_constraintEnd_toStartOf="@+id/item_cloud_track_options"
+        app:layout_constraintTop_toTopOf="@+id/center_guideline" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

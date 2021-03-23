@@ -4,23 +4,40 @@ import android.app.Dialog
 import android.os.Bundle
 import android.view.LayoutInflater
 import androidx.fragment.app.DialogFragment
+import androidx.fragment.app.activityViewModels
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.conch.R
 import com.example.conch.data.model.Playlist
 import com.example.conch.ui.adapter.PlaylistDialogAdapter
+import com.example.conch.ui.main.MainViewModel
+import com.example.conch.utils.InjectUtil
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.textview.MaterialTextView
 
-class PlaylistDialog(private val onClick: (Playlist) -> Unit, private val data: List<Playlist>) :
+class PlaylistDialog(private val onClick: (Playlist) -> Unit) :
     DialogFragment() {
 
     private lateinit var dialog: BottomSheetDialog
 
+    private lateinit var playlistDialogAdapter: PlaylistDialogAdapter
+
+    private lateinit var playlistsLiveData: LiveData<List<Playlist>>
+
+    private val playlistsObserver = Observer<List<Playlist>> {
+        it?.let {
+            playlistDialogAdapter.submitList(it as MutableList<Playlist>)
+        }
+    }
+
+
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
 
-        val context = requireContext()
-
+        val mainViewModel by activityViewModels<MainViewModel> {
+            InjectUtil.provideMainViewModelFactory(requireActivity())
+        }
 
         val contentView = LayoutInflater.from(requireContext()).inflate(
             R.layout.dialog_playlist,
@@ -28,7 +45,7 @@ class PlaylistDialog(private val onClick: (Playlist) -> Unit, private val data: 
             false
         )
 
-        dialog = BottomSheetDialog(requireContext(), R.style.BottomSheetDialog)
+        this.dialog = BottomSheetDialog(requireContext(), R.style.BottomSheetDialog)
             .apply {
                 setContentView(contentView)
                 show()
@@ -38,8 +55,10 @@ class PlaylistDialog(private val onClick: (Playlist) -> Unit, private val data: 
             orientation = LinearLayoutManager.HORIZONTAL
         }
 
-        val playlistDialogAdapter = PlaylistDialogAdapter(onClick).apply {
-            submitList(data as MutableList<Playlist>)
+        playlistDialogAdapter = PlaylistDialogAdapter(onClick)
+
+        this.playlistsLiveData = mainViewModel.playlists.apply {
+            observeForever(playlistsObserver)
         }
 
         val rvPlaylist = contentView.findViewById<RecyclerView>(R.id.dialog_playlist_rv).apply {
@@ -59,10 +78,12 @@ class PlaylistDialog(private val onClick: (Playlist) -> Unit, private val data: 
         return dialog
     }
 
-    fun cancel() {
-        dialog.cancel()
+    override fun onStop() {
+        super.onStop()
+        this.playlistsLiveData.removeObserver(playlistsObserver)
     }
 
+    fun cancel() = this.dialog.cancel()
 }
 
 

@@ -48,5 +48,7 @@
     <string name="hint_no_more_content">没有更多内容了</string>
     <string name="title_delete">删除</string>
     <string name="track_size">文件大小</string>
+    <string name="action_sync">同步</string>
+    <string name="playlist_favorite">我喜欢的</string>
 
 </resources>

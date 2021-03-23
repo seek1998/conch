@@ -132,7 +132,7 @@ class MusicServiceConnection(context: Context) : CoroutineScope by MainScope() {
             if (!queue.isNullOrEmpty()) {
                 val newQueue = queue.toMediaMetadataCompat()
                 queueTracks.postValue(newQueue)
-                trackRepository.currentQueueTracks = newQueue.toTrack()
+                trackRepository.updateCurrentQueueTracks(newQueue.toTrack())
             }
         }
     }

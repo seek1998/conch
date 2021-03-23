@@ -6,4 +6,26 @@
     android:layout_height="match_parent"
     tools:context=".StartActivity">
 
+    <com.google.android.material.imageview.ShapeableImageView
+        android:id="@+id/shapeableImageView2"
+        android:layout_width="96dp"
+        android:layout_height="96dp"
+        android:src="@drawable/ic_conch_blue900"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.323" />
+
+    <com.google.android.material.textview.MaterialTextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:padding="8dp"
+        android:text="@string/app_name_en"
+        android:textColor="@color/blue_900"
+        app:layout_constraintEnd_toEndOf="@+id/shapeableImageView2"
+        app:layout_constraintStart_toStartOf="@+id/shapeableImageView2"
+        app:layout_constraintTop_toBottomOf="@+id/shapeableImageView2" />
+
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -2,7 +2,7 @@ package com.example.conch.ui.register
 
 import android.app.Application
 import androidx.lifecycle.MutableLiveData
-import com.example.conch.data.Result
+import com.example.conch.data.MyResult
 import com.example.conch.data.UserRepository
 import com.example.conch.data.model.RegisterInfoVO
 import com.example.conch.ui.BaseViewModel
@@ -15,9 +15,9 @@ class RegisterViewModel(application: Application) : BaseViewModel(application) {
 
     private val userRepository = UserRepository.getInstance()
 
-    var captchaResult = MutableLiveData<Result<Nothing>>()
+    var captchaResult = MutableLiveData<MyResult<Nothing>>()
 
-    var registerResult = MutableLiveData<Result<Nothing>>()
+    var registerResult = MutableLiveData<MyResult<Nothing>>()
 
     fun getCaptcha(email: String) {
         GlobalScope.launch(Dispatchers.Main) {

@@ -1,4 +1,4 @@
-package com.example.conch.ui.main.account
+package com.example.conch.ui.adapter
 
 import android.net.Uri
 import android.util.Log
@@ -13,7 +13,6 @@ import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.example.conch.R
 import com.example.conch.data.TrackRepository
 import com.example.conch.data.model.Playlist
-import com.example.conch.ui.adapter.PlaylistDiffCallback
 import com.google.android.material.imageview.ShapeableImageView
 import com.google.android.material.textview.MaterialTextView
 import kotlinx.coroutines.CoroutineScope
@@ -68,10 +67,10 @@ class PlaylistAdapter(
             playlistCover.apply {
                 setPadding(32 * 3)
                 alpha = 0.25F
+                Glide.with(this)
+                    .load(R.drawable.ic_conch)
+                    .into(this)
             }
-            Glide.with(playlistCover)
-                .load(R.drawable.ic_conch)
-                .into(playlistCover)
         }
 
         fun bindLastItem(playlist: Playlist) {
@@ -122,12 +121,11 @@ class PlaylistAdapter(
 
     override fun submitList(list: MutableList<Playlist>?) {
         super.submitList(list)
-        //从歌单中，去除“我喜欢的音乐”
 
-        val newItem = Playlist(id = 0L, "新建歌单")
+        val footer = Playlist(id = 0L, "新建歌单")
 
         if (list?.find { it.id == 0L } == null) {
-            list!!.add(newItem)
+            list!!.add(footer)
         }
 
     }

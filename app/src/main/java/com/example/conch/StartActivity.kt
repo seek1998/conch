@@ -1,6 +1,7 @@
 package com.example.conch
 
 import android.Manifest
+import android.app.ActivityOptions
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
@@ -10,17 +11,18 @@ import com.example.conch.data.UserRepository
 import com.example.conch.data.db.ConchRoomDatabase
 import com.example.conch.data.local.LocalMediaSource
 import com.example.conch.data.local.PersistentStorage
-import com.example.conch.data.model.Playlist
-import com.example.conch.data.model.User
 import com.example.conch.data.remote.ConchOss
 import com.example.conch.data.remote.RemoteMediaSource
 import com.example.conch.ui.main.MainActivity
 import com.permissionx.guolindev.PermissionX
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.MainScope
+import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.launch
 
 class StartActivity : AppCompatActivity(), CoroutineScope by MainScope() {
+
+    private val scope = CoroutineScope(coroutineContext + SupervisorJob())
 
     private lateinit var trackRepository: TrackRepository
 
@@ -31,57 +33,46 @@ class StartActivity : AppCompatActivity(), CoroutineScope by MainScope() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_start)
-
-        initPermission()
-
-        launch {
-
-            initOSSClient()
-            initMediaSource()
-            initRepository()
-
-            trackRepository = TrackRepository.getInstance().apply {
-                updateDateBase(applicationContext)
-            }
-
-            createFavoritePlaylist()
-            trackRepository.loadOldRecentPlay()
-
-            startActivity(Intent(this@StartActivity, MainActivity::class.java))
-        }
+        checkPermission()
     }
 
-    private fun initPermission() {
+    private fun checkPermission() {
         PermissionX.init(this)
             .permissions(
                 Manifest.permission.READ_EXTERNAL_STORAGE,
+                Manifest.permission.WRITE_EXTERNAL_STORAGE,
                 Manifest.permission.FOREGROUND_SERVICE,
+                Manifest.permission.ACCESS_MEDIA_LOCATION,
                 Manifest.permission.CALL_PHONE
             )
             .request { allGranted, grantedList, deniedList ->
+
                 if (allGranted) {
                     Log.i(TAG, "All permissions are granted")
-                } else {
-                    Log.i(TAG, "These permissions are denied: $deniedList")
                 }
+
+                this.initialize()
             }
 
     }
 
-    private suspend fun createFavoritePlaylist() {
-        trackRepository.getPlaylistById(1L).let {
-            if (it == null) {
-                trackRepository.createPlaylist(
-                    Playlist(
-                        1,
-                        "我喜欢的音乐",
-                        size = Playlist.NO_TRACK,
-                        "无描述信息",
-                        User.LOCAL_USER
-                    )
-                )
-            }
+    private fun initialize() = scope.launch {
+
+        initOSSClient()
+        initMediaSource()
+        initRepository()
+
+        trackRepository = TrackRepository.getInstance().apply {
+            //更新Room
+            updateDateBase(applicationContext)
+            //加载上次产生的最近播放到内存
+            loadOldRecentPlay()
         }
+
+        startActivity(
+            Intent(this@StartActivity, MainActivity::class.java),
+            ActivityOptions.makeSceneTransitionAnimation(this@StartActivity).toBundle()
+        )
     }
 
     private fun getDatabase(): ConchRoomDatabase = ConchRoomDatabase.getDatabase(applicationContext)
@@ -91,9 +82,11 @@ class StartActivity : AppCompatActivity(), CoroutineScope by MainScope() {
     private fun initOSSClient() = ConchOss.init(applicationContext)
 
     private fun initMediaSource() {
-        RemoteMediaSource.init(ConchOss.getInstance())
+        val oss = ConchOss.getInstance()
+        RemoteMediaSource.init(oss)
         this.remoteMediaSource = RemoteMediaSource.getInstance()
-        localMediaSource = LocalMediaSource(applicationContext.contentResolver)
+        LocalMediaSource.init(application.contentResolver)
+        this.localMediaSource = LocalMediaSource.getInstance()
     }
 
     private fun initRepository() {

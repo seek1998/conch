@@ -2,7 +2,7 @@ package com.example.conch.ui.login
 
 import android.app.Application
 import androidx.lifecycle.MutableLiveData
-import com.example.conch.data.Result
+import com.example.conch.data.MyResult
 import com.example.conch.data.UserRepository
 import com.example.conch.data.model.User
 import com.example.conch.ui.BaseViewModel
@@ -15,7 +15,7 @@ class LoginViewModel(application: Application) : BaseViewModel(application) {
 
     val userRepository = UserRepository.getInstance()
 
-    var loginResult = MutableLiveData<Result<User>>()
+    var loginResult = MutableLiveData<MyResult<User>>()
 
     fun login(email: String, password: String) {
         GlobalScope.launch(Dispatchers.Main) {

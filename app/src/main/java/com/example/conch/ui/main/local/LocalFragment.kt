@@ -1,6 +1,7 @@
 package com.example.conch.ui.main.local
 
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -15,6 +16,7 @@ import com.example.conch.data.model.Playlist
 import com.example.conch.data.model.Track
 import com.example.conch.databinding.FragmentLocalBinding
 import com.example.conch.ui.BaseFragment
+import com.example.conch.ui.adapter.LocalTrackAdapter
 import com.example.conch.ui.dialog.PlaylistDialog
 import com.example.conch.ui.main.MainViewModel
 import com.example.conch.utils.InjectUtil
@@ -40,6 +42,7 @@ class LocalFragment : BaseFragment<FragmentLocalBinding, LocalViewModel>() {
 
     override fun processLogic() {
         viewModel.getLocalTrackList(requireContext())
+
         localTrackAdapter = LocalTrackAdapter({ track: Track -> itemOnClick(track) },
             { track: Track -> trackOptionsOnClick(track) })
 
@@ -47,10 +50,12 @@ class LocalFragment : BaseFragment<FragmentLocalBinding, LocalViewModel>() {
             adapter = localTrackAdapter
             isSaveEnabled = true
             isSaveFromParentEnabled = true
+            scheduleLayoutAnimation()
         }
 
         viewModel.localTracksLiveData.observe(this, {
             it?.let {
+                Log.d(TAG, it.toString())
                 localTrackAdapter.submitList(it as MutableList<Track>)
                 binding.toolBarLayout.subtitle = "共有${it.size}首歌曲"
                 binding.rvPlaylistBottom.visibility = View.VISIBLE
@@ -69,7 +74,7 @@ class LocalFragment : BaseFragment<FragmentLocalBinding, LocalViewModel>() {
                 viewModel.refreshLocalData(requireContext())
                 //刷新歌单数据
                 mainViewModel.loadAllPlaylist()
-                Toast.makeText(requireContext(), "即将刷新本地数据", Toast.LENGTH_SHORT).show()
+                Toast.makeText(requireContext(), "即将刷新列表", Toast.LENGTH_SHORT).show()
             }
         }
     }
@@ -87,17 +92,12 @@ class LocalFragment : BaseFragment<FragmentLocalBinding, LocalViewModel>() {
 
     private fun trackOptionsOnClick(track: Track) {
 
-        playlistDialog = PlaylistDialog(
-            { playlist: Playlist ->
-                run {
-                    mainViewModel.addTrackToPlaylist(track.id, playlist.id)
-                    playlistDialog.cancel()
-                    toast("已添加到歌单：${playlist.title}")
-                }
-            },
-            mainViewModel.playlists.value!!
-        )
-
+        playlistDialog = PlaylistDialog { playlist: Playlist ->
+            run {
+                mainViewModel.addTrackToPlaylist(track.mediaStoreId, playlist.id)
+                toast("已添加到歌单：${playlist.title}")
+            }
+        }
 
         val contentView = LayoutInflater.from(requireContext())
             .inflate(
@@ -127,7 +127,7 @@ class LocalFragment : BaseFragment<FragmentLocalBinding, LocalViewModel>() {
         val optionFavorite =
             contentView.findViewById<LinearLayout>(R.id.dialog_track_options_btn_favorite).apply {
                 setOnClickListener {
-                    mainViewModel.changeFavoriteMode(track.id)
+                    mainViewModel.changeFavoriteMode(track.mediaStoreId)
                 }
             }
 
@@ -136,7 +136,7 @@ class LocalFragment : BaseFragment<FragmentLocalBinding, LocalViewModel>() {
         val optionDelete =
             contentView.findViewById<LinearLayout>(R.id.dialog_track_options_btn_delete).apply {
                 setOnClickListener {
-                    Toast.makeText(requireContext(), "删除", Toast.LENGTH_SHORT).show()
+                    mainViewModel.deleteLocalTrack(track)
                 }
             }
 
@@ -149,7 +149,6 @@ class LocalFragment : BaseFragment<FragmentLocalBinding, LocalViewModel>() {
 
         val optionFavoriteText =
             contentView.findViewById<MaterialTextView>(R.id.dialog_track_options_favorite_text)
-
 
         val favoriteStateObserver = Observer<Boolean> {
             it?.let {
@@ -167,7 +166,7 @@ class LocalFragment : BaseFragment<FragmentLocalBinding, LocalViewModel>() {
         val dialog = BottomSheetDialog(requireContext(), R.style.BottomSheetDialog).apply {
             setContentView(contentView)
             setOnShowListener {
-                mainViewModel.isFavorite(track.id)
+                mainViewModel.isFavorite(track.mediaStoreId)
                 mainViewModel.isTrackFavorite.observeForever(favoriteStateObserver)
             }
             setOnCancelListener {
@@ -176,7 +175,6 @@ class LocalFragment : BaseFragment<FragmentLocalBinding, LocalViewModel>() {
             }
             setCanceledOnTouchOutside(true)
             setCancelable(true)
-            //TODO 设置背景透明
             delegate.findViewById<FrameLayout>(R.id.design_bottom_sheet)?.apply {
                 setBackgroundColor(requireContext().resources.getColor(R.color.transparent))
             }
@@ -194,9 +192,7 @@ class LocalFragment : BaseFragment<FragmentLocalBinding, LocalViewModel>() {
         }
 
         optionUpload.setOnClickListener {
-            toast("开始上传歌曲")
-            mainViewModel.uploadTrackFile(track)
-            mainViewModel.uploadTrackCover(track)
+            mainViewModel.postTrackToCloud(track)
             dialog.cancel()
         }
 

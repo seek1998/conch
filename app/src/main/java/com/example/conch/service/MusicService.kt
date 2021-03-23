@@ -17,6 +17,7 @@ import androidx.core.content.ContextCompat
 import androidx.media.MediaBrowserServiceCompat
 import com.example.conch.data.TrackRepository
 import com.example.conch.data.local.PersistentStorage
+import com.example.conch.data.model.Playlist
 import com.example.conch.extension.*
 import com.google.android.exoplayer2.*
 import com.google.android.exoplayer2.audio.AudioAttributes
@@ -39,18 +40,13 @@ class MusicService : MediaBrowserServiceCompat(), CoroutineScope by MainScope() 
 
     private lateinit var mediaSessionConnector: MediaSessionConnector
 
-    private lateinit var stateBuilder: PlaybackStateCompat.Builder
-
     private lateinit var player: SimpleExoPlayer
 
     private lateinit var notificationManager: MusicNotificationManager
 
-    //播放列表
-    private var playlist: List<MediaMetadataCompat> = emptyList()
+    private val playlist: MutableList<MediaMetadataCompat> = ArrayList()
 
     private lateinit var mediaSource: MediaSource
-
-    private val remote = "http://conch-music.oss-cn-hangzhou.aliyuncs.com/track/"
 
     private var isForegroundService = false
 
@@ -67,7 +63,6 @@ class MusicService : MediaBrowserServiceCompat(), CoroutineScope by MainScope() 
     override fun onCreate() {
         super.onCreate()
 
-        //点击通知,打开App
         val sessionActivityPendingIntent =
             packageManager?.getLaunchIntentForPackage(packageName)?.let { sessionIntent ->
                 PendingIntent.getActivity(this, 0, sessionIntent, 0)
@@ -75,28 +70,31 @@ class MusicService : MediaBrowserServiceCompat(), CoroutineScope by MainScope() 
 
         session = MediaSessionCompat(this, TAG).apply {
 
-            // Set an initial PlaybackState with ACTION_PLAY, so media buttons can start the player
-            stateBuilder = PlaybackStateCompat.Builder()
+            val state = PlaybackStateCompat.Builder()
                 .setActions(
                     PlaybackStateCompat.ACTION_PLAY
                             or PlaybackStateCompat.ACTION_PLAY_PAUSE
                             or PlaybackStateCompat.ACTION_PLAY_FROM_URI
                             or PlaybackStateCompat.ACTION_SKIP_TO_NEXT
                             or PlaybackStateCompat.ACTION_SKIP_TO_PREVIOUS
-                )
+                ).build()
 
-            setPlaybackState(stateBuilder.build())
-
+            setPlaybackState(state)
             setSessionToken(sessionToken)
             setSessionActivity(sessionActivityPendingIntent)
             isActive = true
         }
 
         initExoPlayer()
+
         initMediaSessionConnector()
 
         launch {
-            mediaSource = trackRepository.fetchTracksFromLocation(this@MusicService)
+            trackRepository.checkCurrentQueueTracks()
+        }
+
+        launch {
+            mediaSource = trackRepository.fetchTracksFromLocation()
                 .toMediaMetadataCompat()
                 .toMediaSource(dataSourceFactory)
         }
@@ -105,16 +103,17 @@ class MusicService : MediaBrowserServiceCompat(), CoroutineScope by MainScope() 
             this,
             session.sessionToken,
             PlayerNotificationListener()
-        )
-        notificationManager.showNotificationForPlayer(player)
+        ).apply {
+            showNotificationForPlayer(player)
+        }
 
         storage = PersistentStorage.getInstance(applicationContext)
-
     }
 
     private fun initMediaSessionConnector() {
         mediaSessionConnector = MediaSessionConnector(session).apply {
             setPlayer(player)
+
             setQueueNavigator(object : TimelineQueueNavigator(session) {
                 override fun getMediaDescription(
                     player: Player,
@@ -123,12 +122,13 @@ class MusicService : MediaBrowserServiceCompat(), CoroutineScope by MainScope() 
                     playlist[windowIndex].description
 
             })
-            setPlaybackPreparer(getPlaybackPreparer())
+
+            setPlaybackPreparer(playbackPreparer())
         }
     }
 
 
-    private fun getPlaybackPreparer() = object : MediaSessionConnector.PlaybackPreparer {
+    private fun playbackPreparer() = object : MediaSessionConnector.PlaybackPreparer {
         override fun onCommand(
             p0: Player,
             p1: ControlDispatcher,
@@ -142,6 +142,7 @@ class MusicService : MediaBrowserServiceCompat(), CoroutineScope by MainScope() 
                     PlaybackStateCompat.ACTION_PLAY_FROM_MEDIA_ID or
                     PlaybackStateCompat.ACTION_PREPARE_FROM_SEARCH or
                     PlaybackStateCompat.ACTION_PLAY_FROM_URI or
+                    PlaybackStateCompat.ACTION_PREPARE_FROM_URI or
                     PlaybackStateCompat.ACTION_PREPARE or
                     PlaybackStateCompat.ACTION_SEEK_TO
 
@@ -149,40 +150,44 @@ class MusicService : MediaBrowserServiceCompat(), CoroutineScope by MainScope() 
         override fun onPrepare(playWhenReady: Boolean) {
 
             val recentSong = storage.loadRecentSong() ?: return
+            val extra = recentSong.description.extras
             onPrepareFromMediaId(
                 recentSong.mediaId!!,
                 playWhenReady,
-                recentSong.description.extras
+                extra
             )
         }
 
-        /**
-         *  调用[transportControls.playFromMediaId()]时被触发
-         */
         override fun onPrepareFromMediaId(
             mediaId: String,
             playWhenReady: Boolean,
             extras: Bundle?
         ) {
             launch {
-                //根据mediaID从本地找到对应的音频文件
+
                 val itemToPlay: MediaMetadataCompat? =
-                    trackRepository.fetchTracksFromLocation(this@MusicService).find { item ->
-                        item.id.toString() == mediaId
+                    trackRepository.fetchTracksFromLocation().find { item ->
+                        item.mediaStoreId.toString() == mediaId
                     }?.toMediaMetadataCompat()
 
                 Log.d(TAG, "itemToPlay:${itemToPlay?.title.toString()}")
 
-                //TODO 替换为当前播放列表
-                val playlist =
-                    trackRepository.getCachedLocalTracks(this@MusicService).toMediaMetadataCompat()
+                extras?.getParcelable<Playlist>("playlist")?.let {
+                    val queue = trackRepository.getTracksByPlaylistId(it.id)
+                    trackRepository.updateCurrentQueueTracks(queue)
+                    playlist.clear()
+                    playlist.addAll(queue.toMediaMetadataCompat())
+                }
+
+                if (playlist.isEmpty()) {
+                    handleEmptyPlaylist()
+                }
 
                 val playbackStartPositionMs =
                     extras?.getLong(
                         MEDIA_DESCRIPTION_EXTRAS_START_PLAYBACK_POSITION_MS,
                         C.TIME_UNSET
-                    )
-                        ?: C.TIME_UNSET
+                    ) ?: C.TIME_UNSET
 
                 if (itemToPlay == null) {
                     Log.w(TAG, "Content not found: MediaID=$mediaId")
@@ -199,9 +204,15 @@ class MusicService : MediaBrowserServiceCompat(), CoroutineScope by MainScope() 
 
         override fun onPrepareFromSearch(p0: String, p1: Boolean, p2: Bundle?) = Unit
 
-        override fun onPrepareFromUri(uri: Uri, p1: Boolean, p2: Bundle?) = Unit
+        override fun onPrepareFromUri(
+            uri: Uri,
+            playWhenReady: Boolean,
+            extras: Bundle?
+        ) {
 
+        }
     }
+
 
     private fun initExoPlayer() {
 
@@ -228,8 +239,6 @@ class MusicService : MediaBrowserServiceCompat(), CoroutineScope by MainScope() 
             if (itemToPlay == null) 0 else metadataList.indexOfFirst { metadata ->
                 metadata.id == itemToPlay.id
             }
-
-        playlist = metadataList
 
         player.playWhenReady = playWhenReady
         player.stop(true)
@@ -263,23 +272,20 @@ class MusicService : MediaBrowserServiceCompat(), CoroutineScope by MainScope() 
             super.onMediaItemTransition(mediaItem, reason)
             mediaItem?.let {
                 serviceScope.launch {
-                    val trackId =
-                        mediaItem.mediaId.substringAfter("content://media/external/audio/media/")
-                            .toLong()
-                    trackRepository.updateRecentPlay(trackId)
+                    mediaItem.mediaId.substringAfter("content://media/external/audio/media/")
+                        .toLong()
+                        .let { mediaStoreId -> trackRepository.updateRecentPlay(mediaStoreId) }
                 }
             }
-
         }
 
+
         override fun onPlayerError(error: ExoPlaybackException) {
-            var message = "出现未知错误"
             when (error.type) {
                 // If the data from MediaSource object could not be loaded the Exoplayer raises
                 // a type_source error.
                 // An error message is printed to UI via Toast message to inform the user.
                 ExoPlaybackException.TYPE_SOURCE -> {
-                    message = "没有找到该媒体信息"
                     Log.e(TAG, "TYPE_SOURCE: " + error.sourceException.message)
                 }
                 // If the error occurs in a render component, Exoplayer raises a type_remote error.
@@ -302,10 +308,22 @@ class MusicService : MediaBrowserServiceCompat(), CoroutineScope by MainScope() 
                     Log.e(TAG, "TYPE_TIMEOUT: " + error.message)
                 }
             }
-            Toast.makeText(applicationContext, message, Toast.LENGTH_LONG).show()
+
+            Toast.makeText(applicationContext, "出现未知错误", Toast.LENGTH_LONG).show()
         }
     }
 
+    private fun handleEmptyPlaylist() {
+        val queue = trackRepository.currentQueueTracks
+        if (queue.isNotEmpty()) {
+            playlist.addAll(queue.toMediaMetadataCompat())
+        } else {
+            serviceScope.launch {
+                trackRepository.checkCurrentQueueTracks()
+                handleEmptyPlaylist()
+            }
+        }
+    }
 
     private inner class PlayerNotificationListener :
         PlayerNotificationManager.NotificationListener {
@@ -348,12 +366,8 @@ class MusicService : MediaBrowserServiceCompat(), CoroutineScope by MainScope() 
     }
 
     private fun saveRecentSongToStorage() {
-
-        // Obtain the current song details *before* saving them on a separate thread, otherwise
-        // the current player may have been unloaded by the time the save routine runs.
         val description = playlist[player.currentWindowIndex].description
         val position = player.currentPosition
-
         serviceScope.launch {
             storage.saveRecentSong(
                 description,
@@ -380,13 +394,10 @@ class MusicService : MediaBrowserServiceCompat(), CoroutineScope by MainScope() 
                 result.sendResult(ArrayList())
             }
             MY_MEDIA_ROOT_ID -> {
-                result.detach()//将信息从当前线程中移除，允许后续调用sendResult方法
-                val platItems = ArrayList<MediaMetadataCompat>()
-                val platitems = playlist.forEach {
-                }
+                //将信息从当前线程中移除，允许后续调用sendResult方法
+                result.detach()
+
                 val metadata = MediaMetadataCompat.Builder()
-                    .putString(MediaMetadataCompat.METADATA_KEY_MEDIA_ID, remote)
-                    .putString(MediaMetadataCompat.METADATA_KEY_TITLE, "原神")
                     .build()
                 val mediaItems = mutableListOf(createMediaItem(metadata))
                 result.sendResult(mediaItems)

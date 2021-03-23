@@ -6,7 +6,6 @@ import android.text.TextUtils
 import android.util.Log
 import android.widget.ImageView
 import android.widget.SeekBar
-import androidx.databinding.DataBindingUtil
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.example.conch.R
@@ -84,7 +83,7 @@ class TrackActivity : BaseActivity<ActivityTrackBinding, TrackViewModel>() {
         binding.toolBar.apply {
             setOnMenuItemClickListener {
                 when (it.itemId) {
-                    R.id.more -> {
+                    R.id.navigation_more -> {
                         true
                     }
                     else -> false
@@ -144,10 +143,9 @@ class TrackActivity : BaseActivity<ActivityTrackBinding, TrackViewModel>() {
     }
 
     private fun initDataBinding() {
-        binding = DataBindingUtil.setContentView(this, R.layout.activity_track)
-        binding.lifecycleOwner = this
+
         binding.uiNowPlayingMetadata = NowPlayingMetadata()
-        //使标题textView开启跑马灯
+
         binding.tvTrackTitle.apply {
             isSingleLine = true
             ellipsize = TextUtils.TruncateAt.MARQUEE
@@ -166,14 +164,14 @@ class TrackActivity : BaseActivity<ActivityTrackBinding, TrackViewModel>() {
         setupLastAndNextTrackCover()
     }
 
-    private fun setupLastAndNextTrackCover() {
+    private fun setupLastAndNextTrackCover() = with(binding) {
 
         viewModel.previousTrack?.let {
-            setupAlbumArt(Uri.parse(it.coverPath), binding.ivPreviousAlbumImage)
+            setupAlbumArt(Uri.parse(it.albumArt), ivPreviousAlbumImage)
         }
 
         viewModel.nextTrack?.let {
-            setupAlbumArt(Uri.parse(it.coverPath), binding.ivNextAlbumImage)
+            setupAlbumArt(Uri.parse(it.albumArt), ivNextAlbumImage)
         }
     }
 

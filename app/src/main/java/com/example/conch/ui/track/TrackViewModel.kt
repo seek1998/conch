@@ -36,7 +36,8 @@ class TrackViewModel constructor(
 
     val playMode: LiveData<SupportedPlayMode> = musicServiceConnection.playMode
 
-    val queueTracks: LiveData<List<MediaMetadataCompat>> = musicServiceConnection.queueTracks
+    private val queueTracks: LiveData<List<MediaMetadataCompat>> =
+        musicServiceConnection.queueTracks
 
     private var playbackState: PlaybackStateCompat = EMPTY_PLAYBACK_STATE
 
@@ -58,7 +59,7 @@ class TrackViewModel constructor(
     private val handler = Handler(Looper.getMainLooper())
 
     private val mediaMetadataObserver = Observer<MediaMetadataCompat> {
-        Log.d(TAG, "监测到mediaMetaData变化， 新id:${it.id}")
+        Log.i(TAG, "mediaMetaData changed: new id:${it.id}")
         onMetadataChanged(it)
     }
 
@@ -110,8 +111,8 @@ class TrackViewModel constructor(
         val newNowPlayingMetadata = NowPlayingMetadata(
             id = newMetadata.id.orEmpty(),
             albumArtUri = newMetadata.displayIconUri,
-            title = newMetadata.displayTitle?.trim(),
-            subtitle = newMetadata.displaySubtitle?.trim(),
+            title = newMetadata.displayTitle,
+            subtitle = newMetadata.displaySubtitle,
             duration = NowPlayingMetadata.timestampToMSS(newMetadata.duration),
             _duration = floor(newMetadata.duration / 1E3).toInt()
         )
@@ -119,25 +120,25 @@ class TrackViewModel constructor(
         this.nowPlayingMetadata.postValue(newNowPlayingMetadata)
     }
 
-    private fun updatePreviousAndNextTrack(trackId: Long) {
+    private fun updatePreviousAndNextTrack(mediaStoreId: Long) {
         viewModelScope.launch {
 
             queueTracks.value?.let { list ->
 
-                val index = list.indexOf(list.find { it.id == trackId.toString() })
+                val index = list.indexOf(list.find { it.id == mediaStoreId.toString() })
 
                 previousTrack = if (index == 0) {
                     null
                 } else {
                     val previousTrackId = list[index - 1].id!!.toLong()
-                    trackRepository.getTrack(previousTrackId)
+                    trackRepository.getTrackByMediaStoreId(previousTrackId)
                 }
 
                 nextTrack = if (index == list.size - 1) {
                     null
                 } else {
                     val nextTrackId = list[index + 1].id!!.toLong()
-                    trackRepository.getTrack(nextTrackId)
+                    trackRepository.getTrackByMediaStoreId(nextTrackId)
                 }
 
             }
@@ -179,7 +180,6 @@ class TrackViewModel constructor(
         musicServiceConnection.playbackState.removeObserver(playbackStateObserver)
         musicServiceConnection.nowPlaying.removeObserver(mediaMetadataObserver)
 
-        // 停止加载进度
         updatePosition = false
     }
 
@@ -195,7 +195,7 @@ class TrackViewModel constructor(
                 isFavorite.postValue(false)
             } else {
                 trackRepository.addTrackToPlaylist(
-                    trackId = nowPlayingMetadata.value!!.id.toLong(),
+                    mediaStoreId = nowPlayingMetadata.value!!.id.toLong(),
                     playlistId = Playlist.PLAYLIST_FAVORITE_ID
                 )
                 isFavorite.postValue(true)

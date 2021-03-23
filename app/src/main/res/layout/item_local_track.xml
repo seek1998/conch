@@ -4,6 +4,7 @@
     style="@style/ExoMediaButton"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    android:backgroundTint="@color/windowBackground"
     android:clickable="true">
 
     <com.google.android.material.imageview.ShapeableImageView
@@ -26,7 +27,7 @@
         android:layout_marginStart="8dp"
         android:ellipsize="end"
         android:gravity="start"
-        android:maxEms="8"
+        android:maxEms="12"
         android:maxLines="1"
         android:text="@string/track_title"
         android:textColor="@color/primary_text"
@@ -42,18 +43,19 @@
         android:layout_marginStart="8dp"
         android:ellipsize="end"
         android:gravity="center"
+        android:maxEms="12"
+        android:maxLines="1"
         android:text="@string/track_artist"
         android:textColor="@color/secondary_text"
         android:textSize="@dimen/small_text_size"
         app:layout_constraintStart_toEndOf="@+id/item_local_track_cover"
         app:layout_constraintTop_toTopOf="@+id/center_guideline" />
 
-
     <com.google.android.material.imageview.ShapeableImageView
         android:id="@+id/item_local_track_options"
-        style="@style/ExoMediaButton"
         android:layout_width="wrap_content"
-        android:layout_height="0dp"
+        android:layout_height="wrap_content"
+        android:background="?attr/selectableItemBackgroundBorderless"
         android:clickable="true"
         android:padding="8dp"
         android:src="@drawable/ic_more_vert"
@@ -73,7 +75,6 @@
         android:layout_width="match_parent"
         android:layout_height="0.5dp"
         android:alpha="0.25"
-        android:layout_marginStart="56dp"
         android:background="@color/divider"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"

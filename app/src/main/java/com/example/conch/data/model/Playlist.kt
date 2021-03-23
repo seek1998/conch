@@ -10,12 +10,13 @@ import kotlinx.parcelize.Parcelize
 @Entity
 @Parcelize
 data class Playlist(
-    @field:PrimaryKey(autoGenerate = true) var id: Long = 0,
-    var title: String = "",
+    @field:PrimaryKey(autoGenerate = true) val id: Long = 0L,
+    val title: String = "",
     var size: Int = NO_TRACK,
-    var description: String = "",
-    @field:ColumnInfo(defaultValue = "0") var uid: Long = 0
+    val description: String = "",
+    @field:ColumnInfo(defaultValue = "0") val uid: Long = 0L
 ) : Parcelable {
+
     companion object {
         @Ignore
         const val NO_TRACK = 0

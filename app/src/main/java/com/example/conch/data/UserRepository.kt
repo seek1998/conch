@@ -12,10 +12,10 @@ class UserRepository(database: ConchRoomDatabase) {
     var loggedInUser: User = User()
         private set
 
-    suspend fun login(email: String, password: String): Result<User> {
+    suspend fun login(email: String, password: String): MyResult<User> {
         val result = network.login(email, password)
 
-        if (result is Result.Success) {
+        if (result is MyResult.Success) {
             loggedInUser = result.data as User
         }
 

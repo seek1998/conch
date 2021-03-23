@@ -76,8 +76,8 @@
                     android:textColor="@color/secondary_text"
                     app:icon="@drawable/ic_login"
                     app:iconTint="@color/secondary_text"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintTop_toTopOf="parent" />
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent" />
 
             </androidx.constraintlayout.widget.ConstraintLayout>
 

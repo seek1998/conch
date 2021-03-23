@@ -6,7 +6,7 @@ import android.text.TextWatcher
 import android.widget.Toast
 import androidx.core.content.ContextCompat
 import com.example.conch.R
-import com.example.conch.data.Result
+import com.example.conch.data.MyResult
 import com.example.conch.data.model.User
 import com.example.conch.databinding.ActivityLoginBinding
 import com.example.conch.ui.BaseActivity
@@ -45,11 +45,11 @@ class LoginActivity : BaseActivity<ActivityLoginBinding, LoginViewModel>() {
         viewModel.loginResult.observe(this, {
             val loginResult = it
 
-            if (loginResult is Result.Success) {
+            if (loginResult is MyResult.Success) {
                 loginResult.data?.let { it1 -> updateUiWithUser(it1) }
             }
 
-            if (loginResult is Result.Error) {
+            if (loginResult is MyResult.Error) {
                 showLoginFailed(loginResult.exception.message)
             }
         })

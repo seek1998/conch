@@ -9,6 +9,7 @@ import android.support.v4.media.MediaMetadataCompat
 import android.support.v4.media.session.PlaybackStateCompat
 import android.util.Log
 import androidx.lifecycle.*
+import com.example.conch.data.MyResult
 import com.example.conch.data.TrackRepository
 import com.example.conch.data.UserRepository
 import com.example.conch.data.model.Playlist
@@ -34,10 +35,6 @@ class MainViewModel(
 
     private val handler = Handler(Looper.getMainLooper())
 
-    val uploadProcessLiveData = MutableLiveData<Int>().apply {
-        0
-    }
-
     val isTrackFavorite: MutableLiveData<Boolean> = MutableLiveData()
 
     val recentPlay = MutableLiveData<List<Track>>()
@@ -45,6 +42,8 @@ class MainViewModel(
     val playlists = MutableLiveData<List<Playlist>>().apply {
         emptyList<Playlist>()
     }
+
+    val postTrackInfoResult = MutableLiveData<MyResult<Track>>()
 
     private var updateRecentPlay = true
 
@@ -124,7 +123,6 @@ class MainViewModel(
         queue!!.forEach {
             tracks.add(it.title!!)
         }
-
         return tracks
     }
 
@@ -141,7 +139,7 @@ class MainViewModel(
         val transportControls = musicServiceConnection.transportControls
 
         val isPrepared = musicServiceConnection.playbackState.value?.isPrepared ?: false
-        if (isPrepared && track.id.toString() == nowPlaying?.id) {
+        if (isPrepared && track.mediaStoreId.toString() == nowPlaying?.id) {
             musicServiceConnection.playbackState.value?.let { playbackState ->
                 when {
                     playbackState.isPlaying -> {
@@ -154,13 +152,13 @@ class MainViewModel(
                     else -> {
                         Log.w(
                             TAG, "Playable item clicked but neither play nor pause are enabled!" +
-                                    " (mediaId=${track.id})"
+                                    " (mediaId=${track.mediaStoreId})"
                         )
                     }
                 }
             }
         } else {
-            transportControls.playFromMediaId(track.id.toString(), extra)
+            transportControls.playFromMediaId(track.mediaStoreId.toString(), extra)
         }
     }
 
@@ -211,17 +209,23 @@ class MainViewModel(
         }
     }
 
-    fun uploadTrackFile(track: Track) =
+    fun postTrackToCloud(track: Track) =
         viewModelScope.launch {
-            val userId = userRepository.loggedInUser.id
-            trackRepository.uploadTrackFile(track, userId, uploadProcessLiveData)
+            track.uid = userRepository.loggedInUser.id
+            val result = trackRepository.postTrack(track)
+            postTrackInfoResult.postValue(result)
         }
 
-    fun uploadTrackCover(track: Track) =
+    fun getTrackFromCloud(track: Track) =
         viewModelScope.launch {
-            val userId = userRepository.loggedInUser.id
-            trackRepository.uploadTrackCover(track, userId)
+            track
         }
+
+    fun deleteLocalTrack(track: Track) =
+        viewModelScope.launch {
+            trackRepository.deleteLocalTrack(track)
+        }
+
 
     class Factory(
         private val application: Application,

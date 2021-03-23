@@ -13,52 +13,13 @@
         <item name="android:statusBarColor" tools:targetApi="l">@color/white</item>
         <item name="android:windowLightStatusBar">true</item>
         <!-- Customize your theme here. -->
+        <!--        <item name="android:windowIsTranslucent">true</item>-->
+        <!--        <item name="android:windowBackground">@color/windowBackground</item>-->
+
     </style>
 
     <style name="AppTheme.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />
 
     <style name="AppTheme.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
-
-    <style name="MyExpandedTitleTextAppearance" parent="TextAppearance.Widget.AppCompat.Toolbar.Title">
-        <item name="android:textSize">32sp</item>
-        <item name="android:textColor">@color/primary_text</item>
-    </style>
-
-    <style name="MyExpandedSubTitleTextAppearance" parent="TextAppearance.Widget.AppCompat.Toolbar.Title">
-        <item name="android:textSize">14sp</item>
-        <item name="android:textColor">@color/secondary_text</item>
-    </style>
-
-    <style name="MyCollapsedTitleTextAppearance" parent="TextAppearance.Widget.AppCompat.Toolbar.Title">
-        <item name="android:textSize">18sp</item>
-        <item name="android:textColor">@color/primary_text</item>
-    </style>
-
-    <style name="MyCollapsedSubTitleTextAppearance" parent="TextAppearance.Widget.AppCompat.Toolbar.Title">
-        <item name="android:textSize">12sp</item>
-        <item name="android:textColor">@color/secondary_text</item>
-    </style>
-
-    <style name="PlaylistExpandedTitleTextAppearance" parent="TextAppearance.Widget.AppCompat.Toolbar.Title">
-        <item name="android:textSize">28sp</item>
-        <item name="android:textColor">@color/white</item>
-        <item name="android:textStyle">bold</item>
-    </style>
-
-    <style name="PlaylistExpandedSubTitleTextAppearance" parent="TextAppearance.Widget.AppCompat.Toolbar.Title">
-        <item name="android:textSize">14sp</item>
-        <item name="android:textColor">@color/white</item>
-
-    </style>
-
-    <style name="PlaylistCollapsedTitleTextAppearance" parent="TextAppearance.Widget.AppCompat.Toolbar.Title">
-        <item name="android:textSize">18sp</item>
-        <item name="android:textColor">@color/white</item>
-    </style>
-
-    <style name="PlaylistCollapsedSubTitleTextAppearance" parent="TextAppearance.Widget.AppCompat.Toolbar.Title">
-        <item name="android:textSize">12sp</item>
-        <item name="android:textColor">@color/white</item>
-    </style>
 
 </resources>

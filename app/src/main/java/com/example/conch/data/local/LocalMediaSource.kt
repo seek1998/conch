@@ -1,25 +1,42 @@
 package com.example.conch.data.local
 
+import android.annotation.SuppressLint
 import android.content.ContentResolver
 import android.content.ContentUris
 import android.net.Uri
 import android.provider.MediaStore
 import android.util.Log
 import com.example.conch.data.model.Track
+import com.example.conch.extension.getIntValue
+import com.example.conch.extension.getLongValue
+import com.example.conch.extension.getStringValue
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import java.io.IOException
 import java.io.InputStream
 
-class LocalMediaSource(private val contentResolver: ContentResolver) {
+@SuppressLint("InlinedApi")
+class LocalMediaSource private constructor(private val contentResolver: ContentResolver) {
 
+    fun deleteTrack(track: Track) {
 
-    suspend fun deleteTrack(track: Track) {
-        val uri = Uri.parse(track.localPath)
-        contentResolver.delete(uri, null, null)
+        try {
+
+            val where = "${MediaStore.Audio.Media._ID} = ?"
+            val args = arrayOf(track.mediaStoreId.toString())
+            val uri = MediaStore.Audio.Media.EXTERNAL_CONTENT_URI
+            contentResolver.delete(uri, where, args)
+
+        } catch (ignored: Exception) {
+
+        }
     }
 
-    suspend fun getTracks(): List<Track> {
+    suspend fun insertTrack(track: Track) {
+
+    }
+
+    suspend fun getTracks(): MutableList<Track> {
         val tracks = mutableListOf<Track>()
 
         withContext(Dispatchers.IO) {
@@ -31,59 +48,52 @@ class LocalMediaSource(private val contentResolver: ContentResolver) {
                 MediaStore.Audio.Media.ALBUM,
                 MediaStore.Audio.Media.DURATION,
                 MediaStore.Audio.Media.SIZE,
-                MediaStore.Audio.Media.MIME_TYPE
+                MediaStore.Audio.Media.MIME_TYPE,
+                MediaStore.Audio.Media.DATA
             )
+
+            val uri = MediaStore.Audio.Media.EXTERNAL_CONTENT_URI
             val selection = null
             val selectionArgs = null
             val sortOrder = "${MediaStore.Audio.Media.DATE_ADDED} DESC"
 
             contentResolver.query(
-                MediaStore.Audio.Media.EXTERNAL_CONTENT_URI,
+                uri,
                 projection,
                 selection,
                 selectionArgs,
                 sortOrder
             )?.use { cursor ->
-                val idColumn = cursor.getColumnIndexOrThrow(MediaStore.Audio.Media._ID)
-                val titleColumn = cursor.getColumnIndexOrThrow(MediaStore.Audio.Media.TITLE)
-                val artistColumn = cursor.getColumnIndexOrThrow(MediaStore.Audio.Media.ARTIST)
-                val albumIdColumn = cursor.getColumnIndexOrThrow(MediaStore.Audio.Media.ALBUM_ID)
-                val albumColumn = cursor.getColumnIndexOrThrow(MediaStore.Audio.Media.ALBUM)
-                val audioDuration = cursor.getColumnIndexOrThrow(MediaStore.Audio.Media.DURATION)
-                val fileSize = cursor.getColumnIndexOrThrow(MediaStore.Audio.Media.SIZE)
-                val fileType = cursor.getColumnIndexOrThrow(MediaStore.Audio.Media.MIME_TYPE)
-
                 Log.i(TAG, "Found ${cursor.count} Tracks")
 
                 while (cursor.moveToNext()) {
-                    val id = cursor.getLong(idColumn)
-                    val title = cursor.getString(titleColumn)
-                    val artist = cursor.getString(artistColumn)
-                    val albumId = cursor.getLong(albumIdColumn)
-                    val album = cursor.getString(albumColumn)
-                    val duration = cursor.getString(audioDuration)
-                    val size = cursor.getLong(fileSize)
+                    val id = cursor.getLongValue(MediaStore.Audio.Media._ID)
+                    val title = cursor.getStringValue(MediaStore.Audio.Media.TITLE)
+                    val artist = cursor.getStringValue(MediaStore.Audio.Media.ARTIST)
+                    val albumId = cursor.getLongValue(MediaStore.Audio.Media.ALBUM_ID)
+                    val album = cursor.getStringValue(MediaStore.Audio.Media.ALBUM)
+                    val duration = cursor.getIntValue(MediaStore.Audio.Media.DURATION)
+                    val size = cursor.getLongValue(MediaStore.Audio.Media.SIZE)
                     val cover = getAlbumCoverPathFromAlbumId(contentResolver, albumId)
                     val contentUri: Uri =
                         ContentUris.withAppendedId(MediaStore.Audio.Media.EXTERNAL_CONTENT_URI, id)
-                    val contentType = cursor.getString(fileType)
+                    val contentType = cursor.getStringValue(MediaStore.Audio.Media.MIME_TYPE)
+                    val path = cursor.getStringValue(MediaStore.Audio.Media.DATA)
 
                     val item = Track(
-                        id = id,
                         mediaStoreId = id,
                         title = title,
                         artist = artist,
                         albumId = albumId,
                         albumName = album,
-                        coverPath = cover,
-                        localPath = contentUri.toString(),
+                        albumArt = cover,
+                        contentUri = contentUri.toString(),
+                        path = path,
                         duration = duration,
                         size = size,
                         type = contentType
                     )
-
-                    tracks += item
-                    Log.v(TAG, "Added Tracks: $item")
+                    tracks.add(item)
                 }
             }
         }
@@ -98,7 +108,7 @@ class LocalMediaSource(private val contentResolver: ContentResolver) {
         val albumArtUri =
             Uri.parse("content://media/external/audio/albumart")
         val coverUri = ContentUris.withAppendedId(albumArtUri, albumId)
-        Log.d(TAG, coverUri.toString())
+        Log.i(TAG, coverUri.toString())
 
         return try {
             val inputStream: InputStream? = contentResolver.openInputStream(coverUri)
@@ -109,6 +119,21 @@ class LocalMediaSource(private val contentResolver: ContentResolver) {
         } catch (e: IllegalStateException) {
             ""
         }
+    }
+
+    companion object {
+
+        @Volatile
+        private var instance: LocalMediaSource? = null
+
+        fun init(contentResolver: ContentResolver) {
+            synchronized(this) {
+                instance ?: LocalMediaSource(contentResolver)
+                    .also { instance = it }
+            }
+        }
+
+        fun getInstance() = instance!!
     }
 }
 

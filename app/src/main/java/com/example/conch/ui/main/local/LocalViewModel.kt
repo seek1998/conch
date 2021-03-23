@@ -23,7 +23,7 @@ class LocalViewModel(
 
     fun getLocalTrackList(context: Context) {
         GlobalScope.launch(Dispatchers.IO) {
-            val list = trackRepository.getCachedLocalTracks(context)
+            val list = trackRepository.getCachedLocalTracks()
             localTracksLiveData.postValue(list)
         }
     }
@@ -31,11 +31,10 @@ class LocalViewModel(
     fun refreshLocalData(context: Context) {
         viewModelScope.launch {
             trackRepository.updateDateBase(context.applicationContext)
-            trackRepository.getCachedLocalTracks(context, true)
+            trackRepository.getCachedLocalTracks(true)
             getLocalTrackList(context)
         }
     }
-
 
 }
 

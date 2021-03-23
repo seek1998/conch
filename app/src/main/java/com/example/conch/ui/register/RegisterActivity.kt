@@ -3,7 +3,7 @@ package com.example.conch.ui.register
 import android.content.Intent
 import android.widget.Toast
 import com.example.conch.R
-import com.example.conch.data.Result
+import com.example.conch.data.MyResult
 import com.example.conch.data.model.RegisterInfoVO
 import com.example.conch.databinding.ActivityRegisterBinding
 import com.example.conch.ui.BaseActivity
@@ -40,11 +40,11 @@ class RegisterActivity : BaseActivity<ActivityRegisterBinding, RegisterViewModel
         viewModel.captchaResult.observe(this, {
             val result = it
 
-            if (result is Result.Success) {
+            if (result is MyResult.Success) {
                 sendCaptchaSucceeded()
             }
 
-            if (result is Result.Error) {
+            if (result is MyResult.Error) {
                 showErrorMessage(result.exception.message)
             }
         })
@@ -52,17 +52,16 @@ class RegisterActivity : BaseActivity<ActivityRegisterBinding, RegisterViewModel
         viewModel.registerResult.observe(this, {
             val result = it
 
-            if (result is Result.Success) {
+            if (result is MyResult.Success) {
                 registerSucceeded()
             }
 
-            if (result is Result.Error) {
+            if (result is MyResult.Error) {
                 showErrorMessage(result.exception.message)
             }
 
         })
     }
-
 
     private fun registerSucceeded() {
         Toast.makeText(applicationContext, "注册成功", Toast.LENGTH_LONG).show()

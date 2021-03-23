@@ -8,7 +8,6 @@ interface CrossRefDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insert(vararg crossRef: PlaylistTrackCrossRef)
 
-    // 返回删除的行数
     @Delete
     suspend fun delete(vararg crossRef: PlaylistTrackCrossRef): Int
 

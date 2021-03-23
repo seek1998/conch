@@ -35,7 +35,8 @@ class PlaylistViewModel(
         val transportControls = musicServiceConnection.transportControls
 
         val isPrepared = musicServiceConnection.playbackState.value?.isPrepared ?: false
-        if (isPrepared && track.id.toString() == nowPlaying?.id) {
+
+        if (isPrepared && track.mediaStoreId.toString() == nowPlaying?.id) {
             musicServiceConnection.playbackState.value?.let { playbackState ->
                 when {
                     playbackState.isPlaying -> {
@@ -48,24 +49,23 @@ class PlaylistViewModel(
                     else -> {
                         Log.w(
                             TAG, "Playable item clicked but neither play nor pause are enabled!" +
-                                    " (mediaId=${track.id})"
+                                    " (mediaId=${track.mediaStoreId})"
                         )
                     }
                 }
             }
         } else {
-            transportControls.playFromMediaId(track.id.toString(), null)
+            transportControls.playFromMediaId(track.mediaStoreId.toString(), null)
         }
     }
 
 
-    fun getPlaylistTracks(id: Long) {
+    fun getPlaylistTracks(playlistId: Long) =
         viewModelScope.launch {
-            val result = trackRepository.getTracksByPlaylistId(playlistId = id)
-            Log.d(TAG, result.toString())
+            val result = trackRepository.getTracksByPlaylistId(playlistId)
+            Log.d(TAG, "tracks of the playlist [$playlistId]: $result")
             tracksLiveData.postValue(result)
         }
-    }
 
     fun getPlaylistCover(id: Long) {
         viewModelScope.launch {

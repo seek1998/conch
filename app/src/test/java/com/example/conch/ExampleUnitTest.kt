@@ -1,5 +1,6 @@
 package com.example.conch
 
+import com.example.conch.data.dto.IOProgress
 import org.junit.Test
 
 /**
@@ -11,12 +12,8 @@ class ExampleUnitTest {
 
 
     @Test
-    fun login_test2() {
-       print("".isEmpty())
-
+    fun test() {
+        val ioProgress = IOProgress(0, 342121340, 342121342)
+        print(ioProgress.progress)
     }
-
-
-
-
 }
