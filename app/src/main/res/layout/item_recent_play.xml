@@ -10,21 +10,21 @@
 
     <com.google.android.material.imageview.ShapeableImageView
         android:id="@+id/item_recent_play_cover"
-        android:layout_width="64dp"
-        android:layout_height="64dp"
+        android:layout_width="96dp"
+        android:layout_height="96dp"
         android:src="@drawable/ic_play_arrow_blue900"
         app:shapeAppearance="@style/itemPlaylistImageStyle" />
 
     <com.google.android.material.textview.MaterialTextView
         android:id="@+id/item_recent_play_title"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_gravity="center_horizontal"
         android:ellipsize="end"
-        android:maxEms="4"
+        android:gravity="center"
+        android:maxEms="6"
         android:maxLines="1"
+        android:padding="4dp"
         android:text="@string/track_title"
-        android:textColor="@color/primary_text"
-        android:textSize="@dimen/small_text_size" />
+        android:textColor="@color/primary_text" />
 
 </LinearLayout>

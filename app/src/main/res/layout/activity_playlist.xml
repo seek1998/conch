@@ -20,7 +20,6 @@
             android:layout_width="match_parent"
             android:layout_height="232dp"
             android:fitsSystemWindows="true"
-            android:theme="@style/AppTheme.AppBarOverlay"
             app:expanded="true">
 
             <com.google.android.material.appbar.SubtitleCollapsingToolbarLayout
@@ -95,11 +94,29 @@
                     android:textColor="@color/secondary_text"
                     android:textSize="@dimen/normal_text_size" />
 
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+
+                    <com.google.android.material.button.MaterialButtonToggleGroup
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content">
+
+                        <com.google.android.material.button.MaterialButton
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="播放"
+                            app:icon="@drawable/ic_round_play_arrow_16_write" />
+                    </com.google.android.material.button.MaterialButtonToggleGroup>
+
+                </LinearLayout>
+
                 <androidx.recyclerview.widget.RecyclerView
                     android:id="@+id/rv"
                     android:layout_width="match_parent"
-                    android:layoutAnimation="@anim/recycle_view_animation"
                     android:layout_height="match_parent"
+                    android:layoutAnimation="@anim/recycle_view_animation"
                     android:overScrollMode="never"
                     app:layoutManager="LinearLayoutManager"
                     tools:listitem="@layout/item_local_track" />
@@ -118,19 +135,6 @@
             </LinearLayout>
 
         </androidx.core.widget.NestedScrollView>
-
-        <com.google.android.material.floatingactionbutton.FloatingActionButton
-            android:id="@+id/ac_playlist_btn"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_margin="16dp"
-
-            app:layout_anchor="@id/app_bar"
-            app:layout_anchorGravity="bottom|end"
-            app:pressedTranslationZ="2dp"
-            app:rippleColor="@color/divider"
-            app:srcCompat="@drawable/ic_round_play_arrow_16_write"
-            app:tint="@color/white" />
 
     </androidx.coordinatorlayout.widget.CoordinatorLayout>
 </layout>

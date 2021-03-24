@@ -106,12 +106,12 @@ class RemoteTrackIOViewModel(application: Application) : AndroidViewModel(applic
 
     private fun uploadTrackCover(track: Track) =
         viewModelScope.launch {
-            trackRepository.uploadTrackCover(track, userId)
+            trackRepository.uploadTrackCover(track)
         }
 
     private fun uploadTrackFile(track: Track) =
         viewModelScope.launch {
-            trackRepository.uploadTrackFile(track, userId, currentUploadProgress)
+            trackRepository.uploadTrackFile(track, currentUploadProgress)
         }
 
     @Suppress("ThrowableNotThrown")

@@ -1,13 +1,11 @@
 package com.example.conch.ui.main.local
 
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.FrameLayout
 import android.widget.LinearLayout
-import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Observer
@@ -24,6 +22,7 @@ import com.example.conch.utils.SizeUtils
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.imageview.ShapeableImageView
 import com.google.android.material.textview.MaterialTextView
+import kotlinx.coroutines.launch
 
 
 class LocalFragment : BaseFragment<FragmentLocalBinding, LocalViewModel>() {
@@ -41,7 +40,7 @@ class LocalFragment : BaseFragment<FragmentLocalBinding, LocalViewModel>() {
     }
 
     override fun processLogic() {
-        viewModel.getLocalTrackList(requireContext())
+        viewModel.getLocalTracks()
 
         localTrackAdapter = LocalTrackAdapter({ track: Track -> itemOnClick(track) },
             { track: Track -> trackOptionsOnClick(track) })
@@ -55,10 +54,16 @@ class LocalFragment : BaseFragment<FragmentLocalBinding, LocalViewModel>() {
 
         viewModel.localTracksLiveData.observe(this, {
             it?.let {
-                Log.d(TAG, it.toString())
+
                 localTrackAdapter.submitList(it as MutableList<Track>)
                 binding.toolBarLayout.subtitle = "共有${it.size}首歌曲"
                 binding.rvPlaylistBottom.visibility = View.VISIBLE
+
+                if (binding.srl.isRefreshing) {
+                    binding.srl.isRefreshing = false
+                    val message = getString(R.string.list_refresh_over)
+                    toast(message)
+                }
             }
         })
 
@@ -67,14 +72,16 @@ class LocalFragment : BaseFragment<FragmentLocalBinding, LocalViewModel>() {
     }
 
     private fun setupSwipeRefreshLayout() {
+
         binding.srl.apply {
+
             setColorSchemeResources(R.color.blue_900)
+
             setOnRefreshListener {
-                isRefreshing = false
-                viewModel.refreshLocalData(requireContext())
-                //刷新歌单数据
-                mainViewModel.loadAllPlaylist()
-                Toast.makeText(requireContext(), "即将刷新列表", Toast.LENGTH_SHORT).show()
+                scope.launch {
+                    viewModel.refreshLocalData()
+                    mainViewModel.loadAllPlaylist()
+                }
             }
         }
     }
@@ -140,7 +147,6 @@ class LocalFragment : BaseFragment<FragmentLocalBinding, LocalViewModel>() {
                 }
             }
 
-
         val optionCancel =
             contentView.findViewById<MaterialTextView>(R.id.dialog_track_options_btn_cancel)
 
@@ -205,7 +211,6 @@ class LocalFragment : BaseFragment<FragmentLocalBinding, LocalViewModel>() {
             dialog.cancel()
         }
     }
-
 
     private fun itemOnClick(track: Track) {
         mainViewModel.playTrack(track)

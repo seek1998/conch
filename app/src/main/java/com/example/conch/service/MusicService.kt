@@ -52,9 +52,11 @@ class MusicService : MediaBrowserServiceCompat(), CoroutineScope by MainScope() 
 
     private val playerListener = PlayerEventListener()
 
+    private lateinit var playbackPreparer: MediaSessionConnector.PlaybackPreparer
+
     private lateinit var storage: PersistentStorage
 
-    private var trackRepository = TrackRepository.getInstance()
+    private val trackRepository = TrackRepository.getInstance()
 
     private val dataSourceFactory: DefaultDataSourceFactory by lazy {
         DefaultDataSourceFactory(this, Util.getUserAgent(this, MUSIC_USER_AGENT), null)
@@ -68,7 +70,7 @@ class MusicService : MediaBrowserServiceCompat(), CoroutineScope by MainScope() 
                 PendingIntent.getActivity(this, 0, sessionIntent, 0)
             }
 
-        session = MediaSessionCompat(this, TAG).apply {
+        this.session = MediaSessionCompat(this, TAG).apply {
 
             val state = PlaybackStateCompat.Builder()
                 .setActions(
@@ -85,6 +87,8 @@ class MusicService : MediaBrowserServiceCompat(), CoroutineScope by MainScope() 
             isActive = true
         }
 
+        this.playbackPreparer = getPlaybackPreparer()
+
         initExoPlayer()
 
         initMediaSessionConnector()
@@ -94,7 +98,7 @@ class MusicService : MediaBrowserServiceCompat(), CoroutineScope by MainScope() 
         }
 
         launch {
-            mediaSource = trackRepository.fetchTracksFromLocation()
+            mediaSource = trackRepository.getCachedLocalTracks()
                 .toMediaMetadataCompat()
                 .toMediaSource(dataSourceFactory)
         }
@@ -107,28 +111,11 @@ class MusicService : MediaBrowserServiceCompat(), CoroutineScope by MainScope() 
             showNotificationForPlayer(player)
         }
 
-        storage = PersistentStorage.getInstance(applicationContext)
+        this.storage = PersistentStorage.getInstance(applicationContext)
     }
 
-    private fun initMediaSessionConnector() {
-        mediaSessionConnector = MediaSessionConnector(session).apply {
-            setPlayer(player)
+    private fun getPlaybackPreparer() = object : MediaSessionConnector.PlaybackPreparer {
 
-            setQueueNavigator(object : TimelineQueueNavigator(session) {
-                override fun getMediaDescription(
-                    player: Player,
-                    windowIndex: Int
-                ): MediaDescriptionCompat =
-                    playlist[windowIndex].description
-
-            })
-
-            setPlaybackPreparer(playbackPreparer())
-        }
-    }
-
-
-    private fun playbackPreparer() = object : MediaSessionConnector.PlaybackPreparer {
         override fun onCommand(
             p0: Player,
             p1: ControlDispatcher,
@@ -166,7 +153,7 @@ class MusicService : MediaBrowserServiceCompat(), CoroutineScope by MainScope() 
             launch {
 
                 val itemToPlay: MediaMetadataCompat? =
-                    trackRepository.fetchTracksFromLocation().find { item ->
+                    trackRepository.getCachedLocalTracks().find { item ->
                         item.mediaStoreId.toString() == mediaId
                     }?.toMediaMetadataCompat()
 
@@ -229,6 +216,23 @@ class MusicService : MediaBrowserServiceCompat(), CoroutineScope by MainScope() 
         }
     }
 
+    private fun initMediaSessionConnector() {
+        mediaSessionConnector = MediaSessionConnector(session).apply {
+            setPlayer(player)
+
+            setQueueNavigator(object : TimelineQueueNavigator(session) {
+                override fun getMediaDescription(
+                    player: Player,
+                    windowIndex: Int
+                ): MediaDescriptionCompat =
+                    playlist[windowIndex].description
+
+            })
+
+            setPlaybackPreparer(playbackPreparer)
+        }
+    }
+
     private fun preparePlaylist(
         metadataList: List<MediaMetadataCompat>,
         itemToPlay: MediaMetadataCompat?,
@@ -267,7 +271,6 @@ class MusicService : MediaBrowserServiceCompat(), CoroutineScope by MainScope() 
             }
         }
 
-
         override fun onMediaItemTransition(mediaItem: MediaItem?, reason: Int) {
             super.onMediaItemTransition(mediaItem, reason)
             mediaItem?.let {
@@ -278,7 +281,6 @@ class MusicService : MediaBrowserServiceCompat(), CoroutineScope by MainScope() 
                 }
             }
         }
-
 
         override fun onPlayerError(error: ExoPlaybackException) {
             when (error.type) {
@@ -315,6 +317,7 @@ class MusicService : MediaBrowserServiceCompat(), CoroutineScope by MainScope() 
 
     private fun handleEmptyPlaylist() {
         val queue = trackRepository.currentQueueTracks
+
         if (queue.isNotEmpty()) {
             playlist.addAll(queue.toMediaMetadataCompat())
         } else {
@@ -376,7 +379,6 @@ class MusicService : MediaBrowserServiceCompat(), CoroutineScope by MainScope() 
         }
     }
 
-
     override fun onGetRoot(
         clientPackageName: String,
         clientUid: Int,
@@ -391,7 +393,8 @@ class MusicService : MediaBrowserServiceCompat(), CoroutineScope by MainScope() 
     ) {
         when (parentId) {
             MY_EMPTY_MEDIA_ROOT_ID -> {
-                result.sendResult(ArrayList())
+                val empty = ArrayList<MediaBrowserCompat.MediaItem>()
+                result.sendResult(empty)
             }
             MY_MEDIA_ROOT_ID -> {
                 //将信息从当前线程中移除，允许后续调用sendResult方法

@@ -8,17 +8,24 @@ import androidx.databinding.DataBindingUtil
 import androidx.databinding.ViewDataBinding
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.MainScope
+import kotlinx.coroutines.SupervisorJob
 
-abstract class BaseActivity<VDB : ViewDataBinding, VM : BaseViewModel> : AppCompatActivity() {
+abstract class BaseActivity<VDB : ViewDataBinding, VM : BaseViewModel> : AppCompatActivity(),
+    CoroutineScope by MainScope() {
 
     protected lateinit var binding: VDB
 
     protected lateinit var viewModel: VM
 
+    protected lateinit var activityScope: CoroutineScope
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
         binding = DataBindingUtil.setContentView(this, getLayoutId())
+
         binding.lifecycleOwner = this
 
         viewModel = ViewModelProvider(this, object : ViewModelProvider.Factory {
@@ -27,6 +34,8 @@ abstract class BaseActivity<VDB : ViewDataBinding, VM : BaseViewModel> : AppComp
                 return getViewModelInstance() as T
             }
         }).get(getViewModelClass())
+
+        activityScope = CoroutineScope(coroutineContext + SupervisorJob())
 
         processLogic()
     }

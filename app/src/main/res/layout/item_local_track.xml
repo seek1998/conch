@@ -4,7 +4,7 @@
     style="@style/ExoMediaButton"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:backgroundTint="@color/windowBackground"
+    android:backgroundTint="@color/white"
     android:clickable="true">
 
     <com.google.android.material.imageview.ShapeableImageView

@@ -110,10 +110,9 @@ data class MessageEvent(var type: MessageType) {
 
 enum class MessageType {
     ACTION,
+    ACTION_PLAY_TRACK,
     ACTION_UPDATE_MEDIA_STORE,
     TRACK_DATA,
     TRACK_STATE_PLAYING,
     PLAYLIST_ACTION_ADD_TRACK
 }
-
-const val KEY_ACTION_UPDATE_MEDIA_STORE = "key_action_update_media_store"

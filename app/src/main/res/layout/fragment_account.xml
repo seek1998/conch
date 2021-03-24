@@ -7,167 +7,201 @@
 
     </data>
 
-
-    <LinearLayout
+    <ScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:orientation="vertical"
+        android:layout_marginBottom="142dp"
+        android:overScrollMode="never"
+        android:scrollbars="none"
         tools:context=".ui.main.account.AccountFragment">
 
-        <com.google.android.material.card.MaterialCardView
-            android:id="@+id/materialCardView"
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginHorizontal="16dp"
-            android:layout_marginTop="16dp"
-            android:clickable="true"
-            android:elevation="8dp"
-            app:cardCornerRadius="16dp"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent">
+            android:orientation="vertical">
 
-            <androidx.constraintlayout.widget.ConstraintLayout
+            <com.google.android.material.card.MaterialCardView
+                android:id="@+id/materialCardView"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:background="@color/transparent"
-                android:padding="8dp">
+                android:layout_marginHorizontal="16dp"
+                android:layout_marginTop="16dp"
+                android:clickable="true"
+                android:elevation="8dp"
+                app:cardCornerRadius="16dp">
+
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@color/transparent"
+                    android:padding="8dp">
+
+                    <com.google.android.material.imageview.ShapeableImageView
+                        android:id="@+id/account_head_portrait"
+                        android:layout_width="96dp"
+                        android:layout_height="96dp"
+                        android:src="@drawable/ic_account_box"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent" />
+
+                    <com.google.android.material.textview.MaterialTextView
+                        android:id="@+id/account_username"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:gravity="center"
+                        android:padding="4dp"
+                        android:text="@string/local_user"
+                        android:textColor="@color/primary_text"
+                        android:textSize="18sp"
+                        android:textStyle="bold"
+                        app:layout_constraintEnd_toEndOf="@+id/account_head_portrait"
+                        app:layout_constraintStart_toStartOf="@+id/account_head_portrait"
+                        app:layout_constraintTop_toBottomOf="@+id/account_head_portrait" />
+
+                    <com.google.android.material.textview.MaterialTextView
+                        android:id="@+id/account_email"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:gravity="center"
+                        android:padding="4dp"
+                        android:text="@string/email_example"
+                        android:textColor="@color/secondary_text"
+                        android:textSize="16sp"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintStart_toStartOf="@+id/account_username"
+                        app:layout_constraintTop_toBottomOf="@+id/account_username" />
+
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/btn_account_login"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:background="@android:color/transparent"
+                        android:text="@string/login"
+                        android:textColor="@color/secondary_text"
+                        app:icon="@drawable/ic_login"
+                        app:iconTint="@color/secondary_text"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent" />
+
+                </androidx.constraintlayout.widget.ConstraintLayout>
+
+            </com.google.android.material.card.MaterialCardView>
+
+            <com.google.android.material.internal.BaselineLayout
+                android:id="@+id/baselineLayout"
+                android:layout_width="match_parent"
+                android:layout_height="0.5dp"
+                android:layout_margin="16dp"
+                android:alpha="0.25"
+                android:background="@color/divider" />
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/btn_to_favorite"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="16dp"
+                android:background="@drawable/playlist_favorite_shape"
+                android:padding="16dp">
+
+                <androidx.constraintlayout.widget.Guideline
+                    android:id="@+id/center_guideline"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    app:layout_constraintGuide_percent="0.5" />
 
                 <com.google.android.material.imageview.ShapeableImageView
-                    android:id="@+id/account_head_portrait"
-                    android:layout_width="96dp"
-                    android:layout_height="96dp"
-                    android:src="@drawable/ic_account_box"
+                    android:id="@+id/iv_playlist_favorite_cover"
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:background="@color/windowBackground"
+                    android:src="@drawable/ic_favorite_border_blue900_16"
+                    app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent" />
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:shapeAppearance="@style/itemPlaylistImageStyle" />
 
                 <com.google.android.material.textview.MaterialTextView
-                    android:id="@+id/account_username"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="8dp"
-                    android:gravity="center"
-                    android:text="@string/local_user"
+                    android:layout_marginStart="8dp"
+                    android:padding="2dp"
+                    android:text="@string/playlist_favorite"
                     android:textColor="@color/primary_text"
-                    android:textSize="18sp"
-                    android:textStyle="bold"
-                    app:layout_constraintBottom_toTopOf="@+id/account_email"
-                    app:layout_constraintEnd_toEndOf="@+id/account_head_portrait"
-                    app:layout_constraintStart_toStartOf="@+id/account_head_portrait"
-                    app:layout_constraintTop_toBottomOf="@+id/account_head_portrait" />
+                    android:textSize="@dimen/normal_text_size"
+                    app:layout_constraintBottom_toTopOf="@+id/center_guideline"
+                    app:layout_constraintStart_toEndOf="@+id/iv_playlist_favorite_cover" />
 
                 <com.google.android.material.textview.MaterialTextView
-                    android:id="@+id/account_email"
+                    android:id="@+id/tv_playlist_favorite_count"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginBottom="8dp"
-                    android:gravity="center"
-                    android:text="@string/email_example"
+                    android:layout_marginStart="8dp"
+                    android:padding="2dp"
+                    android:text="@string/no_track"
                     android:textColor="@color/secondary_text"
-                    android:textSize="16sp"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintStart_toStartOf="@+id/account_username" />
+                    android:textSize="@dimen/small_text_size"
+                    app:layout_constraintStart_toEndOf="@+id/iv_playlist_favorite_cover"
+                    app:layout_constraintTop_toTopOf="@+id/center_guideline" />
 
-                <com.google.android.material.button.MaterialButton
-                    android:id="@+id/btn_account_login"
+                <androidx.appcompat.widget.AppCompatImageView
+                    style="@style/ExoMediaButton"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:background="@android:color/transparent"
-                    android:text="@string/login"
-                    android:textColor="@color/secondary_text"
-                    app:icon="@drawable/ic_login"
-                    app:iconTint="@color/secondary_text"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintEnd_toEndOf="parent" />
+                    android:clickable="true"
+                    android:src="@drawable/ic_arrow_forward"
+                    android:translationZ="16dp"
+                    app:layout_constraintBottom_toBottomOf="@+id/btn_to_favorite"
+                    app:layout_constraintEnd_toEndOf="@+id/btn_to_favorite"
+                    app:layout_constraintTop_toTopOf="@+id/btn_to_favorite" />
 
             </androidx.constraintlayout.widget.ConstraintLayout>
 
-        </com.google.android.material.card.MaterialCardView>
-
-        <com.google.android.material.internal.BaselineLayout
-            android:id="@+id/baselineLayout"
-            android:layout_width="match_parent"
-            android:layout_height="0.5dp"
-            android:layout_margin="16dp"
-            android:alpha="0.25"
-            android:background="@color/divider" />
-
-        <androidx.constraintlayout.widget.ConstraintLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content">
-
-            <com.google.android.material.button.MaterialButton
-                android:id="@+id/btn_to_favorite"
-                android:layout_width="match_parent"
-                android:layout_height="72dp"
-                android:layout_marginHorizontal="16dp"
-                android:backgroundTint="@color/blue_900"
-                android:elevation="0dp"
-                android:gravity="start|center_vertical"
-                android:text="@string/favorite_tracks"
-                app:cornerRadius="16dp"
-                app:icon="@drawable/ic_favorite_border"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
-
-            <androidx.appcompat.widget.AppCompatImageView
-                style="@style/ExoMediaButton"
+            <com.google.android.material.textview.MaterialTextView
+                android:id="@+id/tv_recent_play"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginEnd="16dp"
-                android:clickable="true"
-                android:src="@drawable/ic_arrow_forward"
-                android:translationZ="16dp"
-                app:layout_constraintBottom_toBottomOf="@+id/btn_to_favorite"
-                app:layout_constraintEnd_toEndOf="@+id/btn_to_favorite"
-                app:layout_constraintTop_toTopOf="@+id/btn_to_favorite" />
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="16dp"
+                android:text="@string/recent_playlist"
+                android:textColor="@color/primary_text"
+                android:textSize="@dimen/big_text_size"
+                android:textStyle="bold" />
 
-        </androidx.constraintlayout.widget.ConstraintLayout>
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/rv_recent_play"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:overScrollMode="never"
+                android:paddingStart="16dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/tv_recent_play"
+                tools:ignore="RtlSymmetry"
+                tools:listitem="@layout/item_recent_play" />
 
-        <com.google.android.material.textview.MaterialTextView
-            android:id="@+id/tv_recent_play"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="16dp"
-            android:layout_marginTop="16dp"
-            android:text="@string/recent_playlist"
-            android:textColor="@color/primary_text"
-            android:textSize="@dimen/big_text_size"
-            android:textStyle="bold" />
+            <com.google.android.material.textview.MaterialTextView
+                android:id="@+id/materialTextView3"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="16dp"
+                android:text="@string/my_playlist"
+                android:textColor="@color/primary_text"
+                android:textSize="@dimen/big_text_size"
+                android:textStyle="bold" />
 
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/rv_recent_play"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
-            android:overScrollMode="never"
-            android:paddingStart="16dp"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/tv_recent_play"
-            tools:ignore="RtlSymmetry"
-            tools:listitem="@layout/item_recent_play" />
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/rv_playlist"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:overScrollMode="never"
+                android:paddingHorizontal="16dp"
+                tools:listitem="@layout/item_playlist" />
+        </LinearLayout>
 
-        <com.google.android.material.textview.MaterialTextView
-            android:id="@+id/materialTextView3"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="16dp"
-            android:layout_marginTop="16dp"
-            android:text="@string/my_playlist"
-            android:textColor="@color/primary_text"
-            android:textSize="@dimen/big_text_size"
-            android:textStyle="bold" />
-
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/rv_playlist"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
-            android:overScrollMode="never"
-            android:paddingHorizontal="16dp"
-            tools:listitem="@layout/item_playlist" />
-    </LinearLayout>
+    </ScrollView>
 
 </layout>

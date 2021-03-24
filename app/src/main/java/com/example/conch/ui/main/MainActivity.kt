@@ -1,6 +1,9 @@
 package com.example.conch.ui.main
 
+import android.content.Context
 import android.content.Intent
+import android.media.AudioDeviceInfo
+import android.media.AudioManager
 import android.media.MediaScannerConnection
 import android.net.Uri
 import android.os.Bundle
@@ -55,6 +58,10 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
+        viewModel.loadAllPlaylist()
+
+        viewModel.checkRecentPlay()
+
         mainPlayCard = findViewById(R.id.main_card)
         tvNowPlayingTitle = findViewById(R.id.main_tv_title)
         tvNowPlayingArtist = findViewById(R.id.main_tv_artist)
@@ -69,10 +76,6 @@ class MainActivity : AppCompatActivity() {
         val navView = findViewById<BottomNavigationView>(R.id.nav_view)
 
         navView.setupWithNavController(navController)
-
-        viewModel.checkRecentPlay()
-
-        viewModel.loadAllPlaylist()
 
         viewModel.nowPlayingMetadata.observe(this, {
             it?.let {
@@ -128,8 +131,6 @@ class MainActivity : AppCompatActivity() {
                 }
             }
         })
-
-
     }
 
     override fun onStart() {
@@ -142,59 +143,9 @@ class MainActivity : AppCompatActivity() {
         EventBus.getDefault().unregister(this)
     }
 
-    @Subscribe(threadMode = ThreadMode.BACKGROUND, sticky = true)
-    fun onEvent(message: MessageEvent) {
-        when (message.getString()) {
-            "refresh_playlists" -> viewModel.loadAllPlaylist()
-        }
-    }
-
-    @Subscribe(threadMode = ThreadMode.BACKGROUND)
-    fun onPlaylistEvent(message: MessageEvent) {
-        if (message.type == MessageType.PLAYLIST_ACTION_ADD_TRACK) {
-
-        }
-    }
-
-    @Subscribe(threadMode = ThreadMode.MAIN)
-    fun onPlayEvent(message: MessageEvent) {
-        if (message.type == MessageType.TRACK_DATA) {
-            Log.d(TAG, "get event")
-            message.getParcelable<Track>("track_to_play")?.let {
-                Log.d(TAG, it.toString())
-                viewModel.playTrack(track = it)
-            }
-        }
-    }
-
-    @Subscribe(threadMode = ThreadMode.MAIN, sticky = true)
-    fun onMediaScanEvent(messageEvent: MessageEvent) {
-        if (messageEvent.type == MessageType.ACTION_UPDATE_MEDIA_STORE) {
-
-            val path = application.getExternalFilesDir(Environment.DIRECTORY_MUSIC)!!.path
-            val types = arrayOf("audio/mpeg", "audio/flac", "audio/x-wav, image/jpeg")
-            Log.d(TAG, "Path: $path")
-            MediaScannerConnection.scanFile(
-                applicationContext,
-                arrayOf(path),
-                types,
-                object : MediaScannerConnection.MediaScannerConnectionClient {
-                    override fun onScanCompleted(path: String?, uri: Uri?) {
-
-                        //扫描完成后，更新应用数据库
-                        viewModel.refreshLocalData(applicationContext)
-                        Log.d(TAG, "Uri: ${uri.toString()}")
-                    }
-
-                    override fun onMediaScannerConnected() {
-
-                    }
-                })
-        }
-
-    }
 
     private fun observerRemoteIOProgress() {
+
         remoteTrackViewModel.currentUploadProgress.observe(
             this,
             remoteTrackViewModel.uploadProgressObserver
@@ -255,6 +206,20 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+    /**
+     * 检测设备是否使用耳机
+     */
+    private fun isWired(): Boolean {
+        val audioManager = getSystemService(Context.AUDIO_SERVICE) as AudioManager
+        audioManager.getDevices(AudioManager.GET_DEVICES_OUTPUTS).onEach {
+            val deviceType = it.type
+            return (deviceType == AudioDeviceInfo.TYPE_WIRED_HEADSET
+                    || deviceType == AudioDeviceInfo.TYPE_WIRED_HEADPHONES
+                    || deviceType == AudioDeviceInfo.TYPE_BLUETOOTH_A2DP
+                    || deviceType == AudioDeviceInfo.TYPE_BLUETOOTH_SCO)
+        }
+        return false
+    }
 
     private var pressedTime = 0L
 
@@ -270,6 +235,50 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+
+    @Subscribe(threadMode = ThreadMode.BACKGROUND, sticky = true)
+    fun onEvent(message: MessageEvent) {
+        when (message.getString()) {
+            "refresh_playlists" -> viewModel.loadAllPlaylist()
+        }
+    }
+
+    @Subscribe(threadMode = ThreadMode.BACKGROUND)
+    fun onPlaylistEvent(message: MessageEvent) {
+        if (message.type == MessageType.PLAYLIST_ACTION_ADD_TRACK) {
+
+        }
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    fun onPlayEvent(message: MessageEvent) {
+        if (message.type == MessageType.TRACK_DATA) {
+            message.getParcelable<Track>("track_to_play")?.let {
+                viewModel.playTrack(it)
+            }
+        }
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN, sticky = true)
+    fun onMediaScanEvent(messageEvent: MessageEvent) {
+        if (messageEvent.type == MessageType.ACTION_UPDATE_MEDIA_STORE) {
+            val path = application.getExternalFilesDir(Environment.DIRECTORY_MUSIC)!!.path
+            val types = arrayOf("audio/mpeg", "audio/flac", "audio/x-wav, image/jpeg")
+            MediaScannerConnection.scanFile(
+                applicationContext, arrayOf(path), types,
+                object : MediaScannerConnection.MediaScannerConnectionClient {
+                    override fun onScanCompleted(path: String?, uri: Uri?) {
+                        viewModel.refreshLocalData()
+                    }
+
+                    override fun onMediaScannerConnected() {
+
+                    }
+
+                })
+        }
+
+    }
 }
 
 private const val TAG = "MainActivity"

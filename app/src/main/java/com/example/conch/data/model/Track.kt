@@ -20,7 +20,6 @@ data class Track(
     @field:Ignore
     @Expose(serialize = false, deserialize = false)
     var contentUri: String = "",
-    @field:Ignore
     @Expose(serialize = false, deserialize = false)
     var path: String = "",//本地存储路径
     var duration: Int = 0,//时长(单位毫秒)

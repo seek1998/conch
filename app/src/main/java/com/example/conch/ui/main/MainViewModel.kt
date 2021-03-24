@@ -1,7 +1,6 @@
 package com.example.conch.ui.main
 
 import android.app.Application
-import android.content.Context
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
@@ -21,6 +20,7 @@ import com.example.conch.service.MusicServiceConnection
 import com.example.conch.service.NOTHING_PLAYING
 import com.example.conch.ui.BaseViewModel
 import com.example.conch.ui.track.NowPlayingMetadata
+import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
 import kotlin.math.floor
 
@@ -51,15 +51,12 @@ class MainViewModel(
         NowPlayingMetadata(title = "标题", subtitle = "作者")
     }
 
-    private var prepared = false
-
-    val queueTracks: LiveData<List<MediaMetadataCompat>> = musicServiceConnection.queueTracks
+    private val queueTracks: LiveData<List<MediaMetadataCompat>> =
+        musicServiceConnection.queueTracks
 
     private var playbackState: PlaybackStateCompat = EMPTY_PLAYBACK_STATE
 
-    val btnPlayPauseLevel = MutableLiveData<Int>().apply {
-        0
-    }
+    val btnPlayPauseLevel = MutableLiveData<Int>()
 
     private val playbackStateObserver = Observer<PlaybackStateCompat> {
         playbackState = it ?: EMPTY_PLAYBACK_STATE
@@ -85,6 +82,7 @@ class MainViewModel(
         //若歌曲没有信息改变，则不更新NowPlayingMetadata
         if (newMetadata.id.toString() != nowPlayingMetadata.value?.id) {
             onMetadataChanged(newMetadata)
+            checkRecentPlay()
         }
 
         btnPlayPauseLevel.postValue(
@@ -128,10 +126,11 @@ class MainViewModel(
 
     fun checkRecentPlay(): Boolean = handler.postDelayed({
         val newData = trackRepository.getRecentPlay()
-        if (recentPlay.value != newData)
+
+        if (recentPlay.value != newData) {
             recentPlay.postValue(newData)
-        if (updateRecentPlay)
-            checkRecentPlay()
+        }
+
     }, 1000L)
 
     fun playTrack(track: Track, pauseAllowed: Boolean = true, extra: Bundle? = null) {
@@ -181,6 +180,8 @@ class MainViewModel(
                     trackRepository.addTrackToPlaylist(trackId, playlistId)
                     isTrackFavorite.postValue(true)
                 }
+
+                loadAllPlaylist()
             }
         }
 
@@ -191,9 +192,9 @@ class MainViewModel(
         musicServiceConnection.nowPlaying.removeObserver(mediaMetadataObserver)
     }
 
-    fun refreshLocalData(context: Context) {
+    fun refreshLocalData() {
         viewModelScope.launch {
-            trackRepository.updateDateBase(context.applicationContext)
+            trackRepository.getCachedLocalTracks(refresh = true)
         }
     }
 
@@ -216,16 +217,15 @@ class MainViewModel(
             postTrackInfoResult.postValue(result)
         }
 
-    fun getTrackFromCloud(track: Track) =
-        viewModelScope.launch {
-            track
-        }
-
     fun deleteLocalTrack(track: Track) =
         viewModelScope.launch {
             trackRepository.deleteLocalTrack(track)
         }
 
+    fun getPlaylistCover(playlist: Playlist) =
+        viewModelScope.async {
+            return@async trackRepository.getPlaylistCoverPath(playlist.id)
+        }
 
     class Factory(
         private val application: Application,

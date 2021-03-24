@@ -250,12 +250,10 @@ class RemoteMediaSource private constructor(private val oss: OSSClient) :
         eventBus.post(messageEvent)
     }
 
-
-    private fun filesToMultipartBody(files: List<File>): MultipartBody {
+    private fun filesToMultipartBody(files: List<File>, mime: String): MultipartBody {
         val builder = MultipartBody.Builder()
         for (file in files) {
-            // TODO: 16-4-2  这里为了简单起见，没有判断file的类型
-            val requestBody: RequestBody = file.asRequestBody("image/png".toMediaTypeOrNull())
+            val requestBody: RequestBody = file.asRequestBody(mime.toMediaTypeOrNull())
             builder.addFormDataPart("file", file.name, requestBody)
         }
         builder.setType(MultipartBody.FORM)

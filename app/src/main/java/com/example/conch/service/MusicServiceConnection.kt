@@ -34,12 +34,11 @@ class MusicServiceConnection(context: Context) : CoroutineScope by MainScope() {
 
     private val scope = CoroutineScope(coroutineContext + SupervisorJob())
 
-    //播放队列
     val queueTracks = MutableLiveData<List<MediaMetadataCompat>>().apply {
         postValue(EMPTY_QUEUE)
     }
 
-    lateinit var mediaController: MediaControllerCompat
+    private lateinit var mediaController: MediaControllerCompat
 
     private val trackRepository = TrackRepository.getInstance()
 
@@ -103,7 +102,6 @@ class MusicServiceConnection(context: Context) : CoroutineScope by MainScope() {
                 if (metadata?.id == null) {
                     NOTHING_PLAYING
                 } else {
-
                     //sendWidgetMetadataIntent(metadata)
                     metadata
                 }
@@ -173,6 +171,7 @@ class MusicServiceConnection(context: Context) : CoroutineScope by MainScope() {
             SupportedPlayMode.SHUFFLE -> {
                 transportControls.setRepeatMode(PlaybackStateCompat.REPEAT_MODE_ALL)
             }
+
             else -> {
 
             }
@@ -181,7 +180,7 @@ class MusicServiceConnection(context: Context) : CoroutineScope by MainScope() {
 
 
     companion object {
-        // For Singleton instantiation.
+
         @Volatile
         private var instance: MusicServiceConnection? = null
 

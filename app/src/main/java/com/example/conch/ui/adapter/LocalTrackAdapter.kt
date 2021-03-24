@@ -35,8 +35,7 @@ class LocalTrackAdapter(
         itemView: View,
         val onClick: (Track) -> Unit,
         val onOptionsClick: (Track) -> Unit
-    ) :
-        RecyclerView.ViewHolder(itemView) {
+    ) : RecyclerView.ViewHolder(itemView) {
 
         private var mediaStoreId = 0L
 

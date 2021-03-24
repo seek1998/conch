@@ -63,9 +63,6 @@ class StartActivity : AppCompatActivity(), CoroutineScope by MainScope() {
         initRepository()
 
         trackRepository = TrackRepository.getInstance().apply {
-            //更新Room
-            updateDateBase(applicationContext)
-            //加载上次产生的最近播放到内存
             loadOldRecentPlay()
         }
 

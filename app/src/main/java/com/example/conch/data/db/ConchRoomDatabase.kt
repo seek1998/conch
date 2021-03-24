@@ -60,15 +60,23 @@ abstract class ConchRoomDatabase : RoomDatabase() {
 
         private fun addInitialPlaylist(context: Context) {
 
-            val playlist = Playlist(
+            val favoritePlaylist = Playlist(
                 id = Playlist.PLAYLIST_FAVORITE_ID,
                 title = context.resources.getString(R.string.playlist_favorite),
                 size = Playlist.NO_TRACK,
                 uid = User.LOCAL_USER
             )
 
+            val defaultPlaylist = Playlist(
+                id = 2L,
+                title = context.resources.getString(R.string.playlist_default),
+                size = Playlist.NO_TRACK,
+                uid = User.LOCAL_USER
+            )
+
             GlobalScope.launch {
-                instance?.playlistDao()?.insert(playlist)
+                instance?.playlistDao()?.insert(favoritePlaylist)
+                instance?.playlistDao()?.insert(defaultPlaylist)
             }
         }
     }

@@ -17,7 +17,6 @@
         tools:context=".ui.register.RegisterActivity"
         tools:ignore="HardcodedText">
 
-
         <com.google.android.material.textview.MaterialTextView
             android:id="@+id/materialTextView"
             android:layout_width="wrap_content"
@@ -136,11 +135,11 @@
             android:id="@+id/btn_register"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
+            android:layout_marginBottom="32dp"
             android:padding="16dp"
             android:text="@string/register"
-            app:cornerRadius="24dp"
             android:textStyle="bold"
-            android:layout_marginBottom="32dp"
+            app:cornerRadius="24dp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="@+id/textInputLayout4"
             app:layout_constraintStart_toStartOf="@+id/textInputLayout4" />

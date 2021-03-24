@@ -10,7 +10,6 @@
     <string name="display_name">昵称</string>
     <string name="captcha">验证码</string>
     <!-- 错误信息 -->
-    <string name="wrong_email">邮箱格式错误</string>
 
     <string name="track_title">标题</string>
     <string name="track_artist">作者</string>
@@ -21,7 +20,7 @@
     <string name="email_example">xxxxx@example.com</string>
     <string name="recent_playlist">最近播放</string>
     <string name="my_playlist">我的歌单</string>
-    <!-- TODO: Remove or change this placeholder text -->
+
 
     <string name="mode_repeat">列表循环</string>
     <string name="mode_repeat_one">单曲循环</string>
@@ -29,26 +28,33 @@
     <string name="more">详细信息</string>
 
     <!-- Notification Channel -->
-    <string name="notification_channel">Now Playing</string>
-    <string name="notification_channel_description">Shows what music is currently playing in Fancy</string>
+    <string name="notification_channel">正在播放</string>
+    <string name="notification_channel_description">展示海螺音乐当前播放歌曲</string>
 
     <string name="queue_track">播放队列</string>
     <string name="favorite_tracks">我喜欢的音乐</string>
     <string name="local_user">本地用户</string>
     <string name="title_favorite_music">我喜欢的音乐</string>
-    <string name="playlist_has_nothing">该歌单中没有歌曲</string>
-    <string name="no_track">没有歌曲</string>
+
+
     <string name="playlist">歌单</string>
     <string name="no_recent_play">无最近播放</string>
     <string name="playlist_title">歌单标题</string>
     <string name="playlist_description">歌单描述信息</string>
     <string name="yes">确定</string>
     <string name="cancel">取消</string>
-    <string name="empty_playlist_title_error">标题不能为空</string>
-    <string name="hint_no_more_content">没有更多内容了</string>
     <string name="title_delete">删除</string>
     <string name="track_size">文件大小</string>
     <string name="action_sync">同步</string>
     <string name="playlist_favorite">我喜欢的</string>
+
+    <!-- Hint -->
+    <string name="wrong_email">邮箱格式错误</string>
+    <string name="list_refresh_over">列表已更新</string>
+    <string name="empty_playlist_title_error">标题不能为空</string>
+    <string name="hint_no_more_content">没有更多内容了</string>
+    <string name="playlist_has_nothing">该歌单中没有歌曲</string>
+    <string name="no_track">没有歌曲</string>
+    <string name="playlist_default">默认歌单</string>
 
 </resources>

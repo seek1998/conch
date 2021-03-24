@@ -7,6 +7,8 @@ import android.view.LayoutInflater
 import android.widget.TextView
 import androidx.fragment.app.activityViewModels
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.bumptech.glide.Glide
+import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.example.conch.R
 import com.example.conch.data.model.Playlist
 import com.example.conch.data.model.Track
@@ -20,6 +22,7 @@ import com.example.conch.ui.playlist.PlaylistActivity
 import com.example.conch.ui.track.TrackActivity
 import com.example.conch.utils.InjectUtil
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
+import kotlinx.coroutines.launch
 
 
 class AccountFragment : BaseFragment<FragmentAccountBinding, AccountViewModel>() {
@@ -38,17 +41,6 @@ class AccountFragment : BaseFragment<FragmentAccountBinding, AccountViewModel>()
 
         viewModel.loadAllPlaylist()
 
-        binding.btnToFavorite.setOnClickListener {
-
-            val playlist = viewModel.getFavoritePlaylist()
-
-            val intent = Intent(this.activity, PlaylistActivity::class.java).apply {
-                putExtra("playlist", playlist)
-            }
-
-            startActivity(intent)
-        }
-
         binding.btnAccountLogin.setOnClickListener {
             startActivity(Intent(this.activity, LoginActivity::class.java))
         }
@@ -56,6 +48,41 @@ class AccountFragment : BaseFragment<FragmentAccountBinding, AccountViewModel>()
         setUpPlaylistRecycleView()
 
         setUpRecentPlayRecycleView()
+
+        viewModel.favorites.observe(this@AccountFragment, {
+            it?.let {
+                setUpFavorite(it)
+            }
+        })
+    }
+
+    private fun setUpFavorite(favorites: Playlist) = with(binding) {
+
+        btnToFavorite.setOnClickListener {
+
+            val intent = Intent(this@AccountFragment.activity, PlaylistActivity::class.java).apply {
+                putExtra("playlist", favorites)
+            }
+
+            startActivity(intent)
+        }
+
+        ivPlaylistFavoriteCover.apply {
+
+            scope.launch {
+                val coverPath = mainViewModel.getPlaylistCover(favorites).await()
+
+                requireActivity().runOnUiThread {
+                    Glide.with(this@apply)
+                        .load(coverPath)
+                        .skipMemoryCache(false)
+                        .diskCacheStrategy(DiskCacheStrategy.RESOURCE)
+                        .into(this@apply)
+                }
+            }
+        }
+
+        tvPlaylistFavoriteCount.text = "${favorites.size}"
     }
 
     private fun setUpRecentPlayRecycleView() {
@@ -113,8 +140,9 @@ class AccountFragment : BaseFragment<FragmentAccountBinding, AccountViewModel>()
                 val newList =
                     it.dropWhile { playlist -> playlist.id == Playlist.PLAYLIST_FAVORITE_ID }
 
-                //TODO BUG 新建歌单消失
                 playlistAdapter.submitList(newList as MutableList<Playlist>)
+
+                viewModel.updateFavorites()
             }
         })
     }
@@ -132,7 +160,6 @@ class AccountFragment : BaseFragment<FragmentAccountBinding, AccountViewModel>()
             .setView(contentView)
             .setPositiveButton(getString(R.string.yes)) { dialog, which ->
                 run {
-
 
                     val title = tvPlaylistTitle.text.trim().toString()
                     val description = tvPlaylistDescription.text.trim().toString()

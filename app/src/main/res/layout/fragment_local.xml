@@ -13,14 +13,13 @@
             android:id="@+id/app_bar"
             android:layout_width="match_parent"
             android:layout_height="176dp"
-            android:theme="@style/AppTheme.AppBarOverlay"
+            android:background="?android:attr/windowBackground"
             app:expanded="false">
 
             <com.google.android.material.appbar.SubtitleCollapsingToolbarLayout
                 android:id="@+id/tool_bar_layout"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:background="@color/white"
                 app:collapsedSubtitleTextAppearance="@style/MyCollapsedSubTitleTextAppearance"
                 app:collapsedTitleTextAppearance="@style/MyCollapsedTitleTextAppearance"
                 app:expandedSubtitleTextAppearance="@style/MyExpandedSubTitleTextAppearance"

@@ -11,11 +11,18 @@ import androidx.databinding.ViewDataBinding
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.MainScope
+import kotlinx.coroutines.SupervisorJob
 
-abstract class BaseFragment<VDB : ViewDataBinding, VM : BaseViewModel> : Fragment() {
+abstract class BaseFragment<VDB : ViewDataBinding, VM : BaseViewModel> : Fragment(),
+    CoroutineScope by MainScope() {
 
     protected lateinit var binding: VDB
+
     protected lateinit var viewModel: VM
+
+    protected lateinit var scope: CoroutineScope
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -31,11 +38,14 @@ abstract class BaseFragment<VDB : ViewDataBinding, VM : BaseViewModel> : Fragmen
             }
         })[getViewModelClass()]
 
+        scope = CoroutineScope(coroutineContext + SupervisorJob())
+
         return binding.root
     }
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
+
         processLogic()
     }
 

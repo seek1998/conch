@@ -1,10 +1,8 @@
 package com.example.conch.data
 
-import android.content.Context
 import android.net.Uri
 import android.os.Environment.DIRECTORY_MUSIC
 import android.util.Log
-import android.webkit.MimeTypeMap
 import androidx.annotation.WorkerThread
 import androidx.lifecycle.MutableLiveData
 import com.example.conch.MyApplication
@@ -18,6 +16,7 @@ import com.example.conch.data.model.Track
 import com.example.conch.data.model.User
 import com.example.conch.data.remote.Network
 import com.example.conch.data.remote.RemoteMediaSource
+import com.example.conch.extension.getMediaExt
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.MainScope
 import java.io.File
@@ -62,7 +61,6 @@ class TrackRepository private constructor(
             addAll(newList)
         }
 
-
     private suspend fun saveRecentPlay() {
 
         val list = recentPlay.toList()
@@ -73,9 +71,10 @@ class TrackRepository private constructor(
         }
     }
 
-    suspend fun updateRecentPlay(trackId: Long) {
-
-        trackDao.getTrack(trackId)?.let {
+    suspend fun updateRecentPlay(mediaStoreId: Long) {
+        cachedLocalTracks.find {
+            it.mediaStoreId == mediaStoreId
+        }?.let {
             recentPlay.remove(it)
             recentPlay.offer(it)
             saveRecentPlay()
@@ -122,11 +121,14 @@ class TrackRepository private constructor(
 
     suspend fun insertTracks(vararg track: Track) = trackDao.insert(*track)
 
-    suspend fun getPlaylistById(playlistId: Long) = playlistDao.getPlaylistById(playlistId)
-
     suspend fun deletePlaylist(playlist: Playlist) {
         playlistDao.delete(playlist)
         crossRefDao.deleteByPlaylistId(playlist.id)
+    }
+
+    suspend fun deleteLocalTrack(track: Track) {
+        localMediaSource.deleteTrack(track)
+        trackDao.delete(track)
     }
 
     suspend fun createPlaylist(playlist: Playlist) = playlistDao.insert(playlist)
@@ -163,16 +165,19 @@ class TrackRepository private constructor(
 
     @WorkerThread
     suspend fun getTracksByPlaylistId(playlistId: Long): List<Track> {
+
         val tracks = playlistDao.getPlaylistWithTracks(playlistId)?.tracks ?: return emptyList()
 
         val crossRefs = mutableListOf<PlaylistTrackCrossRef>()
+
         tracks.onEach {
             crossRefs.add(crossRefDao.find(it.mediaStoreId, playlistId)!!)
         }
 
         //根据加入歌单的顺序排序，越新的记录越靠前
-        return tracks.sortedBy { track -> crossRefs.find { it.trackId == track.mediaStoreId }?.serialNumber }
-            .reversed()
+        return tracks.sortedBy { track ->
+            crossRefs.find { it.trackId == track.mediaStoreId }?.serialNumber
+        }.reversed()
     }
 
     suspend fun getTrackByMediaStoreId(mediaStoreId: Long): Track? {
@@ -199,75 +204,69 @@ class TrackRepository private constructor(
         return network.fetchTracksByUID(uid)
     }
 
-    suspend fun fetchTracksFromLocation(): MutableList<Track> {
+    private suspend fun fetchTracksFromLocation(): MutableList<Track> {
         return localMediaSource.getTracks()
-    }
-
-    suspend fun updateDateBase(context: Context) {
-
     }
 
     suspend fun postTrack(track: Track): MyResult<Track> {
         return network.postTrack(track)
     }
 
-    @WorkerThread
-    suspend fun uploadTrackFile(
+    fun uploadTrackFile(
         track: Track,
-        uid: Long,
         uploadProcess: MutableLiveData<IOProgress>
     ) {
+        val objectKey = getObjectKey(track, FileType.TRACK)
         val uploadUri = Uri.parse(track.contentUri)
-        val ext = MimeTypeMap.getSingleton().getExtensionFromMimeType(track.type)
-        val folderName = "track"
-        val uploadKey = "$uid/$folderName/${track.id}.$ext"
-        remoteMediaSource.uploadTrackFile(uploadKey, uploadUri, uploadProcess, track)
+        remoteMediaSource.uploadTrackFile(objectKey, uploadUri, uploadProcess, track)
     }
 
-    @WorkerThread
-    suspend fun uploadTrackCover(track: Track, uid: Long) {
+    fun uploadTrackCover(track: Track) {
         val uploadUri = Uri.parse(track.albumArt)
-        val ext = "jpg"
-        val folderName = "image"
-        val uploadKey = "$uid/$folderName/${track.id}.$ext"
-        remoteMediaSource.uploadTrackCover(uploadKey, uploadUri)
+        val objectKey = getObjectKey(track, FileType.IMG)
+        remoteMediaSource.uploadTrackCover(objectKey, uploadUri)
     }
 
-    @WorkerThread
-    suspend fun downloadTrackFile(track: Track) {
-        val uid = track.uid
-        val downloadDir = getTrackDir(uid, track)
-        val ext = MimeTypeMap.getSingleton().getExtensionFromMimeType(track.type)
-        val folderName = "track"
-        val downloadKey = "$uid/$folderName/${track.id}.$ext"
+    fun downloadTrackFile(track: Track) {
+        val objectKey = getObjectKey(track, FileType.TRACK)
+        val downloadDir = getTrackDir(track)
         remoteMediaSource.downloadTrackFile(
-            objectKey = downloadKey,
+            objectKey = objectKey,
             downloadDir = downloadDir,
             track = track
         )
     }
 
-    @WorkerThread
-    suspend fun downloadTrackCover(track: Track) {
-        val uid = track.uid
-        val downloadDir = getTrackDir(uid, track)
-        val ext = "jpg"
-        val folderName = "image"
-        val downloadKey = "$uid/$folderName/${track.id}.$ext"
+    fun downloadTrackCover(track: Track) {
+        val objectKey = getObjectKey(track, FileType.IMG)
+        val downloadDir = getTrackDir(track)
         remoteMediaSource.downloadTrackCover(
-            objectKey = downloadKey,
+            objectKey = objectKey,
             downloadDir = downloadDir,
             track = track
         )
     }
 
-    suspend fun deleteLocalTrack(track: Track) {
-        Log.d(TAG, track.toString())
-        localMediaSource.deleteTrack(track)
-        trackDao.delete(track)
+    private fun getObjectKey(track: Track, fileType: FileType): String {
+        val uid = track.uid
+        var ext = ""
+        var folderName = ""
+        when (fileType) {
+            FileType.IMG -> {
+                ext = "jpg"
+                folderName = "image"
+            }
+            FileType.TRACK -> {
+                ext = track.getMediaExt()!!
+                folderName = "track"
+            }
+        }
+
+        return "$uid/$folderName/${track.id}.$ext"
     }
 
-    private fun getTrackDir(uid: Long = User.LOCAL_USER, track: Track): File {
+    private fun getTrackDir(track: Track): File {
+        val uid = track.uid
         val context = MyApplication._context!!
         context.run {
             val filesDir = getExternalFilesDir(DIRECTORY_MUSIC)
@@ -312,7 +311,12 @@ class TrackRepository private constructor(
         fun getInstance() = instance!!
     }
 
+    enum class FileType {
+        TRACK,
+        IMG
+    }
 }
+
 
 private const val MAX_RECORD_RECENT_PLAY_NUMBER = 20
 

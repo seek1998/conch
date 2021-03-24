@@ -17,9 +17,9 @@ class AccountViewModel(application: Application) : BaseViewModel(application) {
 
     private val user = userRepository.loggedInUser
 
-    val playlists = MutableLiveData<List<Playlist>>().apply {
-        emptyList<Playlist>()
-    }
+    val playlists = MutableLiveData<List<Playlist>>()
+
+    val favorites = MutableLiveData<Playlist>()
 
     fun createNewPlaylist(title: String, description: String) {
 
@@ -40,15 +40,19 @@ class AccountViewModel(application: Application) : BaseViewModel(application) {
         viewModelScope.launch {
             val result = trackRepository.getPlaylists(user.id)
             playlists.postValue(result)
+
         }
     }
 
-    fun getFavoritePlaylist(): Playlist {
-        return playlists.value!!.first {
-            it.id == Playlist.PLAYLIST_FAVORITE_ID
-        }
+    fun updateFavorites() {
+        favorites.postValue(getFavorites())
     }
 
+    private fun getFavorites(): Playlist? {
+        return playlists.value?.firstOrNull {
+            it.id == 1L
+        }
+    }
 }
 
 private const val TAG = "AccountViewModel"

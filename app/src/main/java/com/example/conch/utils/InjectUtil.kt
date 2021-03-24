@@ -26,8 +26,7 @@ object InjectUtil {
     }
 
     fun provideLocalViewModel(activity: Activity): LocalViewModel {
-        val musicServiceConnection = provideMusicServiceConnection(activity)
-        return LocalViewModel(activity.application, musicServiceConnection)
+        return LocalViewModel(activity.application)
     }
 
     fun provideMainViewModelFactory(activity: Activity): MainViewModel.Factory {

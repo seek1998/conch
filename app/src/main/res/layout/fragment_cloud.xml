@@ -17,14 +17,13 @@
             android:id="@+id/app_bar"
             android:layout_width="match_parent"
             android:layout_height="176dp"
-            android:theme="@style/AppTheme.AppBarOverlay"
+            android:background="@color/windowBackground"
             app:expanded="false">
 
             <com.google.android.material.appbar.SubtitleCollapsingToolbarLayout
                 android:id="@+id/tool_bar_layout"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:background="@color/white"
                 app:collapsedSubtitleTextAppearance="@style/CloudCollapsedSubTitleTextAppearance"
                 app:collapsedTitleTextAppearance="@style/CloudCollapsedTitleTextAppearance"
                 app:expandedSubtitleTextAppearance="@style/CloudExpandedSubTitleTextAppearance"
@@ -41,8 +40,8 @@
                     android:layout_width="match_parent"
                     android:layout_height="?attr/actionBarSize"
                     app:layout_collapseMode="pin"
-                    app:popupTheme="@style/AppTheme.PopupOverlay"
-                    app:menu="@menu/cloud_menu" />
+                    app:menu="@menu/cloud_menu"
+                    app:popupTheme="@style/AppTheme.PopupOverlay" />
 
             </com.google.android.material.appbar.SubtitleCollapsingToolbarLayout>
 
@@ -71,9 +70,9 @@
                         android:id="@+id/rv"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
+                        android:layoutAnimation="@anim/recycle_view_animation"
                         android:overScrollMode="never"
                         android:scrollbarStyle="insideOverlay"
-                        android:layoutAnimation="@anim/recycle_view_animation"
                         android:scrollbars="vertical"
                         app:layoutManager="LinearLayoutManager"
                         tools:listitem="@layout/item_cloud_track" />
@@ -86,9 +85,9 @@
                         android:gravity="center"
                         android:paddingTop="16dp"
                         android:paddingBottom="96dp"
-                        android:textSize="@dimen/small_text_size"
                         android:text="@string/hint_no_more_content"
                         android:textColor="@color/secondary_text"
+                        android:textSize="@dimen/small_text_size"
                         android:visibility="invisible" />
 
                 </LinearLayout>
