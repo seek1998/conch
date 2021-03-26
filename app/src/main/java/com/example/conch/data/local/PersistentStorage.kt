@@ -10,6 +10,7 @@ import android.support.v4.media.MediaDescriptionCompat
 import android.util.Log
 import com.bumptech.glide.Glide
 import com.example.conch.data.model.Track
+import com.example.conch.data.model.User
 import com.example.conch.extension.asAlbumArtContentUri
 import com.example.conch.service.MEDIA_DESCRIPTION_EXTRAS_START_PLAYBACK_POSITION_MS
 import com.example.conch.service.NOTIFICATION_LARGE_ICON_SIZE
@@ -37,6 +38,23 @@ class PersistentStorage private constructor(val context: Context) {
             instance ?: synchronized(this) {
                 instance ?: PersistentStorage(context).also { instance = it }
             }
+    }
+
+
+    suspend fun saveLoggedInUser(user: User) {
+        val json = gson.toJson(user)
+
+        preferences.edit().putString("logged_in_user", json).apply()
+    }
+
+    fun loadLoggedInUser(): User {
+        val json = preferences.getString("logged_in_user", "")
+
+        return if (json.isNullOrEmpty()) {
+            User()
+        } else {
+            gson.fromJson(json, User::class.java)
+        }
     }
 
     suspend fun saveRecentPlayList(list: List<Track>) {

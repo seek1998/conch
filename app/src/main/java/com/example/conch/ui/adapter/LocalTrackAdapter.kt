@@ -14,7 +14,6 @@ import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.example.conch.R
 import com.example.conch.data.model.Track
 import com.google.android.material.imageview.ShapeableImageView
-import com.google.android.material.internal.BaselineLayout
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.SupervisorJob
@@ -22,8 +21,8 @@ import kotlinx.coroutines.launch
 
 
 class LocalTrackAdapter(
-    private val onClick: (Track) -> Unit,
-    private val onOptionsClick: (Track) -> Unit
+    private val onItemClick: ((Track) -> Unit)? = null,
+    private val onOptionsClick: ((Track) -> Unit)? = null
 ) :
     ListAdapter<Track, LocalTrackAdapter.ViewHolder>(TrackDiffCallback),
     CoroutineScope by MainScope() {
@@ -33,8 +32,8 @@ class LocalTrackAdapter(
     class ViewHolder(
         context: Context,
         itemView: View,
-        val onClick: (Track) -> Unit,
-        val onOptionsClick: (Track) -> Unit
+        val onItemClick: ((Track) -> Unit)?,
+        val onOptionsClick: ((Track) -> Unit)?
     ) : RecyclerView.ViewHolder(itemView) {
 
         private var mediaStoreId = 0L
@@ -50,19 +49,19 @@ class LocalTrackAdapter(
             mediaStoreId = track.id
 
             itemView.setOnClickListener {
-                onClick(track)
+                onItemClick?.invoke(track)
             }
 
             trackOptions.setOnClickListener {
-                onOptionsClick(track)
+                onOptionsClick?.invoke(track)
             }
 
             trackTitle.text = track.title
+
             trackArtist.text = track.artist
 
             if (isLastItem) {
-                itemView.findViewById<BaselineLayout>(R.id.item_local_track_divider).visibility =
-                    View.INVISIBLE
+
             }
 
             if (track.albumArt.trim().isNotEmpty()) {
@@ -84,7 +83,7 @@ class LocalTrackAdapter(
                 tag = ITEM_VIEW_TAG_NOT_PLYING
             }
 
-        return ViewHolder(parent.context, view, onClick, onOptionsClick)
+        return ViewHolder(parent.context, view, onItemClick, onOptionsClick)
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
@@ -103,6 +102,7 @@ class LocalTrackAdapter(
     override fun submitList(list: MutableList<Track>?) {
         super.submitList(list)
     }
+
 }
 
 private const val TAG = "LocalTrackAdapter"

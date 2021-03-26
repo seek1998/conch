@@ -3,15 +3,22 @@ package com.example.conch.utils
 import android.app.Activity
 import android.app.Application
 import android.content.Context
+import com.example.conch.data.TrackRepository
+import com.example.conch.data.UserRepository
 import com.example.conch.service.MusicServiceConnection
 import com.example.conch.ui.main.MainViewModel
 import com.example.conch.ui.main.RemoteTrackIOViewModel
 import com.example.conch.ui.main.cloud.CloudViewModel
 import com.example.conch.ui.main.local.LocalViewModel
 import com.example.conch.ui.playlist.PlaylistViewModel
+import com.example.conch.ui.queue.QueueViewModel
 import com.example.conch.ui.track.TrackViewModel
 
 object InjectUtil {
+
+    private val userRepository = UserRepository.getInstance()
+
+    private val trackRepository = TrackRepository.getInstance()
 
     private fun provideMusicServiceConnection(context: Context): MusicServiceConnection {
         return MusicServiceConnection.getInstance(
@@ -30,7 +37,6 @@ object InjectUtil {
     }
 
     fun provideMainViewModelFactory(activity: Activity): MainViewModel.Factory {
-
         val musicServiceConnection = provideMusicServiceConnection(activity)
         return MainViewModel.Factory(activity.application, musicServiceConnection)
     }
@@ -48,6 +54,10 @@ object InjectUtil {
 
     fun provideRemoteTrackViewModelFactory(activity: Activity): RemoteTrackIOViewModel.Factory {
         return RemoteTrackIOViewModel.Factory(activity.application)
+    }
+
+    fun provideQueueViewModel(activity: Activity): QueueViewModel {
+        return QueueViewModel(activity.application, trackRepository)
     }
 
 }

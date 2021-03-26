@@ -60,8 +60,6 @@ class MainActivity : AppCompatActivity() {
 
         viewModel.loadAllPlaylist()
 
-        viewModel.checkRecentPlay()
-
         mainPlayCard = findViewById(R.id.main_card)
         tvNowPlayingTitle = findViewById(R.id.main_tv_title)
         tvNowPlayingArtist = findViewById(R.id.main_tv_artist)
@@ -135,6 +133,7 @@ class MainActivity : AppCompatActivity() {
 
     override fun onStart() {
         super.onStart()
+        viewModel.checkRecentPlay()
         EventBus.getDefault().register(this)
     }
 
@@ -142,7 +141,6 @@ class MainActivity : AppCompatActivity() {
         super.onStop()
         EventBus.getDefault().unregister(this)
     }
-
 
     private fun observerRemoteIOProgress() {
 
@@ -230,7 +228,7 @@ class MainActivity : AppCompatActivity() {
             Toast.makeText(this, "再按一次退出应用", Toast.LENGTH_SHORT).show()
             pressedTime = nowTime
         } else {
-            this.finish()
+            this.finishAndRemoveTask()
             exitProcess(0)
         }
     }
@@ -262,10 +260,11 @@ class MainActivity : AppCompatActivity() {
     @Subscribe(threadMode = ThreadMode.MAIN, sticky = true)
     fun onMediaScanEvent(messageEvent: MessageEvent) {
         if (messageEvent.type == MessageType.ACTION_UPDATE_MEDIA_STORE) {
+
             val path = application.getExternalFilesDir(Environment.DIRECTORY_MUSIC)!!.path
             val types = arrayOf("audio/mpeg", "audio/flac", "audio/x-wav, image/jpeg")
-            MediaScannerConnection.scanFile(
-                applicationContext, arrayOf(path), types,
+
+            MediaScannerConnection.scanFile(applicationContext, arrayOf(path), types,
                 object : MediaScannerConnection.MediaScannerConnectionClient {
                     override fun onScanCompleted(path: String?, uri: Uri?) {
                         viewModel.refreshLocalData()
@@ -277,7 +276,6 @@ class MainActivity : AppCompatActivity() {
 
                 })
         }
-
     }
 }
 

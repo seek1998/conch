@@ -39,9 +39,7 @@ class MainViewModel(
 
     val recentPlay = MutableLiveData<List<Track>>()
 
-    val playlists = MutableLiveData<List<Playlist>>().apply {
-        emptyList<Playlist>()
-    }
+    val playlists = MutableLiveData<MutableList<Playlist>>()
 
     val postTrackInfoResult = MutableLiveData<MyResult<Track>>()
 
@@ -114,6 +112,10 @@ class MainViewModel(
             musicServiceConnection.transportControls.play()
         }
     }
+
+    fun isLoggedIn() = userRepository.isLoggedIn()
+
+    fun getUser() = userRepository.loggedInUser
 
     fun getQueueTrack(): MutableList<String> {
         val tracks = mutableListOf<String>()
@@ -222,7 +224,7 @@ class MainViewModel(
             trackRepository.deleteLocalTrack(track)
         }
 
-    fun getPlaylistCover(playlist: Playlist) =
+    suspend fun getPlaylistCover(playlist: Playlist) =
         viewModelScope.async {
             return@async trackRepository.getPlaylistCoverPath(playlist.id)
         }

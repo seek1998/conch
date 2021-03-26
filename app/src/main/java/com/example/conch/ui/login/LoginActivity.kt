@@ -4,7 +4,6 @@ import android.content.Intent
 import android.text.Editable
 import android.text.TextWatcher
 import android.widget.Toast
-import androidx.core.content.ContextCompat
 import com.example.conch.R
 import com.example.conch.data.MyResult
 import com.example.conch.data.model.User
@@ -12,12 +11,14 @@ import com.example.conch.databinding.ActivityLoginBinding
 import com.example.conch.ui.BaseActivity
 import com.example.conch.ui.register.RegisterActivity
 import com.example.conch.utils.RegexUtil
-import com.jaeger.library.StatusBarUtil
+import org.greenrobot.eventbus.EventBus
 
 class LoginActivity : BaseActivity<ActivityLoginBinding, LoginViewModel>() {
 
+    private lateinit var eventBus: EventBus
+
     override fun processLogic() {
-        initToolBar()
+
         initEditText()
 
         binding.btnLogin.apply {
@@ -80,10 +81,6 @@ class LoginActivity : BaseActivity<ActivityLoginBinding, LoginViewModel>() {
         binding.editPwd.addTextChangedListener(textWatcher)
     }
 
-    private fun initToolBar() {
-        StatusBarUtil.setLightMode(this)
-        StatusBarUtil.setColor(this, ContextCompat.getColor(this, R.color.white), 0)
-    }
 
     private fun showLoginFailed(message: String?) {
         Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
@@ -91,6 +88,7 @@ class LoginActivity : BaseActivity<ActivityLoginBinding, LoginViewModel>() {
 
     private fun updateUiWithUser(user: User) {
         Toast.makeText(this, "你好， ${user.name}。", Toast.LENGTH_SHORT).show()
+        finish()
     }
 
     override fun getLayoutId(): Int = R.layout.activity_login

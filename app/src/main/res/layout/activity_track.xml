@@ -200,8 +200,8 @@
 
         <com.google.android.material.imageview.ShapeableImageView
             android:id="@+id/btn_play"
-            android:layout_width="@dimen/large_play_icon_size"
-            android:layout_height="@dimen/large_play_icon_size"
+            android:layout_width="@dimen/extra_big_play_icon_size"
+            android:layout_height="@dimen/extra_big_play_icon_size"
             android:background="@color/blue_900"
             android:clickable="true"
             android:padding="4dp"

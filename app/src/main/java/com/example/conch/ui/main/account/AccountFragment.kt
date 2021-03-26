@@ -39,11 +39,17 @@ class AccountFragment : BaseFragment<FragmentAccountBinding, AccountViewModel>()
 
     override fun processLogic() {
 
+
         viewModel.loadAllPlaylist()
 
-        binding.btnAccountLogin.setOnClickListener {
-            startActivity(Intent(this.activity, LoginActivity::class.java))
+        binding.accountUserLayout.setOnClickListener {
+            val isLoggedIn = mainViewModel.isLoggedIn()
+            if (!isLoggedIn) {
+                startActivity(Intent(this.activity, LoginActivity::class.java))
+            }
         }
+
+        setUpUserInfo()
 
         setUpPlaylistRecycleView()
 
@@ -54,6 +60,18 @@ class AccountFragment : BaseFragment<FragmentAccountBinding, AccountViewModel>()
                 setUpFavorite(it)
             }
         })
+    }
+
+    private fun setUpUserInfo() = with(binding) {
+        if (!mainViewModel.isLoggedIn()) {
+            return
+        }
+
+        val user = mainViewModel.getUser()
+
+        accountUsername.text = user.name
+        accountEmail.text = user.email
+
     }
 
     private fun setUpFavorite(favorites: Playlist) = with(binding) {

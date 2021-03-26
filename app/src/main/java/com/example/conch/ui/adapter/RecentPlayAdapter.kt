@@ -1,7 +1,6 @@
 package com.example.conch.ui.adapter
 
 import android.content.Context
-import android.net.Uri
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -44,17 +43,17 @@ class RecentPlayAdapter(private val onClick: (Track) -> Unit, private val contex
 
             recentPlayTitle.text = track.title
 
-            if (coverPath.trim().isNotEmpty()) {
+            if (coverPath.isNotEmpty()) {
 
-                Glide.with(context)
-                    .load(Uri.parse(coverPath))
-                    .override(256, 256)
-                    .diskCacheStrategy(DiskCacheStrategy.RESOURCE)
-                    .into(recentPlayCover)
+                recentPlayCover.apply {
+                    Glide.with(this)
+                        .load(coverPath)
+                        .override(256, 256)
+                        .diskCacheStrategy(DiskCacheStrategy.RESOURCE)
+                        .into(this)
+                }
 
-                return
             }
-
         }
     }
 

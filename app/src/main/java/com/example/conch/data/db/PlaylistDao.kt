@@ -22,7 +22,7 @@ interface PlaylistDao {
     suspend fun deleteById(id: Long)
 
     @Query("SELECT * FROM playlist WHERE uid = :uid")
-    suspend fun getPlaylistByUid(uid: Long): List<Playlist>
+    suspend fun getPlaylistByUid(uid: Long): MutableList<Playlist>
 
     @Query("SELECT * FROM playlist WHERE id = :id")
     suspend fun getPlaylistById(id: Long): Playlist?

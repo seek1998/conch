@@ -5,7 +5,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.activityViewModels
-import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -17,21 +17,21 @@ import com.example.conch.utils.InjectUtil
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.textview.MaterialTextView
 
-class PlaylistDialog(private val onClick: (Playlist) -> Unit) :
-    DialogFragment() {
+class PlaylistDialog(
+    private val onClick: (Playlist) -> Unit
+) : DialogFragment() {
 
     private lateinit var dialog: BottomSheetDialog
 
-    private lateinit var playlistDialogAdapter: PlaylistDialogAdapter
+    private lateinit var adapter: PlaylistDialogAdapter
 
-    private lateinit var playlistsLiveData: LiveData<List<Playlist>>
+    private lateinit var playlistsLiveData: MutableLiveData<MutableList<Playlist>>
 
-    private val playlistsObserver = Observer<List<Playlist>> {
+    private val playlistsObserver = Observer<MutableList<Playlist>> {
         it?.let {
-            playlistDialogAdapter.submitList(it as MutableList<Playlist>)
+            adapter.submitList(it)
         }
     }
-
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
 
@@ -51,29 +51,27 @@ class PlaylistDialog(private val onClick: (Playlist) -> Unit) :
                 show()
             }
 
-        val playlistLayoutManager = LinearLayoutManager(requireContext()).apply {
+        val linearLayoutManager = LinearLayoutManager(requireContext()).apply {
             orientation = LinearLayoutManager.HORIZONTAL
         }
 
-        playlistDialogAdapter = PlaylistDialogAdapter(onClick)
+        adapter = PlaylistDialogAdapter(onClick)
 
         this.playlistsLiveData = mainViewModel.playlists.apply {
             observeForever(playlistsObserver)
         }
 
-        val rvPlaylist = contentView.findViewById<RecyclerView>(R.id.dialog_playlist_rv).apply {
-            layoutManager = playlistLayoutManager
-            adapter = playlistDialogAdapter
-            isSaveEnabled = true
-            isSaveFromParentEnabled = true
+        contentView.findViewById<RecyclerView>(R.id.dialog_playlist_rv).apply {
+            layoutManager = linearLayoutManager
+            adapter = adapter
+
         }
 
-        val btnCancel =
-            contentView.findViewById<MaterialTextView>(R.id.dialog_playlist_tv_cancel).apply {
-                setOnClickListener {
-                    dialog.cancel()
-                }
+        contentView.findViewById<MaterialTextView>(R.id.dialog_playlist_tv_cancel).apply {
+            setOnClickListener {
+                dialog.cancel()
             }
+        }
 
         return dialog
     }

@@ -6,7 +6,7 @@
     <dimen name="small_text_size">12sp</dimen>
     <dimen name="extra_small_text_size">10sp</dimen>
 
-    <dimen name="large_play_icon_size">56dp</dimen>
+    <dimen name="extra_big_play_icon_size">56dp</dimen>
     <dimen name="big_play_icon_size">48dp</dimen>
     <dimen name="normal_play_icon_size">40dp</dimen>
     <dimen name="small_play_icon_size">32dp</dimen>

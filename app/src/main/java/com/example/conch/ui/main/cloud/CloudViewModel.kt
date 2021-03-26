@@ -12,7 +12,7 @@ import kotlinx.coroutines.launch
 
 class CloudViewModel(application: Application) : BaseViewModel(application) {
 
-    private val userId = UserRepository.getInstance().loggedInUser.id
+    private val user = UserRepository.getInstance().loggedInUser
 
     private val trackRepository = TrackRepository.getInstance()
 
@@ -22,7 +22,7 @@ class CloudViewModel(application: Application) : BaseViewModel(application) {
 
     fun getDataFromRemote() {
         viewModelScope.launch {
-            val result = trackRepository.fetchTracksFromRemote(userId)
+            val result = trackRepository.fetchTracksFromRemote(user.id)
             fetchRemoteTracksResult.postValue(result)
         }
     }

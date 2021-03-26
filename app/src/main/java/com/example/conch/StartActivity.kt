@@ -12,6 +12,7 @@ import com.example.conch.data.db.ConchRoomDatabase
 import com.example.conch.data.local.LocalMediaSource
 import com.example.conch.data.local.PersistentStorage
 import com.example.conch.data.remote.ConchOss
+import com.example.conch.data.remote.Network
 import com.example.conch.data.remote.RemoteMediaSource
 import com.example.conch.ui.main.MainActivity
 import com.permissionx.guolindev.PermissionX
@@ -29,6 +30,8 @@ class StartActivity : AppCompatActivity(), CoroutineScope by MainScope() {
     private lateinit var localMediaSource: LocalMediaSource
 
     private lateinit var remoteMediaSource: RemoteMediaSource
+
+    private lateinit var network: Network
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -89,8 +92,9 @@ class StartActivity : AppCompatActivity(), CoroutineScope by MainScope() {
     private fun initRepository() {
         val database = getDatabase()
         val storage = getStorage()
-        TrackRepository.init(database, storage, localMediaSource, remoteMediaSource)
-        UserRepository.init(database)
+        val network = Network.getInstance()
+        TrackRepository.init(database, storage, localMediaSource, remoteMediaSource, network)
+        UserRepository.init(database, storage, network)
     }
 }
 

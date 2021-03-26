@@ -31,7 +31,6 @@ class PlaylistAdapter(
 
     private val trackRepository = TrackRepository.getInstance()
 
-
     class ViewHolder(
         itemView: View,
         val onClick: (Playlist) -> Unit,
@@ -121,7 +120,6 @@ class PlaylistAdapter(
 
     override fun submitList(list: MutableList<Playlist>?) {
         super.submitList(list)
-
         val footer = Playlist(id = 0L, "新建歌单")
 
         if (list?.find { it.id == 0L } == null) {

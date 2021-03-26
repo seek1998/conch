@@ -27,14 +27,13 @@ class TrackRepository private constructor(
     database: ConchRoomDatabase,
     private val storage: PersistentStorage,
     private val localMediaSource: LocalMediaSource,
-    private val remoteMediaSource: RemoteMediaSource
+    private val remoteMediaSource: RemoteMediaSource,
+    private val network: Network
 ) : CoroutineScope by MainScope() {
 
     init {
         checkFileDir()
     }
-
-    private val network = Network.getInstance()
 
     private val recentPlay: Queue<Track> = LinkedList()
 
@@ -64,6 +63,7 @@ class TrackRepository private constructor(
     private suspend fun saveRecentPlay() {
 
         val list = recentPlay.toList()
+
         if (list.size >= MAX_RECORD_RECENT_PLAY_NUMBER) {
             storage.saveRecentPlayList(list.subList(0, 20))
         } else {
@@ -117,7 +117,7 @@ class TrackRepository private constructor(
         }?.albumArt ?: ""
     }
 
-    suspend fun getPlaylists(uid: Long): List<Playlist> = playlistDao.getPlaylistByUid(uid)
+    suspend fun getPlaylists(uid: Long): MutableList<Playlist> = playlistDao.getPlaylistByUid(uid)
 
     suspend fun insertTracks(vararg track: Track) = trackDao.insert(*track)
 
@@ -194,8 +194,7 @@ class TrackRepository private constructor(
 
     fun isRemoteTrackLocal(remoteTrack: Track): Boolean {
         return cachedLocalTracks.any {
-            it.uid == remoteTrack.uid &&
-                    it.title == remoteTrack.title &&
+            it.title == remoteTrack.title &&
                     it.size == remoteTrack.size
         }
     }
@@ -300,10 +299,17 @@ class TrackRepository private constructor(
             database: ConchRoomDatabase,
             storage: PersistentStorage,
             localMediaSource: LocalMediaSource,
-            remoteMediaSource: RemoteMediaSource
+            remoteMediaSource: RemoteMediaSource,
+            network: Network
         ) {
             synchronized(this) {
-                instance ?: TrackRepository(database, storage, localMediaSource, remoteMediaSource)
+                instance ?: TrackRepository(
+                    database,
+                    storage,
+                    localMediaSource,
+                    remoteMediaSource,
+                    network
+                )
                     .also { instance = it }
             }
         }
@@ -316,7 +322,6 @@ class TrackRepository private constructor(
         IMG
     }
 }
-
 
 private const val MAX_RECORD_RECENT_PLAY_NUMBER = 20
 

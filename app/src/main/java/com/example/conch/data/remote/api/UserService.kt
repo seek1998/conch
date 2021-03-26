@@ -26,5 +26,4 @@ interface UserService {
         @Query("email") email: String,
         @Query("usage") usage: Int
     ): ApiResponse<Nothing>
-
 }

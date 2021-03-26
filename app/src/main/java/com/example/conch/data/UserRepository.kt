@@ -1,22 +1,26 @@
 package com.example.conch.data
 
 import com.example.conch.data.db.ConchRoomDatabase
+import com.example.conch.data.local.PersistentStorage
 import com.example.conch.data.model.RegisterInfoVO
 import com.example.conch.data.model.User
 import com.example.conch.data.remote.Network
 
-class UserRepository(database: ConchRoomDatabase) {
+class UserRepository(
+    private val database: ConchRoomDatabase,
+    private val storage: PersistentStorage,
+    private val network: Network
+) {
 
-    private val network = Network.getInstance()
-
-    var loggedInUser: User = User()
+    var loggedInUser: User = storage.loadLoggedInUser()
         private set
 
     suspend fun login(email: String, password: String): MyResult<User> {
         val result = network.login(email, password)
 
         if (result is MyResult.Success) {
-            loggedInUser = result.data as User
+            this.loggedInUser = result.data as User
+            storage.saveLoggedInUser(this.loggedInUser)
         }
 
         return result
@@ -25,6 +29,10 @@ class UserRepository(database: ConchRoomDatabase) {
     suspend fun getCaptcha(email: String, usage: Int) = network.getCaptcha(email, usage)
 
     suspend fun register(registerInfo: RegisterInfoVO) = network.register(registerInfo)
+
+    fun isLoggedIn(): Boolean {
+        return loggedInUser.id != User.LOCAL_USER
+    }
 
     companion object {
 
@@ -35,9 +43,10 @@ class UserRepository(database: ConchRoomDatabase) {
         @Volatile
         private var instance: UserRepository? = null
 
-        fun init(database: ConchRoomDatabase) {
+        fun init(database: ConchRoomDatabase, storage: PersistentStorage, network: Network) {
+
             synchronized(this) {
-                instance ?: UserRepository(database)
+                instance ?: UserRepository(database, storage, network)
                     .also { instance = it }
             }
         }

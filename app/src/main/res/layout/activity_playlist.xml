@@ -99,17 +99,6 @@
                     android:layout_height="wrap_content"
                     android:orientation="horizontal">
 
-                    <com.google.android.material.button.MaterialButtonToggleGroup
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content">
-
-                        <com.google.android.material.button.MaterialButton
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="播放"
-                            app:icon="@drawable/ic_round_play_arrow_16_write" />
-                    </com.google.android.material.button.MaterialButtonToggleGroup>
-
                 </LinearLayout>
 
                 <androidx.recyclerview.widget.RecyclerView

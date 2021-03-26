@@ -31,8 +31,8 @@ class PlaylistActivity : BaseActivity<ActivityPlaylistBinding, PlaylistViewModel
 
         viewModel.playlistLiveData.postValue(playlist)
 
-        trackAdapter = LocalTrackAdapter({ track: Track -> itemOnClick(track) },
-            { track: Track -> trackOptionsOnClick(track) })
+        trackAdapter = LocalTrackAdapter({ track: Track -> itemOnClick(track) }
+        ) { track: Track -> trackOptionsOnClick(track) }
 
         binding.rv.apply {
             adapter = trackAdapter
