@@ -9,7 +9,7 @@ object ConchOss {
 
     private const val endpoint = "http://oss-cn-hangzhou.aliyuncs.com"
 
-    private const val stsServer = "http://192.168.3.3:8080/oss/sst"
+    private const val stsServer = "http://192.168.3.3:8080/oss/sts"
 
     // 推荐使用OSSAuthCredentialsProvider。token过期可以及时更新。
     private val credentialProvider = OSSAuthCredentialsProvider(stsServer)

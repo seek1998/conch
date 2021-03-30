@@ -1,29 +1,40 @@
 package com.example.conch.ui.track
 
-import android.content.DialogInterface
+import android.content.Intent
 import android.net.Uri
 import android.text.TextUtils
-import android.util.Log
 import android.widget.ImageView
 import android.widget.SeekBar
+import androidx.activity.viewModels
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.example.conch.R
+import com.example.conch.data.model.Playlist
+import com.example.conch.data.model.Track
 import com.example.conch.databinding.ActivityTrackBinding
 import com.example.conch.extension.getFormattedDuration
 import com.example.conch.service.SupportedPlayMode
 import com.example.conch.ui.BaseActivity
+import com.example.conch.ui.dialog.PlaylistDialog
+import com.example.conch.ui.main.MainViewModel
+import com.example.conch.ui.queue.QueueActivity
 import com.example.conch.utils.InjectUtil
-import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import kotlin.math.floor
 
 class TrackActivity : BaseActivity<ActivityTrackBinding, TrackViewModel>() {
 
+    private val mainViewModel by viewModels<MainViewModel> {
+        InjectUtil.provideMainViewModelFactory(this)
+    }
+
     override fun processLogic() {
 
         initDataBinding()
+
         setUpButtons()
+
         setUpSeekBar()
+
         setUpToolBar()
 
         intent.getParcelableExtra<NowPlayingMetadata>("now_playing")?.let {
@@ -115,14 +126,7 @@ class TrackActivity : BaseActivity<ActivityTrackBinding, TrackViewModel>() {
         }
 
         btnQueueTrack.setOnClickListener {
-            val items = viewModel.getQueueTrack().toTypedArray()
-
-            MaterialAlertDialogBuilder(this@TrackActivity)
-                .setTitle(getString(R.string.queue_track))
-                .setItems(items, DialogInterface.OnClickListener { dialog, which ->
-
-                })
-                .show()
+            toQueueActivity()
         }
 
         btnFavorite.setOnClickListener {
@@ -138,8 +142,30 @@ class TrackActivity : BaseActivity<ActivityTrackBinding, TrackViewModel>() {
         }
 
         btnLibraryAdd.setOnClickListener {
-            toast("添加到歌单")
+
+            val trackId =
+                viewModel.nowPlayingMetadata.value?.id?.toLong() ?: return@setOnClickListener
+
+            PlaylistDialog { playlist: Playlist ->
+                run {
+                    mainViewModel.addTrackToPlaylist(trackId, playlist.id)
+                    toast("已添加到歌单：${playlist.title}")
+                }
+            }.show(supportFragmentManager)
         }
+    }
+
+    private fun toQueueActivity() {
+        val tracks = ArrayList<Track>()
+        viewModel.getQueueTracks().onEach {
+            tracks.add(it)
+        }
+
+        val intent = Intent(this, QueueActivity::class.java).apply {
+            putExtra("tracks", tracks)
+        }
+
+        startActivity(intent)
     }
 
     private fun initDataBinding() {
@@ -159,8 +185,9 @@ class TrackActivity : BaseActivity<ActivityTrackBinding, TrackViewModel>() {
         uiNowPlayingMetadata = metadata
         seekbar.max = metadata._duration
         trackProgressMax.text = metadata.duration
-        //更新图片
+
         setupAlbumArt(metadata.albumArtUri, binding.ivAlbumImage)
+
         setupLastAndNextTrackCover()
     }
 
@@ -175,12 +202,11 @@ class TrackActivity : BaseActivity<ActivityTrackBinding, TrackViewModel>() {
         }
     }
 
-    //加载专辑图片
     private fun setupAlbumArt(uri: Uri, target: ImageView) {
 
         if (uri.toString() == "" || uri == Uri.EMPTY) {
             Glide.with(this)
-                .load(R.drawable.ic_music_note_big)
+                .load(R.drawable.ic_conch_128)
                 .into(target)
 
             return
@@ -199,7 +225,6 @@ class TrackActivity : BaseActivity<ActivityTrackBinding, TrackViewModel>() {
         binding.seekbar.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
             override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
                 binding.trackProgressCurrent.text = progress.getFormattedDuration()
-                Log.d(TAG, "新位置$progress")
             }
 
             override fun onStartTrackingTouch(seekBar: SeekBar?) {

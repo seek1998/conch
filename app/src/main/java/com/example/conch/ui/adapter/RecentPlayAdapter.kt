@@ -1,6 +1,5 @@
 package com.example.conch.ui.adapter
 
-import android.content.Context
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -16,7 +15,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.SupervisorJob
 
-class RecentPlayAdapter(private val onClick: (Track) -> Unit, private val context: Context) :
+class RecentPlayAdapter(private val onItemClick: (Track) -> Unit) :
     ListAdapter<Track, RecentPlayAdapter.ViewHolder>(TrackDiffCallback),
     CoroutineScope by MainScope() {
 
@@ -24,8 +23,7 @@ class RecentPlayAdapter(private val onClick: (Track) -> Unit, private val contex
 
     class ViewHolder(
         itemView: View,
-        private val onClick: (Track) -> Unit,
-        private val context: Context
+        private val onItemClick: (Track) -> Unit
     ) : RecyclerView.ViewHolder(itemView) {
 
         private val recentPlayCover =
@@ -36,7 +34,7 @@ class RecentPlayAdapter(private val onClick: (Track) -> Unit, private val contex
         fun bind(track: Track) {
 
             itemView.setOnClickListener {
-                onClick(track)
+                onItemClick(track)
             }
 
             val coverPath = track.albumArt
@@ -53,6 +51,12 @@ class RecentPlayAdapter(private val onClick: (Track) -> Unit, private val contex
                         .into(this)
                 }
 
+            } else {
+                recentPlayCover.apply {
+                    Glide.with(this)
+                        .load(R.drawable.ic_play_arrow_blue900)
+                        .into(this)
+                }
             }
         }
     }
@@ -60,16 +64,12 @@ class RecentPlayAdapter(private val onClick: (Track) -> Unit, private val contex
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val view = LayoutInflater.from(parent.context)
             .inflate(R.layout.item_recent_play, parent, false)
-        return ViewHolder(view, onClick, parent.context)
+        return ViewHolder(view, onItemClick)
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val track = getItem(position)
         holder.bind(track)
-    }
-
-    override fun submitList(list: MutableList<Track>?) {
-        super.submitList(list)
     }
 }
 

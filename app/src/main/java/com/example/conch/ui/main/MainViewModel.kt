@@ -49,7 +49,7 @@ class MainViewModel(
         NowPlayingMetadata(title = "标题", subtitle = "作者")
     }
 
-    private val queueTracks: LiveData<List<MediaMetadataCompat>> =
+    private val queueTracks: LiveData<MutableList<MediaMetadataCompat>> =
         musicServiceConnection.queueTracks
 
     private var playbackState: PlaybackStateCompat = EMPTY_PLAYBACK_STATE

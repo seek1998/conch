@@ -37,4 +37,7 @@ interface TrackDao {
     @Query("UPDATE track SET id = :id WHERE mediaStoreId = 0")
     suspend fun setId(id: Long)
 
+    @Query("UPDATE track SET uid = :uid WHERE uid = 0")
+    fun updateAfterLogin(uid: Long)
+
 }

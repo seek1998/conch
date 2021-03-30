@@ -37,6 +37,7 @@ class LocalMediaSource private constructor(private val contentResolver: ContentR
     }
 
     suspend fun getTracks(): MutableList<Track> {
+
         val tracks = mutableListOf<Track>()
 
         withContext(Dispatchers.IO) {
@@ -64,6 +65,7 @@ class LocalMediaSource private constructor(private val contentResolver: ContentR
                 selectionArgs,
                 sortOrder
             )?.use { cursor ->
+
                 Log.i(TAG, "Found ${cursor.count} Tracks")
 
                 while (cursor.moveToNext()) {
@@ -93,6 +95,7 @@ class LocalMediaSource private constructor(private val contentResolver: ContentR
                         size = size,
                         type = contentType
                     )
+
                     tracks.add(item)
                 }
             }
@@ -107,16 +110,16 @@ class LocalMediaSource private constructor(private val contentResolver: ContentR
     ): String {
         val albumArtUri =
             Uri.parse("content://media/external/audio/albumart")
+
         val coverUri = ContentUris.withAppendedId(albumArtUri, albumId)
-        Log.i(TAG, coverUri.toString())
 
         return try {
             val inputStream: InputStream? = contentResolver.openInputStream(coverUri)
             inputStream?.close()
             coverUri.toString()
-        } catch (e: IOException) {
+        } catch (ignored: IOException) {
             ""
-        } catch (e: IllegalStateException) {
+        } catch (ignored: IllegalStateException) {
             ""
         }
     }

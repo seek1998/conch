@@ -10,7 +10,7 @@
         android:id="@+id/shapeableImageView2"
         android:layout_width="96dp"
         android:layout_height="96dp"
-        android:src="@drawable/ic_conch_blue900"
+        android:src="@drawable/ic_conch_128_blue900"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"

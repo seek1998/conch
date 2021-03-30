@@ -226,12 +226,16 @@ class TrackRepository private constructor(
         remoteMediaSource.uploadTrackCover(objectKey, uploadUri)
     }
 
-    fun downloadTrackFile(track: Track) {
+    fun downloadTrackFile(
+        track: Track,
+        downloadProgress: MutableLiveData<IOProgress>
+    ) {
         val objectKey = getObjectKey(track, FileType.TRACK)
         val downloadDir = getTrackDir(track)
         remoteMediaSource.downloadTrackFile(
             objectKey = objectKey,
             downloadDir = downloadDir,
+            downloadProgress = downloadProgress,
             track = track
         )
     }
@@ -279,7 +283,7 @@ class TrackRepository private constructor(
         }
     }
 
-    private fun checkFileDir(uid: Long = User.LOCAL_USER) {
+    fun checkFileDir(uid: Long = User.LOCAL_USER) {
         val context = MyApplication._context
         context?.run {
             val filesDir = getExternalFilesDir(DIRECTORY_MUSIC)
@@ -288,6 +292,18 @@ class TrackRepository private constructor(
                 userDir.mkdir()
             }
         }
+    }
+
+    @WorkerThread
+    suspend fun dataMobility(
+        user: User,
+        taskResult: MutableLiveData<Boolean>
+    ) {
+        trackDao.updateAfterLogin(user.id)
+
+        playlistDao.updateAfterLogin(user.id)
+
+        taskResult.postValue(true)
     }
 
     companion object {

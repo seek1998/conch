@@ -2,15 +2,20 @@ package com.example.conch.data.remote
 
 import android.util.Log
 import com.example.conch.data.MyResult
-import com.example.conch.data.model.RegisterInfoVO
+import com.example.conch.data.dto.RegisterInfoVO
 import com.example.conch.data.model.Track
 import com.example.conch.data.model.User
 import com.example.conch.data.remote.api.TrackService
 import com.example.conch.data.remote.api.UserService
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.MainScope
+import kotlinx.coroutines.SupervisorJob
 
 private const val STATUS_OK = 1
 
-class Network private constructor() {
+class Network private constructor() : CoroutineScope by MainScope() {
+
+    private val networkScope = CoroutineScope(coroutineContext + SupervisorJob())
 
     private val userService: UserService = ServiceCreator.create(UserService::class.java)
 
@@ -23,7 +28,6 @@ class Network private constructor() {
         } else {
             MyResult.Error(Exception(apiResponse.message))
         }
-
     }
 
     suspend fun register(registerInfo: RegisterInfoVO): MyResult<Nothing> {
@@ -62,6 +66,24 @@ class Network private constructor() {
         val apiResponse = trackService.getAllTracksByUID(uid)
         return if (apiResponse.code == STATUS_OK) {
             MyResult.Success(data = apiResponse.data)
+        } else {
+            MyResult.Error(Exception(apiResponse.message))
+        }
+    }
+
+    suspend fun updatePassword(oldPassword: String, newUserInfo: User): MyResult<User> {
+        val apiResponse = userService.updatePassword(oldPassword, newUserInfo)
+        return if (apiResponse.code == STATUS_OK) {
+            MyResult.Success(apiResponse.data)
+        } else {
+            MyResult.Error(Exception(apiResponse.message))
+        }
+    }
+
+    suspend fun updateUser(user: User): MyResult<User> {
+        val apiResponse = userService.update(user)
+        return if (apiResponse.code == STATUS_OK) {
+            MyResult.Success(apiResponse.data)
         } else {
             MyResult.Error(Exception(apiResponse.message))
         }

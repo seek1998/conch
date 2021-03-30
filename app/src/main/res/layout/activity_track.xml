@@ -61,9 +61,8 @@
                 android:id="@+id/iv_album_image"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:background="@color/windowBackground"
-                android:contentDescription="null"
-                android:src="@drawable/ic_music_note" />
+                android:contentDescription="track cover"
+                android:src="@drawable/ic_conch_128" />
 
         </com.google.android.material.card.MaterialCardView>
 
@@ -86,6 +85,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:contentDescription="专辑图片" />
+
         </com.google.android.material.card.MaterialCardView>
 
         <com.google.android.material.card.MaterialCardView
@@ -217,8 +217,8 @@
 
         <com.google.android.material.imageview.ShapeableImageView
             android:id="@+id/btn_previous_track"
-            android:layout_width="@dimen/small_play_icon_size"
-            android:layout_height="@dimen/small_play_icon_size"
+            android:layout_width="@dimen/normal_play_icon_size"
+            android:layout_height="@dimen/normal_play_icon_size"
             android:background="?attr/selectableItemBackgroundBorderless"
             android:clickable="true"
             android:src="@drawable/ic_skip_previous"
@@ -230,8 +230,8 @@
 
         <com.google.android.material.imageview.ShapeableImageView
             android:id="@+id/btn_next_track"
-            android:layout_width="@dimen/small_play_icon_size"
-            android:layout_height="@dimen/small_play_icon_size"
+            android:layout_width="@dimen/normal_play_icon_size"
+            android:layout_height="@dimen/normal_play_icon_size"
             android:background="?attr/selectableItemBackgroundBorderless"
             android:clickable="true"
             android:src="@drawable/ic_skip_next"

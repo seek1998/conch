@@ -46,12 +46,12 @@ abstract class BaseFragment<VDB : ViewDataBinding, VM : BaseViewModel> : Fragmen
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
-
         processLogic()
     }
 
     fun toast(msg: String) {
-        Toast.makeText(requireContext(), msg, Toast.LENGTH_SHORT).apply {
+        val context = requireActivity().applicationContext ?: requireContext()
+        Toast.makeText(context, msg, Toast.LENGTH_SHORT).apply {
             setText(msg)
             show()
         }

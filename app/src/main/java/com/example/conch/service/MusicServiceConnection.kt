@@ -34,7 +34,7 @@ class MusicServiceConnection(context: Context) : CoroutineScope by MainScope() {
 
     private val scope = CoroutineScope(coroutineContext + SupervisorJob())
 
-    val queueTracks = MutableLiveData<List<MediaMetadataCompat>>().apply {
+    val queueTracks = MutableLiveData<MutableList<MediaMetadataCompat>>().apply {
         postValue(EMPTY_QUEUE)
     }
 
@@ -211,6 +211,6 @@ val NOTHING_PLAYING: MediaMetadataCompat = MediaMetadataCompat.Builder()
     .build()
 
 @Suppress("PropertyName")
-val EMPTY_QUEUE: List<MediaMetadataCompat> = mutableListOf(
+val EMPTY_QUEUE: MutableList<MediaMetadataCompat> = mutableListOf(
     NOTHING_PLAYING
 )

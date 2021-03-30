@@ -33,8 +33,8 @@ class PlaylistAdapter(
 
     class ViewHolder(
         itemView: View,
-        val onClick: (Playlist) -> Unit,
-        val createNewPlaylist: () -> Unit
+        private val onClick: (Playlist) -> Unit,
+        private val createNewPlaylist: () -> Unit
     ) :
         RecyclerView.ViewHolder(itemView) {
 
@@ -120,6 +120,7 @@ class PlaylistAdapter(
 
     override fun submitList(list: MutableList<Playlist>?) {
         super.submitList(list)
+
         val footer = Playlist(id = 0L, "新建歌单")
 
         if (list?.find { it.id == 0L } == null) {

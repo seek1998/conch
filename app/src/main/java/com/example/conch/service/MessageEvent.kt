@@ -5,6 +5,7 @@ import android.os.Parcelable
 import java.io.Serializable
 
 private const val KEY_INT = "key_int"
+private const val KEY_LONG = "key_long"
 private const val KEY_STRING = "key_string"
 private const val KEY_BOOL = "key_bool"
 private const val KEY_SERIALIZABLE = "key_serializable"
@@ -16,6 +17,11 @@ data class MessageEvent(var type: MessageType) {
 
     fun put(value: Int): MessageEvent {
         bundle.putInt(KEY_INT, value)
+        return this
+    }
+
+    fun put(value: Long): MessageEvent {
+        bundle.putLong(KEY_LONG, value)
         return this
     }
 
@@ -70,6 +76,10 @@ data class MessageEvent(var type: MessageType) {
         return bundle.getInt(KEY_INT)
     }
 
+    fun getLong(): Long {
+        return bundle.getLong(KEY_LONG)
+    }
+
     fun getString(): String? {
         return bundle.getString(KEY_STRING)
     }
@@ -112,7 +122,9 @@ enum class MessageType {
     ACTION,
     ACTION_PLAY_TRACK,
     ACTION_UPDATE_MEDIA_STORE,
+    ACTION_UPDATE_USER_INFO,
     TRACK_DATA,
     TRACK_STATE_PLAYING,
+    TRACK_DELETE,
     PLAYLIST_ACTION_ADD_TRACK
 }

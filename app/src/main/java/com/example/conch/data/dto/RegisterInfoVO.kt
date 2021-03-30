@@ -1,4 +1,4 @@
-package com.example.conch.data.model
+package com.example.conch.data.dto
 
 data class RegisterInfoVO(
     var email: String = "",

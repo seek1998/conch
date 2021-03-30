@@ -18,15 +18,17 @@ class RemoteTrackIOViewModel(application: Application) : AndroidViewModel(applic
 
     private val trackRepository = TrackRepository.getInstance()
 
+    private val user = UserRepository.getInstance().loggedInUser
+
     private val handler = Handler(Looper.getMainLooper())
 
-    private val userId = UserRepository.getInstance().loggedInUser.id
+    private val uploadQueue: Queue<Track> = LinkedList()
 
-    val uploadQueue: Queue<Track> = LinkedList()
-
-    val downloadQueue: Queue<Track> = LinkedList()
+    private val downloadQueue: Queue<Track> = LinkedList()
 
     val succeedTrackUploadResult = MutableLiveData<MyResult<Track>>()
+
+    val succeedTrackDownloadResult = MutableLiveData<MyResult<Track>>()
 
     val loadingTrackUploadResult = MutableLiveData<MyResult<Track>>()
 
@@ -45,7 +47,13 @@ class RemoteTrackIOViewModel(application: Application) : AndroidViewModel(applic
     }
 
     fun addTrackToUploadQueue(track: Track) {
+        trackRepository.checkFileDir(uid = user.id)
         uploadQueue.offer(track)
+    }
+
+    private fun addTrackToDownloadQueue(track: Track) {
+        trackRepository.checkFileDir(uid = user.id)
+        downloadQueue.offer(track)
     }
 
     private fun checkIOQueue(): Boolean = handler.postDelayed({
@@ -100,7 +108,27 @@ class RemoteTrackIOViewModel(application: Application) : AndroidViewModel(applic
             }
 
             val currentTrack = currentUploadTrack.value?.title
-            Log.d(TAG, "currentTrack:  $currentTrack, IOProgress: $it")
+            Log.d(TAG, "currentUploadTrack:  $currentTrack, IOProgress: $it")
+        }
+    }
+
+    val downloadProgressObserver = Observer<IOProgress?> {
+        it?.let {
+
+            if (it.current == it.total) {
+
+                currentDownloadTrack.value?.run {
+                    val succeedResult = MyResult.Success(this)
+                    succeedTrackDownloadResult.postValue(succeedResult)
+                }
+
+                handler.postDelayed({
+                    currentDownloadTrack.postValue(null)
+                }, 200)
+            }
+
+            val currentTrack = currentDownloadTrack.value?.title
+            Log.d(TAG, "currentDownloadTrack:  $currentTrack, IOProgress: $it")
         }
     }
 
@@ -125,17 +153,17 @@ class RemoteTrackIOViewModel(application: Application) : AndroidViewModel(applic
                 this@RemoteTrackIOViewModel.errorResult.postValue(errorResult)
                 return@launch
             } else {
-                downloadQueue.offer(track)
+                addTrackToDownloadQueue(track)
             }
         }
     }
 
-    fun downloadTrackFile(track: Track) =
+    private fun downloadTrackFile(track: Track) =
         viewModelScope.launch {
-            trackRepository.downloadTrackFile(track)
+            trackRepository.downloadTrackFile(track, currentDownloadProgress)
         }
 
-    fun downloadTrackCover(track: Track) =
+    private fun downloadTrackCover(track: Track) =
         viewModelScope.launch {
             trackRepository.downloadTrackCover(track)
         }

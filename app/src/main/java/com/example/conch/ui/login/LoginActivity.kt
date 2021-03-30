@@ -3,14 +3,18 @@ package com.example.conch.ui.login
 import android.content.Intent
 import android.text.Editable
 import android.text.TextWatcher
+import android.util.Log
 import android.widget.Toast
 import com.example.conch.R
 import com.example.conch.data.MyResult
 import com.example.conch.data.model.User
 import com.example.conch.databinding.ActivityLoginBinding
 import com.example.conch.ui.BaseActivity
+import com.example.conch.ui.main.MainActivity
 import com.example.conch.ui.register.RegisterActivity
+import com.example.conch.utils.InjectUtil
 import com.example.conch.utils.RegexUtil
+import kotlinx.coroutines.launch
 import org.greenrobot.eventbus.EventBus
 
 class LoginActivity : BaseActivity<ActivityLoginBinding, LoginViewModel>() {
@@ -25,6 +29,7 @@ class LoginActivity : BaseActivity<ActivityLoginBinding, LoginViewModel>() {
             setOnClickListener {
 
                 val email = binding.editEmail.text.toString()
+
                 val password = binding.editPwd.text.toString()
 
                 if (!RegexUtil.isEmail(email)) {
@@ -44,21 +49,53 @@ class LoginActivity : BaseActivity<ActivityLoginBinding, LoginViewModel>() {
         }
 
         viewModel.loginResult.observe(this, {
-            val loginResult = it
 
-            if (loginResult is MyResult.Success) {
-                loginResult.data?.let { it1 -> updateUiWithUser(it1) }
+            if (it is MyResult.Success) {
+
+                val user = it.data!!
+
+                val isChecked = binding.acLoginCheckbox.isChecked
+
+                if (isChecked) {
+
+                    activityScope.launch {
+
+                        viewModel.dataMobility(user)
+
+                        runOnUiThread {
+                            updateUiWithUser(user)
+                        }
+                    }
+
+                } else {
+                    updateUiWithUser(user)
+                }
+
             }
 
-            if (loginResult is MyResult.Error) {
-                showLoginFailed(loginResult.exception.message)
+            if (it is MyResult.Error) {
+
+                it.exception.message?.let { message ->
+                    showLoginFailed(message)
+                }
+
+            }
+        })
+
+        viewModel.taskResult.observe(this, {
+            it?.let {
+                if (it && binding.loading.isShown) {
+                    binding.loading.hide()
+                }
             }
         })
     }
 
 
     private fun initEditText() {
+
         val textWatcher = object : TextWatcher {
+
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
 
             }
@@ -68,6 +105,7 @@ class LoginActivity : BaseActivity<ActivityLoginBinding, LoginViewModel>() {
             }
 
             override fun afterTextChanged(s: Editable?) {
+
                 if (s.toString() == "") {
                     binding.btnLogin.isEnabled = false
                     return
@@ -78,23 +116,29 @@ class LoginActivity : BaseActivity<ActivityLoginBinding, LoginViewModel>() {
         }
 
         binding.editEmail.addTextChangedListener(textWatcher)
+
         binding.editPwd.addTextChangedListener(textWatcher)
     }
 
 
-    private fun showLoginFailed(message: String?) {
-        Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
+    private fun showLoginFailed(message: String) {
+        toast(message)
     }
 
     private fun updateUiWithUser(user: User) {
-        Toast.makeText(this, "你好， ${user.name}。", Toast.LENGTH_SHORT).show()
+        Log.d(TAG, "update ui")
+        toast("你好， ${user.name}")
+        val intent = Intent(this, MainActivity::class.java)
+        startActivity(intent)
         finish()
     }
 
-    override fun getLayoutId(): Int = R.layout.activity_login
+    override fun getLayoutId() = R.layout.activity_login
 
-    override fun getViewModelInstance(): LoginViewModel = LoginViewModel(application)
+    override fun getViewModelInstance() = InjectUtil.provideLoginViewModel(this)
 
-    override fun getViewModelClass(): Class<LoginViewModel> = LoginViewModel::class.java
+    override fun getViewModelClass() = LoginViewModel::class.java
 
 }
+
+private const val TAG = "LoginActivity"

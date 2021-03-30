@@ -6,6 +6,6 @@ import retrofit2.http.GET
 
 interface OssService {
 
-    @GET("oss/sst")
+    @GET("oss/sts")
     fun getSTS(): ApiResponse<STSToken>
 }

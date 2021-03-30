@@ -56,5 +56,23 @@
     <string name="playlist_has_nothing">该歌单中没有歌曲</string>
     <string name="no_track">没有歌曲</string>
     <string name="playlist_default">默认歌单</string>
+    <string name="user">用户</string>
+    <string name="confirm_exchange">确认修改</string>
+
+    <string name="hint_password_confirm_failed">新密码和重复密码不一致</string>
+    <string name="hint_password_too_short">密码不应少于8位</string>
+    <string name="apply_exchange">提交修改</string>
+    <string name="title_activity_login2">LoginActivity2</string>
+    <string name="prompt_email">Email</string>
+    <string name="prompt_password">Password</string>
+    <string name="action_sign_in">Sign in or register</string>
+    <string name="action_sign_in_short">Sign in</string>
+    <string name="welcome">"Welcome !"</string>
+    <string name="invalid_username">Not a valid username</string>
+    <string name="invalid_password">Password must be >5 characters</string>
+    <string name="login_failed">"Login failed"</string>
+    <string name="exit">退出登录</string>
+    <string name="track_favorite">我喜欢的歌曲</string>
+    <string name="hint_empty_old_password">旧密码不能为空</string>
 
 </resources>

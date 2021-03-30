@@ -13,6 +13,7 @@ import com.example.conch.service.MessageEvent
 import com.example.conch.service.MessageType
 import com.example.conch.ui.BaseActivity
 import com.example.conch.ui.adapter.LocalTrackAdapter
+import com.example.conch.ui.dialog.TrackOptionDialog
 import com.example.conch.ui.track.TrackActivity
 import com.example.conch.utils.InjectUtil
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
@@ -31,8 +32,10 @@ class PlaylistActivity : BaseActivity<ActivityPlaylistBinding, PlaylistViewModel
 
         viewModel.playlistLiveData.postValue(playlist)
 
-        trackAdapter = LocalTrackAdapter({ track: Track -> itemOnClick(track) }
-        ) { track: Track -> trackOptionsOnClick(track) }
+        trackAdapter = LocalTrackAdapter(
+            onItemClick = { track: Track -> itemOnClick(track) },
+            onOptionsClick = { track: Track -> trackOptionsOnClick(track) }
+        )
 
         binding.rv.apply {
             adapter = trackAdapter
@@ -88,7 +91,7 @@ class PlaylistActivity : BaseActivity<ActivityPlaylistBinding, PlaylistViewModel
     }
 
     private fun trackOptionsOnClick(track: Track) {
-
+        TrackOptionDialog(this, track).show(supportFragmentManager)
     }
 
     private fun setupToolbar(playlistId: Long) {

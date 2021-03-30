@@ -106,11 +106,20 @@ class MainActivity : AppCompatActivity() {
         }
 
         mainPlayCard.setOnClickListener {
-            val intent = Intent(this, TrackActivity::class.java).apply {
-                val nowPlaying = viewModel.nowPlayingMetadata.value
-                putExtra("now_playing", nowPlaying)
+
+            val nowPlaying = viewModel.nowPlayingMetadata.value
+
+            nowPlaying ?: kotlin.run {
+                toast("当前没有播放歌曲")
             }
-            startActivity(intent)
+
+            nowPlaying?.let {
+                val intent = Intent(this, TrackActivity::class.java).apply {
+                    putExtra("now_playing", nowPlaying)
+                }
+                startActivity(intent)
+            }
+
         }
 
         observerRemoteIOProgress()
@@ -149,11 +158,25 @@ class MainActivity : AppCompatActivity() {
             remoteTrackViewModel.uploadProgressObserver
         )
 
+        remoteTrackViewModel.currentDownloadProgress.observe(
+            this,
+            remoteTrackViewModel.downloadProgressObserver
+        )
+
         remoteTrackViewModel.succeedTrackUploadResult.observe(this, {
             it?.let {
                 if (it is MyResult.Success) {
                     val succeedTrack = it.data
                     toast("${succeedTrack?.title}上传成功")
+                }
+            }
+        })
+
+        remoteTrackViewModel.succeedTrackDownloadResult.observe(this, {
+            it?.let {
+                if (it is MyResult.Success) {
+                    val succeedTrack = it.data
+                    toast("${succeedTrack?.title}下载成功")
                 }
             }
         })
@@ -184,8 +207,8 @@ class MainActivity : AppCompatActivity() {
 
         if (uri == Uri.EMPTY) {
             Glide.with(this)
-                .load(ContextCompat.getDrawable(this, R.drawable.ic_round_play_arrow_16_write))
-                .into(ivNowPlayingCover)
+                .load(ContextCompat.getDrawable(this, R.drawable.ic_play_arrow_blue900))
+                .into(this.ivNowPlayingCover)
             return
         }
 

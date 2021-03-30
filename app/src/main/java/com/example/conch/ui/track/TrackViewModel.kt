@@ -21,12 +21,14 @@ import kotlinx.coroutines.launch
 import kotlin.math.floor
 
 class TrackViewModel constructor(
-    musicServiceConnection: MusicServiceConnection, application: Application,
+    application: Application,
+    musicServiceConnection: MusicServiceConnection,
+    private val trackRepository: TrackRepository
 ) : BaseViewModel(application) {
 
-    private var trackRepository = TrackRepository.getInstance()
-
     val nowPlayingMetadata: MutableLiveData<NowPlayingMetadata> = MutableLiveData()
+
+    private val handler = Handler(Looper.getMainLooper())
 
     var nextTrack: Track? = null
 
@@ -36,7 +38,7 @@ class TrackViewModel constructor(
 
     val playMode: LiveData<SupportedPlayMode> = musicServiceConnection.playMode
 
-    private val queueTracks: LiveData<List<MediaMetadataCompat>> =
+    private val queueTracks: LiveData<MutableList<MediaMetadataCompat>> =
         musicServiceConnection.queueTracks
 
     private var playbackState: PlaybackStateCompat = EMPTY_PLAYBACK_STATE
@@ -56,7 +58,6 @@ class TrackViewModel constructor(
     }
 
     private var updatePosition = true
-    private val handler = Handler(Looper.getMainLooper())
 
     private val mediaMetadataObserver = Observer<MediaMetadataCompat> {
         Log.i(TAG, "mediaMetaData changed: new id:${it.id}")
@@ -163,16 +164,7 @@ class TrackViewModel constructor(
     fun changePlayMode() =
         musicServiceConnection.changePlayMode(currentMode = playMode.value)
 
-    fun getQueueTrack(): MutableList<String> {
-        val tracks = mutableListOf<String>()
-        val queue = queueTracks.value
-        queue!!.forEach {
-            tracks.add(it.title!!)
-        }
-
-        return tracks
-    }
-
+    fun getQueueTracks() = trackRepository.currentQueueTracks
 
     override fun onCleared() {
         super.onCleared()
@@ -203,13 +195,14 @@ class TrackViewModel constructor(
         }
 
     class Factory(
+        private val application: Application,
         private val musicServiceConnection: MusicServiceConnection,
-        private val application: Application
+        private val trackRepository: TrackRepository
     ) : ViewModelProvider.NewInstanceFactory() {
 
         @Suppress("unchecked_cast")
         override fun <T : ViewModel?> create(modelClass: Class<T>): T {
-            return TrackViewModel(musicServiceConnection, application) as T
+            return TrackViewModel(application, musicServiceConnection, trackRepository) as T
         }
     }
 }

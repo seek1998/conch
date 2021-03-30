@@ -4,7 +4,7 @@ import android.app.Application
 import androidx.lifecycle.MutableLiveData
 import com.example.conch.data.MyResult
 import com.example.conch.data.UserRepository
-import com.example.conch.data.model.RegisterInfoVO
+import com.example.conch.data.dto.RegisterInfoVO
 import com.example.conch.ui.BaseViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope

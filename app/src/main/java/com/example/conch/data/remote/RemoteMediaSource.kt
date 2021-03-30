@@ -141,7 +141,12 @@ class RemoteMediaSource private constructor(private val oss: OSSClient) :
 
     }
 
-    fun downloadTrackFile(objectKey: String, downloadDir: File, track: Track) {
+    fun downloadTrackFile(
+        objectKey: String,
+        downloadDir: File,
+        downloadProgress: MutableLiveData<IOProgress>,
+        track: Track
+    ) {
         //下载文件。
         //objectKey等同于objectName，表示从OSS下载文件时需要指定包含文件后缀在内的完整路径，例如abc/efg/123.jpg。
         val get = GetObjectRequest(BUCKET_NAME, objectKey)
@@ -152,6 +157,11 @@ class RemoteMediaSource private constructor(private val oss: OSSClient) :
                 val length = result.contentLength
                 val buffer = ByteArray(length.toInt())
                 var readCount = 0
+
+                val start = IOProgress(id = track.id, total = length, current = 0L)
+
+                downloadProgress.postValue(start)
+
                 Log.d(TAG, "start download ${track.title}, length= $length")
                 while (readCount < length) {
                     try {
@@ -160,6 +170,11 @@ class RemoteMediaSource private constructor(private val oss: OSSClient) :
                             readCount,
                             length.toInt() - readCount
                         )
+                        val progress =
+                            IOProgress(id = track.id, total = length, current = readCount.toLong())
+
+                        downloadProgress.postValue(progress)
+
                     } catch (e: Exception) {
                         Log.d(TAG, e.toString())
                         OSSLog.logInfo(e.toString())

@@ -2,8 +2,10 @@ package com.example.conch.ui.dialog
 
 import android.app.Dialog
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import androidx.fragment.app.DialogFragment
+import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Observer
@@ -23,13 +25,14 @@ class PlaylistDialog(
 
     private lateinit var dialog: BottomSheetDialog
 
-    private lateinit var adapter: PlaylistDialogAdapter
+    private lateinit var playlistAdapter: PlaylistDialogAdapter
 
     private lateinit var playlistsLiveData: MutableLiveData<MutableList<Playlist>>
 
     private val playlistsObserver = Observer<MutableList<Playlist>> {
         it?.let {
-            adapter.submitList(it)
+            Log.d(TAG, "sublist: $it")
+            this.playlistAdapter.submitList(it)
         }
     }
 
@@ -48,14 +51,13 @@ class PlaylistDialog(
         this.dialog = BottomSheetDialog(requireContext(), R.style.BottomSheetDialog)
             .apply {
                 setContentView(contentView)
-                show()
             }
 
         val linearLayoutManager = LinearLayoutManager(requireContext()).apply {
             orientation = LinearLayoutManager.HORIZONTAL
         }
 
-        adapter = PlaylistDialogAdapter(onClick)
+        this.playlistAdapter = PlaylistDialogAdapter(onClick)
 
         this.playlistsLiveData = mainViewModel.playlists.apply {
             observeForever(playlistsObserver)
@@ -63,25 +65,36 @@ class PlaylistDialog(
 
         contentView.findViewById<RecyclerView>(R.id.dialog_playlist_rv).apply {
             layoutManager = linearLayoutManager
-            adapter = adapter
-
+            adapter = playlistAdapter
         }
 
         contentView.findViewById<MaterialTextView>(R.id.dialog_playlist_tv_cancel).apply {
             setOnClickListener {
-                dialog.cancel()
+                cancel()
             }
         }
 
         return dialog
     }
 
+
     override fun onStop() {
+        Log.d(TAG, "stop")
         super.onStop()
         this.playlistsLiveData.removeObserver(playlistsObserver)
     }
 
-    fun cancel() = this.dialog.cancel()
+    fun show(manager: FragmentManager) {
+        Log.d(TAG, "show")
+        this.show(manager, TAG)
+    }
+
+    fun cancel() {
+        Log.d(TAG, "cancel")
+        this.dialog.cancel()
+    }
 }
+
+private const val TAG = "PlaylistDialog"
 
 

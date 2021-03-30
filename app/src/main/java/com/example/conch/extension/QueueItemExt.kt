@@ -19,5 +19,5 @@ fun MediaSessionCompat.QueueItem.toMediaMetadataCompat():
     }.build()
 }
 
-fun List<MediaSessionCompat.QueueItem>.toMediaMetadataCompat() =
-    this.map { it.toMediaMetadataCompat() }
+fun MutableList<MediaSessionCompat.QueueItem>.toMediaMetadataCompat() =
+    this.map { it.toMediaMetadataCompat() } as MutableList

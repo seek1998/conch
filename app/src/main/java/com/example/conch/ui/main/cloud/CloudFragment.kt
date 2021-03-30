@@ -8,6 +8,7 @@ import com.example.conch.data.model.Track
 import com.example.conch.databinding.FragmentCloudBinding
 import com.example.conch.ui.BaseFragment
 import com.example.conch.ui.adapter.CloudTrackAdapter
+import com.example.conch.ui.dialog.TrackOptionDialog
 import com.example.conch.ui.main.MainViewModel
 import com.example.conch.ui.main.RemoteTrackIOViewModel
 import com.example.conch.utils.InjectUtil
@@ -30,7 +31,14 @@ class CloudFragment : BaseFragment<FragmentCloudBinding, CloudViewModel>() {
         viewModel.getDataFromRemote()
 
         cloudTrackAdapter =
-            CloudTrackAdapter { track -> onCloudTrackItemClick(track) }
+            CloudTrackAdapter(
+                onItemClick = { track -> onItemClick(track) },
+                onOptionsClick = { track ->
+                    TrackOptionDialog(requireActivity(), track).show(
+                        childFragmentManager
+                    )
+                }
+            )
 
         binding.rv.apply {
             adapter = cloudTrackAdapter
@@ -87,8 +95,8 @@ class CloudFragment : BaseFragment<FragmentCloudBinding, CloudViewModel>() {
         }
     }
 
-    private fun onCloudTrackItemClick(track: Track) {
-        remoteTrackIOViewModel.getTrackFileFromCloud(track)
+    private fun onItemClick(track: Track) {
+
     }
 
     override fun getLayoutId() = R.layout.fragment_cloud

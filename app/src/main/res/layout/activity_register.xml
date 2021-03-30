@@ -7,7 +7,7 @@
 
         <variable
             name="registerInfo"
-            type="com.example.conch.data.model.RegisterInfoVO" />
+            type="com.example.conch.data.dto.RegisterInfoVO" />
 
     </data>
 
@@ -133,17 +133,17 @@
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/btn_register"
-            android:layout_width="0dp"
+            style="?attr/materialButtonOutlinedStyle"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginHorizontal="48dp"
             android:layout_marginBottom="32dp"
             android:padding="16dp"
             android:text="@string/register"
-            android:textStyle="bold"
-            app:cornerRadius="24dp"
+            app:cornerRadius="@dimen/circle_button_corner_radius"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="@+id/textInputLayout4"
-            app:layout_constraintStart_toStartOf="@+id/textInputLayout4" />
-
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

@@ -58,6 +58,7 @@
         android:background="?attr/selectableItemBackgroundBorderless"
         android:clickable="true"
         android:padding="8dp"
+        android:visibility="invisible"
         android:src="@drawable/ic_more_vert"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"

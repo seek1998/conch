@@ -2,10 +2,10 @@ package com.example.conch.utils
 
 import android.app.Activity
 import android.app.Application
-import android.content.Context
 import com.example.conch.data.TrackRepository
 import com.example.conch.data.UserRepository
 import com.example.conch.service.MusicServiceConnection
+import com.example.conch.ui.login.LoginViewModel
 import com.example.conch.ui.main.MainViewModel
 import com.example.conch.ui.main.RemoteTrackIOViewModel
 import com.example.conch.ui.main.cloud.CloudViewModel
@@ -13,6 +13,7 @@ import com.example.conch.ui.main.local.LocalViewModel
 import com.example.conch.ui.playlist.PlaylistViewModel
 import com.example.conch.ui.queue.QueueViewModel
 import com.example.conch.ui.track.TrackViewModel
+import com.example.conch.ui.user.UserViewModel
 
 object InjectUtil {
 
@@ -20,15 +21,16 @@ object InjectUtil {
 
     private val trackRepository = TrackRepository.getInstance()
 
-    private fun provideMusicServiceConnection(context: Context): MusicServiceConnection {
+    private fun provideMusicServiceConnection(application: Application): MusicServiceConnection {
         return MusicServiceConnection.getInstance(
-            context
+            application
         )
     }
 
     fun provideTrackViewModel(activity: Activity): TrackViewModel {
-        val musicServiceConnection = provideMusicServiceConnection(activity)
-        return TrackViewModel.Factory(musicServiceConnection, activity.application)
+        val application = activity.application
+        val musicServiceConnection = provideMusicServiceConnection(application)
+        return TrackViewModel.Factory(application, musicServiceConnection, trackRepository)
             .create(TrackViewModel::class.java)
     }
 
@@ -37,14 +39,15 @@ object InjectUtil {
     }
 
     fun provideMainViewModelFactory(activity: Activity): MainViewModel.Factory {
-        val musicServiceConnection = provideMusicServiceConnection(activity)
-        return MainViewModel.Factory(activity.application, musicServiceConnection)
+        val application = activity.application
+        val musicServiceConnection = provideMusicServiceConnection(application)
+        return MainViewModel.Factory(application, musicServiceConnection)
     }
 
-    fun providePlaylistViewModelFactory(context: Context): PlaylistViewModel.Factory {
-        val applicationContext = context.applicationContext
-        val musicServiceConnection = provideMusicServiceConnection(applicationContext)
-        return PlaylistViewModel.Factory(applicationContext as Application, musicServiceConnection)
+    fun providePlaylistViewModelFactory(activity: Activity): PlaylistViewModel.Factory {
+        val application = activity.application
+        val musicServiceConnection = provideMusicServiceConnection(application)
+        return PlaylistViewModel.Factory(application, musicServiceConnection)
     }
 
     fun provideCloudViewModel(activity: Activity): CloudViewModel {
@@ -58,6 +61,16 @@ object InjectUtil {
 
     fun provideQueueViewModel(activity: Activity): QueueViewModel {
         return QueueViewModel(activity.application, trackRepository)
+    }
+
+    fun provideUserViewModel(activity: Activity): UserViewModel {
+        val application = activity.application
+        return UserViewModel(application, userRepository)
+    }
+
+    fun provideLoginViewModel(activity: Activity): LoginViewModel {
+        val application = activity.application
+        return LoginViewModel(application, userRepository, trackRepository)
     }
 
 }

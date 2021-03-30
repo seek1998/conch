@@ -41,9 +41,8 @@ class PersistentStorage private constructor(val context: Context) {
     }
 
 
-    suspend fun saveLoggedInUser(user: User) {
+    fun saveLoggedInUser(user: User) {
         val json = gson.toJson(user)
-
         preferences.edit().putString("logged_in_user", json).apply()
     }
 

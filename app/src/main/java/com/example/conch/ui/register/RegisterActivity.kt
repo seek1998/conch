@@ -3,7 +3,7 @@ package com.example.conch.ui.register
 import android.widget.Toast
 import com.example.conch.R
 import com.example.conch.data.MyResult
-import com.example.conch.data.model.RegisterInfoVO
+import com.example.conch.data.dto.RegisterInfoVO
 import com.example.conch.databinding.ActivityRegisterBinding
 import com.example.conch.ui.BaseActivity
 import com.example.conch.utils.RegexUtil

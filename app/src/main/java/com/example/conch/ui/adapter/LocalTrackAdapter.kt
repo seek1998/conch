@@ -21,7 +21,8 @@ import kotlinx.coroutines.launch
 
 
 class LocalTrackAdapter(
-    private val onItemClick: ((Track) -> Unit)? = null,
+    private val context: Context? = null,
+    private val onItemClick: (Track) -> Unit,
     private val onOptionsClick: ((Track) -> Unit)? = null
 ) :
     ListAdapter<Track, LocalTrackAdapter.ViewHolder>(TrackDiffCallback),
@@ -32,8 +33,8 @@ class LocalTrackAdapter(
     class ViewHolder(
         context: Context,
         itemView: View,
-        val onItemClick: ((Track) -> Unit)?,
-        val onOptionsClick: ((Track) -> Unit)?
+        private val onItemClick: ((Track) -> Unit)?,
+        private val onOptionsClick: ((Track) -> Unit)?
     ) : RecyclerView.ViewHolder(itemView) {
 
         private var mediaStoreId = 0L
@@ -41,7 +42,7 @@ class LocalTrackAdapter(
         private val trackTitle = itemView.findViewById<TextView>(R.id.item_local_track_title)
         private val trackArtist = itemView.findViewById<TextView>(R.id.item_local_track_artist)
         private val trackCover = itemView.findViewById<ImageView>(R.id.item_local_track_cover)
-        private val trackOptions =
+        private val options =
             itemView.findViewById<ShapeableImageView>(R.id.item_local_track_options)
 
         fun bind(track: Track, isLastItem: Boolean = false) {
@@ -52,7 +53,11 @@ class LocalTrackAdapter(
                 onItemClick?.invoke(track)
             }
 
-            trackOptions.setOnClickListener {
+            onOptionsClick?.let {
+                options.visibility = View.VISIBLE
+            }
+
+            options.setOnClickListener {
                 onOptionsClick?.invoke(track)
             }
 
@@ -101,6 +106,10 @@ class LocalTrackAdapter(
 
     override fun submitList(list: MutableList<Track>?) {
         super.submitList(list)
+    }
+
+    fun deleteTracks(tracks: List<Track>) {
+        val potions = ArrayList<Int>()
     }
 
 }

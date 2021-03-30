@@ -13,16 +13,16 @@ class LocalViewModel(application: Application) : BaseViewModel(application) {
 
     private val trackRepository = TrackRepository.getInstance()
 
-    val localTracksLiveData = MutableLiveData<List<Track>>()
+    val localTracks = MutableLiveData<List<Track>>()
 
     fun getLocalTracks() = viewModelScope.launch {
         val list = trackRepository.getCachedLocalTracks()
-        localTracksLiveData.postValue(list)
+        localTracks.postValue(list)
     }
 
     suspend fun refreshLocalData() = with(Dispatchers.IO) {
-        trackRepository.getCachedLocalTracks(true)
-        getLocalTracks()
+        val list = trackRepository.getCachedLocalTracks(true)
+        localTracks.postValue(list)
     }
 }
 

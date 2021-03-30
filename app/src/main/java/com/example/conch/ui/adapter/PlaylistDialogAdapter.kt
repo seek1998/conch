@@ -19,7 +19,6 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.launch
-import org.greenrobot.eventbus.EventBus
 
 class PlaylistDialogAdapter(
     private val onClick: (Playlist) -> Unit
@@ -33,8 +32,6 @@ class PlaylistDialogAdapter(
 
     class ViewHolder(itemView: View, val onClick: (Playlist) -> Unit) :
         RecyclerView.ViewHolder(itemView) {
-
-        private val eventBus = EventBus.getDefault()
 
         private val playlistCover =
             itemView.findViewById<ShapeableImageView>(R.id.item_playlist_cover)
@@ -64,14 +61,12 @@ class PlaylistDialogAdapter(
             playlistCover.apply {
                 setPadding(32 * 3)
                 alpha = 0.25F
+
+                Glide.with(this)
+                    .load(R.drawable.ic_conch)
+                    .into(this)
             }
-
-            Glide.with(playlistCover)
-                .load(R.drawable.ic_conch)
-                .into(playlistCover)
         }
-
-
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
@@ -96,6 +91,11 @@ class PlaylistDialogAdapter(
             }
 
         }
+    }
+
+    override fun submitList(list: MutableList<Playlist>?) {
+        super.submitList(list)
+        Log.d(TAG, list.toString())
     }
 }
 

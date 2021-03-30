@@ -1,7 +1,6 @@
 package com.example.conch.ui.adapter
 
 import android.content.Context
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -17,6 +16,7 @@ import com.example.conch.extension.getMediaExt
 import com.example.conch.service.MessageEvent
 import com.example.conch.service.MessageType
 import com.example.conch.utils.SizeUtils
+import com.google.android.material.imageview.ShapeableImageView
 import com.google.android.material.internal.BaselineLayout
 import com.google.android.material.textview.MaterialTextView
 import kotlinx.coroutines.CoroutineScope
@@ -25,9 +25,9 @@ import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.launch
 import org.greenrobot.eventbus.EventBus
 
-
 class CloudTrackAdapter(
-    private val onClick: (Track) -> Unit
+    private val onItemClick: ((Track) -> Unit)? = null,
+    private val onOptionsClick: ((Track) -> Unit)? = null
 ) :
     ListAdapter<Track, CloudTrackAdapter.ViewHolder>(TrackDiffCallback),
     CoroutineScope by MainScope() {
@@ -39,7 +39,8 @@ class CloudTrackAdapter(
     class ViewHolder(
         context: Context,
         itemView: View,
-        val onClick: (Track) -> Unit,
+        private val onClick: ((Track) -> Unit)? = null,
+        private val onOptionsClick: ((Track) -> Unit)? = null
     ) : RecyclerView.ViewHolder(itemView) {
 
         private var mediaStoreId = 0L
@@ -59,6 +60,9 @@ class CloudTrackAdapter(
         private val loading =
             itemView.findViewById<ContentLoadingProgressBar>(R.id.item_cloud_track_loading)
 
+        private val options =
+            itemView.findViewById<ShapeableImageView>(R.id.item_cloud_track_options)
+
         fun bind(
             track: Track,
             isLocal: Boolean = false,
@@ -69,13 +73,22 @@ class CloudTrackAdapter(
             mediaStoreId = track.mediaStoreId
 
             itemView.setOnClickListener {
-                onClick(track)
+
+                onClick?.invoke(track)
+
                 if (isLocal) {
-                    Log.d(TAG, "OnClicked: $track")
                     val messageEvent =
                         MessageEvent(MessageType.TRACK_DATA).put("track_to_play", track)
                     eventBus.post(messageEvent)
                 }
+            }
+
+            onOptionsClick?.let {
+                options.visibility = View.VISIBLE
+            }
+
+            options.setOnClickListener {
+                onOptionsClick?.invoke(track)
             }
 
             itemSerialNumber.text = position.toString()
@@ -103,7 +116,7 @@ class CloudTrackAdapter(
         val view = LayoutInflater.from(parent.context)
             .inflate(R.layout.item_cloud_track, parent, false)
 
-        return ViewHolder(parent.context, view, onClick)
+        return ViewHolder(parent.context, view, onItemClick, onOptionsClick)
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
