@@ -1,7 +1,7 @@
 package com.example.conch.ui.adapter
 
+import android.app.Activity
 import android.net.Uri
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -21,8 +21,9 @@ import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.launch
 
 class PlaylistAdapter(
-    private val onClick: (Playlist) -> Unit,
-    private val createNewPlaylist: () -> Unit
+    private val activity: Activity,
+    private val onItemClick: ((Playlist) -> Unit)? = null,
+    private val onLongClick: ((Playlist) -> Unit)? = null
 ) :
     ListAdapter<Playlist, PlaylistAdapter.ViewHolder>(PlaylistDiffCallback),
     CoroutineScope by MainScope() {
@@ -33,8 +34,8 @@ class PlaylistAdapter(
 
     class ViewHolder(
         itemView: View,
-        private val onClick: (Playlist) -> Unit,
-        private val createNewPlaylist: () -> Unit
+        private val onItemClick: ((Playlist) -> Unit)? = null,
+        private val onLongClick: ((Playlist) -> Unit)? = null
     ) :
         RecyclerView.ViewHolder(itemView) {
 
@@ -45,8 +46,14 @@ class PlaylistAdapter(
 
         fun bind(playlist: Playlist, coverPath: String) {
 
+
             itemView.setOnClickListener {
-                onClick(playlist)
+                onItemClick?.invoke(playlist)
+            }
+
+            itemView.setOnLongClickListener {
+                onLongClick?.invoke(playlist)
+                true
             }
 
             playlistTitle.text = playlist.title
@@ -71,62 +78,26 @@ class PlaylistAdapter(
                     .into(this)
             }
         }
-
-        fun bindLastItem(playlist: Playlist) {
-            //对末尾的特殊歌单做特殊处理
-
-            itemView.setOnClickListener {
-                createNewPlaylist()
-            }
-
-            playlistTitle.text = playlist.title
-            playlistCover.apply {
-                setPadding(32 * 3)
-                alpha = 0.25F
-            }
-
-            Glide.with(playlistCover)
-                .load(R.drawable.ic_add_108)
-                .override(256, 256)
-                .diskCacheStrategy(DiskCacheStrategy.ALL)
-                .into(playlistCover)
-
-        }
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val view = LayoutInflater.from(parent.context)
             .inflate(R.layout.item_playlist, parent, false)
 
-        return ViewHolder(view, onClick, createNewPlaylist)
+        return ViewHolder(view, onItemClick, onLongClick)
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
 
         scope.launch {
             val playlistItem = getItem(position)
-
-            Log.i(TAG, "position = $position, playlist = $playlistItem")
-
-            if (playlistItem.id == 0L) {
-                holder.bindLastItem(playlistItem)
-            } else {
-                val coverPath = trackRepository.getPlaylistCoverPath(playlistItem.id)
-                holder.bind(playlistItem, coverPath)
-            }
-
+            val coverPath = trackRepository.getPlaylistCoverPath(playlistItem.id)
+            holder.bind(playlistItem, coverPath)
         }
     }
 
     override fun submitList(list: MutableList<Playlist>?) {
         super.submitList(list)
-
-        val footer = Playlist(id = 0L, "新建歌单")
-
-        if (list?.find { it.id == 0L } == null) {
-            list!!.add(footer)
-        }
-
     }
 }
 

@@ -24,6 +24,7 @@ class LocalViewModel(application: Application) : BaseViewModel(application) {
         val list = trackRepository.getCachedLocalTracks(true)
         localTracks.postValue(list)
     }
+
 }
 
 private const val TAG = "LocalViewModel"

@@ -9,7 +9,6 @@ import androidx.activity.viewModels
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.example.conch.R
-import com.example.conch.data.model.Playlist
 import com.example.conch.data.model.Track
 import com.example.conch.databinding.ActivityTrackBinding
 import com.example.conch.extension.getFormattedDuration
@@ -59,18 +58,19 @@ class TrackActivity : BaseActivity<ActivityTrackBinding, TrackViewModel>() {
 
             binding.btnPlayMode.setImageLevel(
                 when (it) {
+
                     SupportedPlayMode.REPEAT -> {
-                        toast(this.getString(R.string.mode_repeat))
                         0
                     }
+
                     SupportedPlayMode.REPEAT_ONE -> {
-                        toast(this.getString(R.string.mode_repeat_one))
                         1
                     }
+
                     SupportedPlayMode.SHUFFLE -> {
-                        toast(this.getString(R.string.mode_shuffle))
                         2
                     }
+
                     else -> 0
                 }
             )
@@ -92,14 +92,6 @@ class TrackActivity : BaseActivity<ActivityTrackBinding, TrackViewModel>() {
     private fun setUpToolBar() {
 
         binding.toolBar.apply {
-            setOnMenuItemClickListener {
-                when (it.itemId) {
-                    R.id.navigation_more -> {
-                        true
-                    }
-                    else -> false
-                }
-            }
 
             setNavigationOnClickListener {
                 this@TrackActivity.finish()
@@ -129,7 +121,16 @@ class TrackActivity : BaseActivity<ActivityTrackBinding, TrackViewModel>() {
             toQueueActivity()
         }
 
+        btnFastForward.setOnClickListener {
+            viewModel.fastForward()
+        }
+
+        btnFastRewind.setOnClickListener {
+            viewModel.fastRewind()
+        }
+
         btnFavorite.setOnClickListener {
+
             val isFavorite = viewModel.isFavorite.value!!
 
             if (isFavorite) {
@@ -141,22 +142,18 @@ class TrackActivity : BaseActivity<ActivityTrackBinding, TrackViewModel>() {
             viewModel.changeFavoriteMode()
         }
 
-        btnLibraryAdd.setOnClickListener {
+        btnPlaylistAdd.setOnClickListener {
 
-            val trackId =
-                viewModel.nowPlayingMetadata.value?.id?.toLong() ?: return@setOnClickListener
+            val id = viewModel.nowPlayingMetadata.value?.id?.toLong() ?: return@setOnClickListener
 
-            PlaylistDialog { playlist: Playlist ->
-                run {
-                    mainViewModel.addTrackToPlaylist(trackId, playlist.id)
-                    toast("已添加到歌单：${playlist.title}")
-                }
-            }.show(supportFragmentManager)
+            PlaylistDialog(this@TrackActivity, mediaStoreId = id).show(supportFragmentManager)
         }
     }
 
     private fun toQueueActivity() {
+
         val tracks = ArrayList<Track>()
+
         viewModel.getQueueTracks().onEach {
             tracks.add(it)
         }

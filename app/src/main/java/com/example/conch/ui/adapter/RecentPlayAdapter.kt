@@ -42,7 +42,6 @@ class RecentPlayAdapter(private val onItemClick: (Track) -> Unit) :
             recentPlayTitle.text = track.title
 
             if (coverPath.isNotEmpty()) {
-
                 recentPlayCover.apply {
                     Glide.with(this)
                         .load(coverPath)

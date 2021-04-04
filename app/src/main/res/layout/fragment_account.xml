@@ -20,83 +20,105 @@
             android:layout_height="wrap_content"
             android:orientation="vertical">
 
-            <androidx.constraintlayout.widget.ConstraintLayout
-                android:id="@+id/account_user_layout"
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginHorizontal="16dp"
-                android:layout_marginTop="16dp"
-                android:background="@drawable/playlist_favorite_shape"
-                android:clickable="true"
-                android:padding="8dp">
+                android:orientation="horizontal">
 
-                <androidx.constraintlayout.widget.Guideline
-                    android:id="@+id/center_user_guideline"
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:id="@+id/account_user_layout"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:orientation="horizontal"
-                    app:layout_constraintGuide_percent="0.5" />
+                    android:layout_marginStart="16dp"
+                    android:layout_marginTop="16dp"
+                    android:background="@drawable/playlist_favorite_shape"
+                    android:clickable="true"
+                    android:padding="16dp">
 
-                <com.google.android.material.imageview.ShapeableImageView
-                    android:id="@+id/account_head_portrait"
-                    android:layout_width="@dimen/head_portrait_size"
-                    android:layout_height="@dimen/head_portrait_size"
-                    android:src="@drawable/ic_account_box"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent" />
+                    <androidx.constraintlayout.widget.Guideline
+                        android:id="@+id/center_user_guideline"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        app:layout_constraintGuide_percent="0.5" />
 
-                <com.google.android.material.textview.MaterialTextView
-                    android:id="@+id/account_username"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:gravity="center"
-                    android:padding="8dp"
-                    android:text="@string/local_user"
-                    android:textColor="@color/primary_text"
-                    android:textSize="@dimen/big_text_size"
-                    android:textStyle="bold"
-                    app:layout_constraintBottom_toTopOf="@+id/center_user_guideline"
-                    app:layout_constraintStart_toEndOf="@+id/account_head_portrait" />
+                    <com.google.android.material.imageview.ShapeableImageView
+                        android:id="@+id/account_head_portrait"
+                        android:layout_width="@dimen/head_portrait_size"
+                        android:layout_height="@dimen/head_portrait_size"
+                        android:src="@drawable/ic_account_box"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent" />
 
-                <com.google.android.material.textview.MaterialTextView
-                    android:id="@+id/account_email"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:gravity="center"
-                    android:text="@string/email_example"
-                    android:textColor="@color/secondary_text"
-                    android:textSize="@dimen/normal_text_size"
-                    android:padding="8dp"
-                    app:layout_constraintStart_toEndOf="@+id/account_username"
-                    app:layout_constraintStart_toStartOf="@+id/account_username"
-                    app:layout_constraintTop_toBottomOf="@+id/account_username" />
+                    <com.google.android.material.textview.MaterialTextView
+                        android:id="@+id/account_username"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:gravity="center"
+                        android:padding="8dp"
+                        android:text="@string/local_user"
+                        android:textColor="@color/primary_text"
+                        android:textSize="@dimen/big_text_size"
+                        android:textStyle="bold"
+                        app:layout_constraintBottom_toTopOf="@+id/center_user_guideline"
+                        app:layout_constraintStart_toEndOf="@+id/account_head_portrait" />
 
-                <com.google.android.material.imageview.ShapeableImageView
-                    android:id="@+id/account_to_login_or_user_info"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginEnd="8dp"
-                    android:padding="8dp"
-                    android:src="@drawable/ic_login"
-                    app:layout_constraintBottom_toTopOf="@+id/center_user_guideline"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintTop_toTopOf="@+id/center_user_guideline" />
+                    <com.google.android.material.textview.MaterialTextView
+                        android:id="@+id/account_uid"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:gravity="center"
+                        android:padding="8dp"
+                        android:text="UID:10"
+                        android:textColor="@color/secondary_text"
+                        android:textSize="@dimen/normal_text_size"
+                        app:layout_constraintStart_toEndOf="@+id/account_username"
+                        app:layout_constraintStart_toStartOf="@+id/account_username"
+                        app:layout_constraintTop_toBottomOf="@+id/account_username"
+                        tools:ignore="HardcodedText" />
 
-            </androidx.constraintlayout.widget.ConstraintLayout>
 
-            <com.google.android.material.internal.BaselineLayout
-                android:id="@+id/baselineLayout"
-                android:layout_width="match_parent"
-                android:layout_height="0.5dp"
-                android:layout_margin="16dp"
-                android:alpha="0.25"
-                android:background="@color/divider" />
+                </androidx.constraintlayout.widget.ConstraintLayout>
+
+                <LinearLayout
+
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:orientation="vertical"
+                    tools:ignore="ContentDescription">
+
+                    <ImageButton
+                        android:id="@+id/account_to_setting"
+                        android:layout_width="match_parent"
+                        android:layout_height="60dp"
+                        android:layout_marginStart="8dp"
+                        android:layout_marginTop="16dp"
+                        android:layout_marginEnd="16dp"
+                        android:layout_marginBottom="4dp"
+                        android:background="@drawable/shape_account_big_button"
+                        android:src="@drawable/ic_settings" />
+
+                    <ImageButton
+                        android:id="@+id/account_to_login_or_user_info"
+                        android:layout_width="match_parent"
+                        android:layout_height="60dp"
+                        android:layout_marginStart="8dp"
+                        android:layout_marginTop="4dp"
+                        android:layout_marginEnd="16dp"
+                        android:background="@drawable/shape_account_big_button"
+                        android:src="@drawable/ic_login" />
+
+                </LinearLayout>
+
+            </LinearLayout>
+
 
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:id="@+id/btn_to_favorite"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginHorizontal="16dp"
+                android:layout_marginTop="8dp"
                 android:background="@drawable/playlist_favorite_shape"
                 android:clickable="true"
                 android:padding="16dp">
@@ -116,7 +138,7 @@
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent"
-                    app:shapeAppearance="@style/itemPlaylistImageStyle" />
+                    app:shapeAppearance="@style/style_round_corner_8" />
 
                 <com.google.android.material.textview.MaterialTextView
                     android:layout_width="wrap_content"
@@ -144,7 +166,7 @@
                 <androidx.appcompat.widget.AppCompatImageView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:clickable="true"
+                    android:clickable="false"
                     android:padding="8dp"
                     android:src="@drawable/ic_arrow_forward"
                     android:translationZ="16dp"
@@ -154,18 +176,13 @@
 
             </androidx.constraintlayout.widget.ConstraintLayout>
 
-            <com.google.android.material.internal.BaselineLayout
-                android:layout_width="match_parent"
-                android:layout_height="0.5dp"
-                android:layout_margin="16dp"
-                android:alpha="0.25"
-                android:background="@color/divider" />
 
             <com.google.android.material.textview.MaterialTextView
                 android:id="@+id/tv_recent_play"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="16dp"
+                android:layout_marginTop="32dp"
                 android:text="@string/recent_playlist"
                 android:textColor="@color/primary_text"
                 android:textSize="@dimen/big_text_size"
@@ -184,25 +201,57 @@
                 tools:ignore="RtlSymmetry"
                 tools:listitem="@layout/item_recent_play" />
 
-            <com.google.android.material.textview.MaterialTextView
-                android:id="@+id/materialTextView3"
-                android:layout_width="wrap_content"
+            <RelativeLayout
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="16dp"
-                android:layout_marginTop="16dp"
-                android:text="@string/my_playlist"
-                android:textColor="@color/primary_text"
-                android:textSize="@dimen/big_text_size"
-                android:textStyle="bold" />
+                android:layout_marginTop="32dp"
+                android:orientation="horizontal">
+
+                <com.google.android.material.textview.MaterialTextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:layout_alignParentStart="true"
+                    android:layout_centerVertical="true"
+                    android:layout_marginStart="16dp"
+                    android:text="@string/my_playlist"
+                    android:textColor="@color/primary_text"
+                    android:textSize="@dimen/big_text_size"
+                    android:textStyle="bold"
+                    tools:ignore="RelativeOverlap" />
+
+                <ImageButton
+                    android:id="@+id/account_new_playlist"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentEnd="true"
+                    android:layout_gravity="end"
+                    android:layout_marginEnd="16dp"
+                    android:background="?attr/selectableItemBackgroundBorderless"
+                    android:padding="8dp"
+                    android:src="@drawable/ic_add"
+                    tools:ignore="ContentDescription" />
+
+            </RelativeLayout>
 
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/rv_playlist"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
+                android:layout_marginTop="16dp"
                 android:overScrollMode="never"
                 android:paddingHorizontal="16dp"
                 tools:listitem="@layout/item_playlist" />
+
+            <com.google.android.material.textview.MaterialTextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@color/windowBackground"
+                android:gravity="center"
+                android:paddingVertical="16dp"
+                android:text="@string/hint_no_more_content"
+                android:textColor="@color/secondary_text"
+                android:textSize="@dimen/small_text_size" />
+
         </LinearLayout>
 
     </ScrollView>

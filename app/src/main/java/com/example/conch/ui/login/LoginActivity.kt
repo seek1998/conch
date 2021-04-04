@@ -3,8 +3,6 @@ package com.example.conch.ui.login
 import android.content.Intent
 import android.text.Editable
 import android.text.TextWatcher
-import android.util.Log
-import android.widget.Toast
 import com.example.conch.R
 import com.example.conch.data.MyResult
 import com.example.conch.data.model.User
@@ -33,8 +31,9 @@ class LoginActivity : BaseActivity<ActivityLoginBinding, LoginViewModel>() {
                 val password = binding.editPwd.text.toString()
 
                 if (!RegexUtil.isEmail(email)) {
-                    Toast.makeText(this@LoginActivity, R.string.wrong_email, Toast.LENGTH_SHORT)
-                        .show()
+
+                    toast(getString(R.string.wrong_email))
+
                     return@setOnClickListener
                 }
 
@@ -126,10 +125,13 @@ class LoginActivity : BaseActivity<ActivityLoginBinding, LoginViewModel>() {
     }
 
     private fun updateUiWithUser(user: User) {
-        Log.d(TAG, "update ui")
+
         toast("你好， ${user.name}")
+
         val intent = Intent(this, MainActivity::class.java)
+
         startActivity(intent)
+
         finish()
     }
 

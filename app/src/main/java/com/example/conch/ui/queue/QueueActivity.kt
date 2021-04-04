@@ -28,6 +28,7 @@ class QueueActivity : BaseActivity<ActivityQueueBinding, QueueViewModel>() {
             it?.let {
                 trackAdapter.submitList(it)
             }
+
         })
 
         binding.activityQueueToolBar.apply {

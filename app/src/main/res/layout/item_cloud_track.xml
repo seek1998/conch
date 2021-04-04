@@ -22,7 +22,7 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:shapeAppearance="@style/itemLocalTrackImageStyle" />
+        app:shapeAppearance="@style/style_round_corner_4" />
 
     <com.google.android.material.textview.MaterialTextView
         android:id="@+id/item_cloud_track_title"
@@ -135,7 +135,7 @@
         android:visibility="gone"
         app:layout_constraintStart_toStartOf="@+id/item_cloud_track_title"
         app:layout_constraintTop_toBottomOf="@+id/item_cloud_track_title"
-        app:shapeAppearance="@style/circleImageStyle" />
+        app:shapeAppearance="@style/style_round_corner_p50" />
 
     <androidx.core.widget.ContentLoadingProgressBar
         android:id="@+id/item_cloud_track_loading"

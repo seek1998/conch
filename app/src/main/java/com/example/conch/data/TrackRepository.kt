@@ -126,9 +126,12 @@ class TrackRepository private constructor(
         crossRefDao.deleteByPlaylistId(playlist.id)
     }
 
+    suspend fun updatePlaylist(playlist: Playlist) = playlistDao.update(playlist)
+
     suspend fun deleteLocalTrack(track: Track) {
         localMediaSource.deleteTrack(track)
         trackDao.delete(track)
+        cachedLocalTracks.remove(track)
     }
 
     suspend fun createPlaylist(playlist: Playlist) = playlistDao.insert(playlist)
@@ -299,9 +302,17 @@ class TrackRepository private constructor(
         user: User,
         taskResult: MutableLiveData<Boolean>
     ) {
-        trackDao.updateAfterLogin(user.id)
+        val local = User.LOCAL_USER
 
-        playlistDao.updateAfterLogin(user.id)
+        trackDao.getTracksByUid(local).onEach {
+            it.uid = user.id
+            trackDao.insert(it)
+        }
+
+        playlistDao.getPlaylistByUid(local).onEach {
+            it.uid = user.id
+            playlistDao.insert(it)
+        }
 
         taskResult.postValue(true)
     }

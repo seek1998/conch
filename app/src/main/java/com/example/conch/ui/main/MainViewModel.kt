@@ -20,6 +20,7 @@ import com.example.conch.service.MusicServiceConnection
 import com.example.conch.service.NOTHING_PLAYING
 import com.example.conch.ui.BaseViewModel
 import com.example.conch.ui.track.NowPlayingMetadata
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
 import kotlin.math.floor
@@ -219,15 +220,22 @@ class MainViewModel(
             postTrackInfoResult.postValue(result)
         }
 
-    fun deleteLocalTrack(track: Track) =
-        viewModelScope.launch {
-            trackRepository.deleteLocalTrack(track)
-        }
+    suspend fun deleteLocalTrack(track: Track) = with(Dispatchers.Main) {
+        trackRepository.deleteLocalTrack(track)
+    }
 
     suspend fun getPlaylistCover(playlist: Playlist) =
         viewModelScope.async {
             return@async trackRepository.getPlaylistCoverPath(playlist.id)
-        }
+        }.await()
+
+    suspend fun deletePlaylist(playlist: Playlist) = with(Dispatchers.Main) {
+        trackRepository.deletePlaylist(playlist)
+    }
+
+    suspend fun updatePlaylist(playlist: Playlist) = with(Dispatchers.Main) {
+        trackRepository.updatePlaylist(playlist)
+    }
 
     class Factory(
         private val application: Application,

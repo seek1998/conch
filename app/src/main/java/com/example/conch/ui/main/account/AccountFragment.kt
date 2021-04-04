@@ -65,8 +65,13 @@ class AccountFragment : BaseFragment<FragmentAccountBinding, AccountViewModel>()
                 setUpFavorite(it)
             }
         })
+
+        binding.accountNewPlaylist.setOnClickListener {
+            createNewPlaylist()
+        }
     }
 
+    @SuppressLint("SetTextI18n")
     private fun setUpUserInfo(user: User = mainViewModel.getUser()) = with(binding) {
 
         accountToLoginOrUserInfo.apply {
@@ -108,10 +113,8 @@ class AccountFragment : BaseFragment<FragmentAccountBinding, AccountViewModel>()
             accountUsername.text = user.name
         }
 
-        accountEmail.text = user.email
-
+        accountUid.text = "UID: ${user.id}"
     }
-
 
     @SuppressLint("SetTextI18n")
     private fun setUpFavorite(favorites: Playlist) = with(binding) {
@@ -128,7 +131,8 @@ class AccountFragment : BaseFragment<FragmentAccountBinding, AccountViewModel>()
         ivPlaylistFavoriteCover.apply {
 
             scope.launch {
-                val coverPath = mainViewModel.getPlaylistCover(favorites).await()
+
+                val coverPath = mainViewModel.getPlaylistCover(favorites)
 
                 requireActivity().runOnUiThread {
                     Glide.with(this@apply)
@@ -182,7 +186,11 @@ class AccountFragment : BaseFragment<FragmentAccountBinding, AccountViewModel>()
             orientation = LinearLayoutManager.HORIZONTAL
         }
 
-        val playlistAdapter = PlaylistAdapter(this::playlistItemOnClick, this::createNewPlaylist)
+        val playlistAdapter = PlaylistAdapter(
+            activity = requireActivity(),
+            onItemClick = this::playlistItemOnClick,
+            onLongClick = this::playlistItemOnLongClick
+        )
 
         binding.rvPlaylist.apply {
             layoutManager = playlistLayoutManager
@@ -211,12 +219,13 @@ class AccountFragment : BaseFragment<FragmentAccountBinding, AccountViewModel>()
             .inflate(R.layout.dialog_create_playlist, null)
 
         this.tvPlaylistTitle = contentView.findViewById(R.id.fg_tv_playlist_title)
+
         this.tvPlaylistDescription = contentView.findViewById(R.id.fg_tv_playlist_description)
 
         MaterialAlertDialogBuilder(requireContext())
             .setTitle("新建歌单")
             .setView(contentView)
-            .setPositiveButton(getString(R.string.yes)) { dialog, which ->
+            .setPositiveButton(getString(R.string.yes)) { _, _ ->
                 run {
 
                     val title = tvPlaylistTitle.text.trim().toString()
@@ -239,12 +248,36 @@ class AccountFragment : BaseFragment<FragmentAccountBinding, AccountViewModel>()
             .show()
     }
 
-
     private fun playlistItemOnClick(playlist: Playlist) {
+
         val intent = Intent(requireActivity(), PlaylistActivity::class.java).apply {
             putExtra("playlist", playlist)
         }
         startActivity(intent)
+    }
+
+    private fun playlistItemOnLongClick(playlist: Playlist) {
+
+        val options = arrayOf("修改", "删除")
+
+        MaterialAlertDialogBuilder(requireContext())
+            .setTitle(playlist.title)
+            .setItems(options) { dialog, which ->
+                when (which) {
+                    //update playlist
+                    0 -> {
+                        //TODO 修改歌单
+                    }
+
+                    //delete playlist
+                    1 -> scope.launch {
+                        mainViewModel.deletePlaylist(playlist)
+                    }
+
+                }
+
+            }.show()
+
     }
 
     private fun recentPlayItemOnClick(track: Track) {
@@ -266,8 +299,11 @@ class AccountFragment : BaseFragment<FragmentAccountBinding, AccountViewModel>()
     @Subscribe(threadMode = ThreadMode.MAIN, sticky = true)
     fun onEvent(message: MessageEvent) {
         if (message.type == MessageType.ACTION_UPDATE_USER_INFO) {
-            val user = message.getParcelable<User>()!!
-            this.setUpUserInfo(user)
+
+            message.getParcelable<User>()?.let {
+                this.setUpUserInfo(it)
+            }
+
         }
     }
 

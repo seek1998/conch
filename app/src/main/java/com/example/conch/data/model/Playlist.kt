@@ -14,7 +14,7 @@ data class Playlist(
     val title: String = "",
     var size: Int = NO_TRACK,
     val description: String = "",
-    @field:ColumnInfo(defaultValue = "0") val uid: Long = 0L
+    @field:ColumnInfo(defaultValue = "0") var uid: Long = 0L
 ) : Parcelable {
 
     companion object {

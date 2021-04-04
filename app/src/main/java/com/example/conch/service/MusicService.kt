@@ -63,6 +63,7 @@ class MusicService : MediaBrowserServiceCompat(), CoroutineScope by MainScope() 
     }
 
     override fun onCreate() {
+
         super.onCreate()
 
         val sessionActivityPendingIntent =
@@ -133,7 +134,6 @@ class MusicService : MediaBrowserServiceCompat(), CoroutineScope by MainScope() 
                     PlaybackStateCompat.ACTION_PREPARE or
                     PlaybackStateCompat.ACTION_SEEK_TO
 
-
         override fun onPrepare(playWhenReady: Boolean) {
 
             val recentSong = storage.loadRecentSong() ?: return
@@ -198,6 +198,7 @@ class MusicService : MediaBrowserServiceCompat(), CoroutineScope by MainScope() 
         ) {
 
         }
+
     }
 
 
@@ -264,6 +265,7 @@ class MusicService : MediaBrowserServiceCompat(), CoroutineScope by MainScope() 
                     if (playbackState == Player.STATE_READY) {
                         if (!playWhenReady) stopForeground(false)
                     }
+
                 }
                 else -> {
                     notificationManager.hideNotification()
@@ -313,6 +315,7 @@ class MusicService : MediaBrowserServiceCompat(), CoroutineScope by MainScope() 
 
             Toast.makeText(applicationContext, "出现未知错误", Toast.LENGTH_LONG).show()
         }
+
     }
 
     private fun handleEmptyPlaylist() {

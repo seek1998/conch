@@ -74,5 +74,6 @@
     <string name="exit">退出登录</string>
     <string name="track_favorite">我喜欢的歌曲</string>
     <string name="hint_empty_old_password">旧密码不能为空</string>
+    <string name="title_playlist_play">歌单播放</string>
 
 </resources>

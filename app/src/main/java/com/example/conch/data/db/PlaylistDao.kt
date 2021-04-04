@@ -31,7 +31,4 @@ interface PlaylistDao {
     @Query("SELECT * FROM Playlist WHERE id = :playlistId")
     suspend fun getPlaylistWithTracks(playlistId: Long): PlaylistWithTracks?
 
-    @Query("UPDATE playlist SET uid = :uid WHERE uid = 0")
-    fun updateAfterLogin(uid: Long)
-
 }

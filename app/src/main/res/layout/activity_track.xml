@@ -36,7 +36,6 @@
                 android:background="@android:color/transparent"
                 android:tag="activity_track"
                 android:textAlignment="gravity"
-                app:menu="@menu/activity_track_toolbar_menu"
                 app:navigationIcon="@drawable/ic_arrow_back">
 
             </com.google.android.material.appbar.MaterialToolbar>
@@ -52,8 +51,8 @@
             app:cardCornerRadius="32dp"
             app:cardElevation="8dp"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="@+id/seekbar"
-            app:layout_constraintStart_toStartOf="@+id/seekbar"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/appBarLayout"
             app:layout_constraintVertical_bias="0.1">
 
@@ -112,9 +111,9 @@
 
         <SeekBar
             android:id="@+id/seekbar"
-            android:layout_width="324dp"
+            android:layout_width="248dp"
             android:layout_height="wrap_content"
-            android:layout_marginHorizontal="24dp"
+            android:layout_marginBottom="16dp"
             android:clickable="true"
             android:focusable="true"
             android:maxHeight="8dp"
@@ -126,42 +125,44 @@
             android:thumb="@drawable/ic_thumb"
             android:thumbTint="@color/icons"
             app:layout_constraintBottom_toTopOf="@+id/btn_play"
-            app:layout_constraintEnd_toEndOf="@+id/btn_library_add"
-            app:layout_constraintStart_toStartOf="@+id/btn_favorite"
-            app:layout_constraintTop_toBottomOf="@+id/cv_track"
-            app:layout_constraintVertical_bias="0.8"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
             app:thumbRadius="8dp" />
 
         <TextView
             android:id="@+id/track_progress_current"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:background="?attr/selectableItemBackgroundBorderless"
+            android:layout_marginStart="16dp"
+            android:background="@drawable/shape_track_progress"
             android:gravity="center_vertical|end"
             android:maxLines="1"
-            android:padding="4dp"
+            android:paddingHorizontal="8dp"
+            android:paddingVertical="4dp"
             android:text="00:00"
+            android:textColor="@color/primary_text"
             android:textSize="10sp"
-            app:layout_constraintEnd_toEndOf="@+id/seekbar"
-            app:layout_constraintHorizontal_bias="0.04"
-            app:layout_constraintStart_toStartOf="@+id/seekbar"
-            app:layout_constraintTop_toBottomOf="@+id/seekbar"
+            app:layout_constraintBottom_toBottomOf="@+id/seekbar"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/seekbar"
             tools:ignore="SmallSp" />
 
         <TextView
             android:id="@+id/track_progress_max"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:background="?attr/selectableItemBackgroundBorderless"
+            android:layout_marginEnd="16dp"
+            android:background="@drawable/shape_track_progress"
             android:gravity="center_vertical|start"
             android:maxLines="1"
-            android:padding="4dp"
+            android:paddingHorizontal="8dp"
+            android:paddingVertical="4dp"
             android:text="00:00"
+            android:textColor="@color/primary_text"
             android:textSize="10sp"
-            app:layout_constraintEnd_toEndOf="@+id/seekbar"
-            app:layout_constraintHorizontal_bias="0.96"
-            app:layout_constraintStart_toStartOf="@+id/seekbar"
-            app:layout_constraintTop_toBottomOf="@+id/seekbar"
+            app:layout_constraintBottom_toBottomOf="@+id/seekbar"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/seekbar"
             tools:ignore="SmallSp" />
 
         <com.google.android.material.textview.MaterialTextView
@@ -210,98 +211,151 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="@+id/appBarLayout"
-            app:layout_constraintVertical_bias="0.85"
-            app:shapeAppearance="@style/circleImageStyle"
+            app:layout_constraintVertical_bias="0.95"
+            app:shapeAppearance="@style/style_round_corner_p50"
             app:strokeColor="@color/blue_900"
             app:strokeWidth="4dp" />
 
-        <com.google.android.material.imageview.ShapeableImageView
-            android:id="@+id/btn_previous_track"
-            android:layout_width="@dimen/normal_play_icon_size"
-            android:layout_height="@dimen/normal_play_icon_size"
+        <ImageButton
+            android:id="@+id/btn_fast_rewind"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="24dp"
             android:background="?attr/selectableItemBackgroundBorderless"
             android:clickable="true"
+            android:padding="8dp"
+            android:src="@drawable/ic_fast_rewind"
+            app:layout_constraintBottom_toBottomOf="@+id/btn_previous_track"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/btn_previous_track"
+            tools:ignore="ContentDescription" />
+
+        <ImageButton
+            android:id="@+id/btn_previous_track"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:clickable="true"
+            android:padding="8dp"
             android:src="@drawable/ic_skip_previous"
             app:layout_constraintBottom_toBottomOf="@+id/btn_play"
             app:layout_constraintEnd_toStartOf="@+id/btn_play"
-            app:layout_constraintStart_toEndOf="@+id/btn_play_mode"
-            app:layout_constraintTop_toTopOf="@+id/btn_play" />
+            app:layout_constraintStart_toEndOf="@+id/btn_fast_rewind"
+            app:layout_constraintTop_toTopOf="@+id/btn_play"
+            tools:ignore="ContentDescription" />
 
-
-        <com.google.android.material.imageview.ShapeableImageView
+        <ImageButton
             android:id="@+id/btn_next_track"
-            android:layout_width="@dimen/normal_play_icon_size"
-            android:layout_height="@dimen/normal_play_icon_size"
-            android:background="?attr/selectableItemBackgroundBorderless"
-            android:clickable="true"
-            android:src="@drawable/ic_skip_next"
-            app:layout_constraintBottom_toBottomOf="@+id/btn_play"
-            app:layout_constraintEnd_toStartOf="@+id/btn_queue_track"
-            app:layout_constraintStart_toEndOf="@+id/btn_play"
-            app:layout_constraintTop_toTopOf="@+id/btn_play" />
-
-        <com.google.android.material.imageview.ShapeableImageView
-            android:id="@+id/btn_play_mode"
-            android:layout_width="@dimen/small_play_icon_size"
-            android:layout_height="@dimen/small_play_icon_size"
-            android:background="?attr/selectableItemBackgroundBorderless"
-            android:clickable="true"
-            android:src="@drawable/playmode"
-            app:layout_constraintBottom_toBottomOf="@+id/btn_previous_track"
-            app:layout_constraintEnd_toEndOf="@+id/btn_favorite"
-            app:layout_constraintStart_toStartOf="@+id/btn_favorite"
-            app:layout_constraintTop_toTopOf="@+id/btn_previous_track" />
-
-        <com.google.android.material.imageview.ShapeableImageView
-            android:id="@+id/btn_queue_track"
-            android:layout_width="@dimen/small_play_icon_size"
-            android:layout_height="@dimen/small_play_icon_size"
-            android:background="?attr/selectableItemBackgroundBorderless"
-            android:clickable="true"
-            android:src="@drawable/ic_queue_music_32"
-            app:layout_constraintBottom_toBottomOf="@+id/btn_next_track"
-            app:layout_constraintEnd_toEndOf="@+id/btn_library_add"
-            app:layout_constraintStart_toStartOf="@+id/btn_library_add"
-            app:layout_constraintTop_toTopOf="@+id/btn_next_track" />
-
-        <com.google.android.material.imageview.ShapeableImageView
-            android:id="@+id/btn_favorite"
-            android:layout_width="@dimen/small_play_icon_size"
-            android:layout_height="@dimen/small_play_icon_size"
-            android:layout_marginStart="32dp"
-            android:layout_marginBottom="32dp"
-            android:background="?attr/selectableItemBackgroundBorderless"
-            android:clickable="true"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:shapeAppearance="@style/itemPlaylistImageStyle"
-            app:srcCompat="@drawable/favorite_mode" />
-
-        <com.google.android.material.imageview.ShapeableImageView
-            android:id="@+id/btn_library_add"
-            android:layout_width="@dimen/small_play_icon_size"
-            android:layout_height="@dimen/small_play_icon_size"
-            android:layout_marginEnd="32dp"
-            android:layout_marginBottom="32dp"
-            android:background="?attr/selectableItemBackgroundBorderless"
-            android:clickable="true"
-            android:src="@drawable/ic_library_add_blue900"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:shapeAppearance="@style/itemPlaylistImageStyle" />
-
-        <com.google.android.material.textview.MaterialTextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:clickable="true"
             android:padding="8dp"
-            android:text="@string/app_name_en"
-            android:textColor="@color/light_green_700"
-            android:textStyle="bold"
-            app:layout_constraintBottom_toBottomOf="@+id/btn_favorite"
-            app:layout_constraintEnd_toStartOf="@+id/btn_library_add"
-            app:layout_constraintStart_toEndOf="@+id/btn_favorite"
-            app:layout_constraintTop_toTopOf="@+id/btn_favorite" />
+            android:src="@drawable/ic_skip_next"
+            app:layout_constraintBottom_toBottomOf="@+id/btn_play"
+            app:layout_constraintEnd_toStartOf="@+id/btn_fast_forward"
+            app:layout_constraintStart_toEndOf="@+id/btn_play"
+            app:layout_constraintTop_toTopOf="@+id/btn_play"
+            tools:ignore="ContentDescription" />
 
+        <ImageButton
+            android:id="@+id/btn_fast_forward"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="24dp"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:clickable="true"
+            android:padding="8dp"
+            android:src="@drawable/ic_fast_forward"
+            app:layout_constraintBottom_toBottomOf="@+id/btn_next_track"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/btn_next_track"
+            tools:ignore="ContentDescription" />
+
+        <ImageButton
+            android:id="@+id/btn_play_mode"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="24dp"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:clickable="true"
+            android:padding="8dp"
+            android:src="@drawable/playmode"
+            app:layout_constraintBottom_toBottomOf="@+id/btn_queue_track"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/btn_queue_track"
+            tools:ignore="ContentDescription" />
+
+        <ImageButton
+            android:id="@+id/btn_queue_track"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:clickable="true"
+            android:padding="8dp"
+            android:src="@drawable/ic_queue_music"
+            app:layout_constraintBottom_toBottomOf="@+id/btn_favorite"
+            app:layout_constraintEnd_toStartOf="@+id/btn_favorite"
+            app:layout_constraintStart_toEndOf="@+id/btn_play_mode"
+            app:layout_constraintTop_toTopOf="@+id/btn_favorite"
+            tools:ignore="ContentDescription" />
+
+        <ImageButton
+            android:id="@+id/btn_favorite"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="16dp"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:clickable="true"
+            android:padding="8dp"
+            app:layout_constraintBottom_toTopOf="@+id/seekbar"
+            app:layout_constraintEnd_toEndOf="@+id/btn_play"
+            app:layout_constraintStart_toStartOf="@+id/btn_play"
+            app:shapeAppearance="@style/style_round_corner_8"
+            app:srcCompat="@drawable/favorite_mode"
+            tools:ignore="ContentDescription" />
+
+        <ImageButton
+            android:id="@+id/btn_playlist_add"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:clickable="true"
+            android:padding="8dp"
+            android:src="@drawable/ic_playlist_add"
+            app:layout_constraintBottom_toBottomOf="@+id/btn_favorite"
+            app:layout_constraintEnd_toStartOf="@+id/btn_more_vert"
+            app:layout_constraintStart_toEndOf="@+id/btn_favorite"
+            app:layout_constraintTop_toTopOf="@+id/btn_favorite"
+            app:shapeAppearance="@style/style_round_corner_8"
+            tools:ignore="ContentDescription" />
+
+        <ImageButton
+            android:id="@+id/btn_more_vert"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="24dp"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:clickable="true"
+            android:padding="8dp"
+            android:src="@drawable/ic_more_vert"
+            app:layout_constraintBottom_toBottomOf="@+id/btn_playlist_add"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/btn_playlist_add"
+            app:shapeAppearance="@style/style_round_corner_8"
+            tools:ignore="ContentDescription" />
+
+        <!--        <com.google.android.material.textview.MaterialTextView-->
+        <!--            android:layout_width="wrap_content"-->
+        <!--            android:layout_height="wrap_content"-->
+        <!--            android:padding="8dp"-->
+        <!--            android:text="@string/app_name_en"-->
+        <!--            android:textColor="@color/light_green_700"-->
+        <!--            android:textStyle="bold"-->
+        <!--            app:layout_constraintBottom_toBottomOf="parent"-->
+        <!--            app:layout_constraintEnd_toEndOf="parent"-->
+        <!--            app:layout_constraintStart_toStartOf="parent" />-->
 
     </androidx.constraintlayout.widget.ConstraintLayout>
+
 </layout>

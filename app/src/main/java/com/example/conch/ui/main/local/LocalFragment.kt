@@ -28,10 +28,6 @@ class LocalFragment : BaseFragment<FragmentLocalBinding, LocalViewModel>() {
         InjectUtil.provideMainViewModelFactory(requireActivity())
     }
 
-    companion object {
-        fun newInstance() = LocalFragment()
-    }
-
     private val eventBus: EventBus = EventBus.getDefault()
 
     override fun processLogic() {

@@ -122,6 +122,7 @@ class TrackViewModel constructor(
     }
 
     private fun updatePreviousAndNextTrack(mediaStoreId: Long) {
+
         viewModelScope.launch {
 
             queueTracks.value?.let { list ->
@@ -150,6 +151,34 @@ class TrackViewModel constructor(
 
     fun skipToPrevious() = musicServiceConnection.transportControls.skipToPrevious()
 
+    fun fastForward() {
+
+        var target = mediaPosition.value?.plus(SKIP_TIME)
+
+        val duration = nowPlayingMetadata.value?._duration?.times(1000L)
+
+        if (target == null || duration == null) return
+
+        if (target > duration) {
+            target = duration - 500L
+        }
+
+        musicServiceConnection.transportControls.seekTo(target)
+    }
+
+    fun fastRewind() {
+
+        val current = mediaPosition.value ?: return
+
+        var target = current.minus(SKIP_TIME)
+
+        if (target < 0L) {
+            target = 0L
+        }
+
+        musicServiceConnection.transportControls.seekTo(target)
+    }
+
     fun changeTrackProgress(progress: Int) =
         musicServiceConnection.transportControls.seekTo(progress * 1E3.toLong())
 
@@ -173,6 +202,7 @@ class TrackViewModel constructor(
         musicServiceConnection.nowPlaying.removeObserver(mediaMetadataObserver)
 
         updatePosition = false
+
     }
 
     fun changeFavoriteMode() =
@@ -185,14 +215,18 @@ class TrackViewModel constructor(
                 )
 
                 isFavorite.postValue(false)
+
             } else {
                 trackRepository.addTrackToPlaylist(
                     mediaStoreId = nowPlayingMetadata.value!!.id.toLong(),
                     playlistId = Playlist.PLAYLIST_FAVORITE_ID
                 )
+
                 isFavorite.postValue(true)
+
             }
         }
+
 
     class Factory(
         private val application: Application,
@@ -206,5 +240,7 @@ class TrackViewModel constructor(
         }
     }
 }
+
+private const val SKIP_TIME: Long = 10 * 1000
 
 private const val TAG = "TrackViewModel"

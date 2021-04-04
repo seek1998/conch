@@ -57,7 +57,7 @@
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
-                app:shapeAppearance="@style/mainCordTrackCoverImageStyle"
+                app:shapeAppearance="@style/style_round_corner_12"
                 app:strokeColor="@color/blue_900"
                 app:strokeWidth="2dp" />
 
@@ -115,7 +115,7 @@
                 android:src="@drawable/main_play_mode_level"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
-                app:shapeAppearance="@style/circleImageStyle" />
+                app:shapeAppearance="@style/style_round_corner_p50" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 

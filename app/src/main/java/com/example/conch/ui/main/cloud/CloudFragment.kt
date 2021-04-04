@@ -33,6 +33,7 @@ class CloudFragment : BaseFragment<FragmentCloudBinding, CloudViewModel>() {
         cloudTrackAdapter =
             CloudTrackAdapter(
                 onItemClick = { track -> onItemClick(track) },
+
                 onOptionsClick = { track ->
                     TrackOptionDialog(requireActivity(), track).show(
                         childFragmentManager

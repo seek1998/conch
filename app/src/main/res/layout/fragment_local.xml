@@ -14,7 +14,7 @@
             android:layout_width="match_parent"
             android:layout_height="176dp"
             android:background="?android:attr/windowBackground"
-            app:expanded="false">
+            app:expanded="true">
 
             <com.google.android.material.appbar.SubtitleCollapsingToolbarLayout
                 android:id="@+id/tool_bar_layout"

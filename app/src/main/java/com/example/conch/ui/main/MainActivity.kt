@@ -206,18 +206,37 @@ class MainActivity : AppCompatActivity() {
     private fun setupAlbumArt(uri: Uri) {
 
         if (uri == Uri.EMPTY) {
-            Glide.with(this)
-                .load(ContextCompat.getDrawable(this, R.drawable.ic_play_arrow_blue900))
-                .into(this.ivNowPlayingCover)
+
+            this.ivNowPlayingCover.apply {
+
+                strokeWidth = 5.0F
+
+                Glide.with(this)
+                    .load(
+                        ContextCompat.getDrawable(
+                            applicationContext,
+                            R.drawable.ic_play_arrow_blue900
+                        )
+                    )
+                    .into(this)
+            }
+
             return
         }
 
-        Glide.with(this)
-            .load(uri)
-            .placeholder(ivNowPlayingCover.drawable)
-            .skipMemoryCache(false)
-            .diskCacheStrategy(DiskCacheStrategy.RESOURCE)
-            .into(ivNowPlayingCover)
+        ivNowPlayingCover.apply {
+
+            strokeWidth = 0F
+
+            Glide.with(this)
+                .load(uri)
+                .placeholder(this.drawable)
+                .skipMemoryCache(false)
+                .diskCacheStrategy(DiskCacheStrategy.RESOURCE)
+                .into(this)
+        }
+
+
     }
 
     private fun toast(msg: String) {
@@ -230,6 +249,7 @@ class MainActivity : AppCompatActivity() {
     /**
      * 检测设备是否使用耳机
      */
+
     private fun isWired(): Boolean {
         val audioManager = getSystemService(Context.AUDIO_SERVICE) as AudioManager
         audioManager.getDevices(AudioManager.GET_DEVICES_OUTPUTS).onEach {

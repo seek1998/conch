@@ -53,6 +53,7 @@ class AccountViewModel(application: Application) : BaseViewModel(application) {
             it.id == 1L
         }
     }
+
 }
 
 private const val TAG = "AccountViewModel"

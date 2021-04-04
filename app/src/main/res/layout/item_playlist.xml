@@ -16,7 +16,7 @@
         android:layout_height="96dp"
         android:background="@color/white"
         android:src="@drawable/ic_conch"
-        app:shapeAppearance="@style/itemPlaylistImageStyle" />
+        app:shapeAppearance="@style/style_round_corner_8" />
 
     <com.google.android.material.textview.MaterialTextView
         android:id="@+id/item_playlist_title"

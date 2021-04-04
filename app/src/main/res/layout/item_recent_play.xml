@@ -2,10 +2,10 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    style="@style/ExoMediaButton"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
     android:layout_marginEnd="8dp"
+    android:background="@drawable/shape_account_big_button"
     android:clickable="true"
     android:orientation="vertical"
     tools:context=".ui.main.MainActivity">
@@ -15,7 +15,7 @@
         android:layout_width="96dp"
         android:layout_height="96dp"
         android:src="@drawable/ic_play_arrow_blue900"
-        app:shapeAppearance="@style/itemPlaylistImageStyle" />
+        app:shapeAppearance="@style/style_round_corner_top_8" />
 
     <com.google.android.material.textview.MaterialTextView
         android:id="@+id/item_recent_play_title"

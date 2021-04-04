@@ -1,10 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    style="@style/ExoMediaButton"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:backgroundTint="@color/white"
+    android:background="?attr/selectableItemBackground"
     android:clickable="true">
 
     <com.google.android.material.imageview.ShapeableImageView
@@ -18,7 +17,7 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:shapeAppearance="@style/itemLocalTrackImageStyle" />
+        app:shapeAppearance="@style/style_round_corner_4" />
 
     <com.google.android.material.textview.MaterialTextView
         android:id="@+id/item_local_track_title"
@@ -58,8 +57,8 @@
         android:background="?attr/selectableItemBackgroundBorderless"
         android:clickable="true"
         android:padding="8dp"
-        android:visibility="invisible"
         android:src="@drawable/ic_more_vert"
+        android:visibility="invisible"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent" />

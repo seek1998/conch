@@ -28,8 +28,7 @@ import org.greenrobot.eventbus.EventBus
 class CloudTrackAdapter(
     private val onItemClick: ((Track) -> Unit)? = null,
     private val onOptionsClick: ((Track) -> Unit)? = null
-) :
-    ListAdapter<Track, CloudTrackAdapter.ViewHolder>(TrackDiffCallback),
+) : ListAdapter<Track, CloudTrackAdapter.ViewHolder>(TrackDiffCallback),
     CoroutineScope by MainScope() {
 
     private val scope = CoroutineScope(coroutineContext + SupervisorJob())

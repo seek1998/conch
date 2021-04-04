@@ -13,7 +13,6 @@ import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Observer
 import com.example.conch.R
-import com.example.conch.data.model.Playlist
 import com.example.conch.data.model.Track
 import com.example.conch.ui.main.MainViewModel
 import com.example.conch.ui.main.RemoteTrackIOViewModel
@@ -24,6 +23,8 @@ import com.google.android.material.imageview.ShapeableImageView
 import com.google.android.material.textview.MaterialTextView
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.MainScope
+import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.launch
 
 class TrackOptionDialog(
     private val activity: Activity,
@@ -32,7 +33,10 @@ class TrackOptionDialog(
 
     private lateinit var dialog: BottomSheetDialog
 
+    private val scope = CoroutineScope(coroutineContext + SupervisorJob())
+
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
+
         super.onCreateDialog(savedInstanceState)
 
         val mainViewModel by activityViewModels<MainViewModel> {
@@ -43,7 +47,7 @@ class TrackOptionDialog(
             InjectUtil.provideRemoteTrackViewModelFactory(activity)
         }
 
-        val contentView = LayoutInflater.from(requireContext())
+        val contentView = LayoutInflater.from(activity)
             .inflate(
                 R.layout.dialog_track_options,
                 activity.findViewById(R.id.dialog_track_options),
@@ -123,14 +127,7 @@ class TrackOptionDialog(
         }
 
         optionAdd.setOnClickListener {
-
-            PlaylistDialog { playlist: Playlist ->
-                run {
-                    mainViewModel.addTrackToPlaylist(track.mediaStoreId, playlist.id)
-                    toast("已添加到歌单：${playlist.title}")
-                }
-            }.show(childFragmentManager)
-
+            PlaylistDialog(activity, track.mediaStoreId).show(childFragmentManager)
             mainViewModel.loadAllPlaylist()
         }
 
@@ -153,7 +150,9 @@ class TrackOptionDialog(
         }
 
         optionDelete.setOnClickListener {
-            mainViewModel.deleteLocalTrack(track)
+            scope.launch {
+                mainViewModel.deleteLocalTrack(track)
+            }
         }
 
         return this.dialog

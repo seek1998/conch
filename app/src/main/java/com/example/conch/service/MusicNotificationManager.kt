@@ -40,7 +40,8 @@ class MusicNotificationManager(
             notificationListener
         ).apply {
             setMediaSessionToken(sessionToken)
-            setSmallIcon(R.drawable.ic_music_note)
+            setSmallIcon(R.drawable.ic_conch)
+
             setRewindIncrementMs(0)
             setFastForwardIncrementMs(0)
         }
@@ -58,6 +59,7 @@ class MusicNotificationManager(
         PlayerNotificationManager.MediaDescriptionAdapter {
 
         var currentIconUri: Uri? = null
+
         var currentBitmap: Bitmap? = null
 
         override fun createCurrentContentIntent(player: Player): PendingIntent? =
@@ -74,9 +76,11 @@ class MusicNotificationManager(
             callback: PlayerNotificationManager.BitmapCallback
         ): Bitmap? {
             val iconUri = controller.metadata.description.iconUri
+
             return if (currentIconUri != iconUri || currentBitmap == null) {
 
                 currentIconUri = iconUri
+
                 launch {
                     currentBitmap = iconUri?.let {
                         resolveUriAsBitmap(it)

@@ -12,8 +12,8 @@ interface TrackDao {
     @Update
     suspend fun update(track: Track)
 
-    @Query("SELECT * FROM track")
-    suspend fun getAll(): List<Track>
+    @Query("SELECT * FROM track WHERE uid = :uid")
+    suspend fun getTracksByUid(uid: Long): List<Track>
 
     @Transaction
     @Query("SELECT * FROM Track WHERE mediaStoreId = :mediaStoreId")
@@ -21,9 +21,6 @@ interface TrackDao {
 
     @Query("SELECT * FROM track WHERE mediaStoreId = :mediaStoreId")
     suspend fun getTrack(mediaStoreId: Long): Track?
-
-    @Query("SELECT * FROM track WHERE uid = :uid AND title = :title AND size = :size")
-    suspend fun getTracksByUidAndTitleAndSize(uid: Long, title: String, size: Long): List<Track>
 
     @Query("DELETE FROM track")
     suspend fun deleteAll()
@@ -36,8 +33,5 @@ interface TrackDao {
 
     @Query("UPDATE track SET id = :id WHERE mediaStoreId = 0")
     suspend fun setId(id: Long)
-
-    @Query("UPDATE track SET uid = :uid WHERE uid = 0")
-    fun updateAfterLogin(uid: Long)
 
 }

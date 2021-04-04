@@ -32,10 +32,6 @@ class LocalMediaSource private constructor(private val contentResolver: ContentR
         }
     }
 
-    suspend fun insertTrack(track: Track) {
-
-    }
-
     suspend fun getTracks(): MutableList<Track> {
 
         val tracks = mutableListOf<Track>()
